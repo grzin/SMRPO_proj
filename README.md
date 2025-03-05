@@ -7,6 +7,8 @@ Backend: https://payloadcms.com/
 
 ## Development
 
+`npm install`
+
 Development:
 `npm run dev`
 
