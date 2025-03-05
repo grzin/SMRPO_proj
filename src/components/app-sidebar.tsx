@@ -8,11 +8,6 @@ import { NavUser } from '@/components/nav-user'
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
 
 const data = {
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navMain: [
     {
       title: 'Projects',
@@ -63,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

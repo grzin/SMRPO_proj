@@ -64,7 +64,7 @@ export async function logoutAction() {
   }
 }
 
-export async function getUser(): Promise<User | null> {
+export async function getUser(): Promise<User> {
   const headers = await getHeaders()
   const payload: Payload = await getPayload({ config })
   const { user } = await payload.auth({ headers })
