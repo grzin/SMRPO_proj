@@ -8,9 +8,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html suppressHydrationWarning>
       <head></head>
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
