@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
       name: 'role',
       type: 'relationship',
       relationTo: 'roles',
-    }
+    },
   ],
   timestamps: true,
 }
