@@ -1,4 +1,6 @@
+import { getUser } from '@/actions/login-action'
 import { AppSidebar } from '@/components/app-sidebar'
+import { LoginForm } from '@/components/login-form'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +12,9 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
-export default function Page() {
+export default async function Page() {
+  const user = await getUser()
+
   return (
     <SidebarProvider>
       <AppSidebar />

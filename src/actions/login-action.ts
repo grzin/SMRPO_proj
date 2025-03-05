@@ -1,7 +1,11 @@
 'use server'
+import { User } from '@/payload-types'
 import config from '@/payload.config'
-import { getPayload } from 'payload'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { getPayload, Payload } from 'payload'
 import { z } from 'zod'
+import { headers as getHeaders } from 'next/headers'
 
 const loginSchema = z.object({
   username: z
@@ -16,7 +20,7 @@ const loginSchema = z.object({
   }),
 })
 
-export async function loginAction(prevState: { message: string }, formData: FormData) {
+export async function loginAction({}, formData: FormData) {
   const payload = await getPayload({ config })
 
   const validatedFields = loginSchema.safeParse({
@@ -28,7 +32,7 @@ export async function loginAction(prevState: { message: string }, formData: Form
     return { ...validatedFields.error.flatten().fieldErrors, message: '' }
   }
 
-  const result = await payload
+  const result: any = await payload
     .login({
       collection: 'users',
       data: {
@@ -40,5 +44,33 @@ export async function loginAction(prevState: { message: string }, formData: Form
       return { message: 'Failed to login', username: '', password: '' }
     })
 
-  return { message: 'Login successfull', username: '', password: '' }
+  if (!result.token) {
+    return { message: 'Username or password incorrect', username: '', password: '' }
+  }
+
+  const cookieStore = await cookies()
+  cookieStore.set('payload-token', result.token, { httpOnly: true, secure: false, path: '/' })
+  redirect('/dashboard')
+}
+
+export async function logoutAction() {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('payload-token')
+
+    redirect('/dashboard')
+  } catch (error) {
+    return { success: false, error: 'An error occurred during logout' }
+  }
+}
+
+export async function getUser(): Promise<User | null> {
+  const headers = await getHeaders()
+  const payload: Payload = await getPayload({ config })
+  const { user } = await payload.auth({ headers })
+  if (!user) {
+    redirect('/')
+  }
+
+  return user
 }
