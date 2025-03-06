@@ -9,6 +9,9 @@ export const Roles: CollectionConfig = {
     {
       name: 'role',
       type: 'text',
+      index: true,
+      required: true,
+      unique: true,
     },
   ],
   timestamps: true,

@@ -19,6 +19,13 @@ Development:
 Build:
 `npm run build`
 
+## Test data
+
+Visit `http://localhost:3000/seed` to seed the database.
+
+username: admin
+password: admin
+
 ## Attributes
 
 - **Database**: sqlite

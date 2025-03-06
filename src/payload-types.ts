@@ -138,7 +138,7 @@ export interface User {
  */
 export interface Role {
   id: number;
-  role?: string | null;
+  role: string;
   updatedAt: string;
   createdAt: string;
 }
