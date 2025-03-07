@@ -10,6 +10,13 @@ export const Projects: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+      unique: true,
     },
+    {
+      name: 'user',
+      type: 'relationship',
+      relationTo: 'users',
+      required: false,
+    }
   ],
 }

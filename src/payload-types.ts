@@ -149,6 +149,7 @@ export interface Role {
 export interface Project {
   id: number;
   name: string;
+  user?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -237,6 +238,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
+  user?: T;
   updatedAt?: T;
   createdAt?: T;
 }
