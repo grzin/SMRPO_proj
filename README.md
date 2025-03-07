@@ -2,16 +2,20 @@
 
 ## Tech-Stavk
 
-Framework: https://nextjs.org/
-Backend: https://payloadcms.com/
-
-UI: https://ui.shadcn.com/
-Form validation: https://zod.dev/
-Query: https://tanstack.com/query/latest/docs/framework/react/overview
+| Technology      | Link                                                                              |
+| --------------- | --------------------------------------------------------------------------------- |
+| Framework       | [Next.js](https://nextjs.org/)                                                    |
+| Backend         | [Payload CMS](https://payloadcms.com/)                                            |
+| UI              | [shadcn/ui](https://ui.shadcn.com/)                                               |
+| Icons           | [Lucide Icons](https://lucide.dev/icons/)                                         |
+| Form validation | [Zod](https://zod.dev/)                                                           |
+| Query           | [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) |
 
 ## Development
 
 `npm install`
+
+Copy `.env.example` to `.env` and configure settings.
 
 Development:
 `npm run dev`
