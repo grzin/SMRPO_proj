@@ -1,6 +1,7 @@
 'use client'
 
 import { AppSidebar } from '@/components/app-sidebar'
+import AddProjectForm from '@/components/project/add-project'
 import { LoginForm } from '@/components/login-form'
 import {
   Breadcrumb,
@@ -33,17 +34,18 @@ const Projects: FC<ProjectProps> = ({ project }) => {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">{project.name}</BreadcrumbLink>
+                    <BreadcrumbLink href="#">Projects</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Sprint</BreadcrumbPage>
+                    <BreadcrumbPage>{project.name}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <AddProjectForm /> {/* Add the AddProjectForm component */}
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
               <div className="bg-muted/50 aspect-video rounded-xl" />
               <div className="bg-muted/50 aspect-video rounded-xl" />
