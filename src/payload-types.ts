@@ -69,6 +69,8 @@ export interface Config {
     users: User;
     projects: Project;
     roles: Role;
+    'project-roles': ProjectRole;
+    userProjectRoles: UserProjectRole;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -78,6 +80,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     roles: RolesSelect<false> | RolesSelect<true>;
+    'project-roles': ProjectRolesSelect<false> | ProjectRolesSelect<true>;
+    userProjectRoles: UserProjectRolesSelect<false> | UserProjectRolesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -149,7 +153,28 @@ export interface Role {
 export interface Project {
   id: number;
   name: string;
-  user?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-roles".
+ */
+export interface ProjectRole {
+  id: number;
+  role: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "userProjectRoles".
+ */
+export interface UserProjectRole {
+  id: number;
+  user: number | User;
+  project: number | Project;
+  role?: (number | null) | ProjectRole;
   updatedAt: string;
   createdAt: string;
 }
@@ -171,6 +196,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'roles';
         value: number | Role;
+      } | null)
+    | ({
+        relationTo: 'project-roles';
+        value: number | ProjectRole;
+      } | null)
+    | ({
+        relationTo: 'userProjectRoles';
+        value: number | UserProjectRole;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -238,7 +271,6 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
-  user?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -247,6 +279,26 @@ export interface ProjectsSelect<T extends boolean = true> {
  * via the `definition` "roles_select".
  */
 export interface RolesSelect<T extends boolean = true> {
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-roles_select".
+ */
+export interface ProjectRolesSelect<T extends boolean = true> {
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "userProjectRoles_select".
+ */
+export interface UserProjectRolesSelect<T extends boolean = true> {
+  user?: T;
+  project?: T;
   role?: T;
   updatedAt?: T;
   createdAt?: T;

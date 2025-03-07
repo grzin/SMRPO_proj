@@ -11,12 +11,6 @@ export const Projects: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
-    },
-    {
-      name: 'user',
-      type: 'relationship',
-      relationTo: 'users',
-      required: false,
     }
   ],
 }
