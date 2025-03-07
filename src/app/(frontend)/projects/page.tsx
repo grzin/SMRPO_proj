@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Project, User, Role } from '@/payload-types'
+import Projects from './projects'
 
 interface ProjectInterface {
   name: string;
@@ -24,32 +25,10 @@ interface UserInterface {
   password?: string | null;
 }
 
-const Projects = () => {
-  const [projects, setProjects] = useState<ProjectInterface[]>([]);
+export default async function Page() {
+  const res = await fetch('http://localhost:3000/api/projects');
+  const data = await res.json();
+  const project = data.docs[0];
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      const res = await fetch('http://localhost:3000/api/projects');
-      const data = await res.json();
-      setProjects(data.docs); // Payload returns an array of documents in the "docs" field
-    };
-
-    fetchProjects();
-  }, []);
-
-  return (
-    <div>
-      <h1>Projects</h1>
-      <ul>
-        {projects.map((project) => (
-          <li key={project.name}>
-            <h2>User assigned to project: {project.user ? project.user.name : ""} with role: {project.user && project.user.role ? project.user.role.role : ""}</h2>
-            <p>Project name: {project.name}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default Projects;
+  return <Projects project={project} />
+}
