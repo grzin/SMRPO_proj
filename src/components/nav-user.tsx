@@ -67,6 +67,10 @@ export function NavUser() {
                 <BadgeCheck />
                 Profile
               </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BadgeCheck />
+                <Link href="/settings/profile">Profile Settings</Link>
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <Link href="/logout">
