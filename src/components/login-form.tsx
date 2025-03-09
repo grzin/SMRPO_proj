@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -10,6 +10,8 @@ import { useFormStatus } from 'react-dom'
 import { useActionState } from 'react'
 import { loginAction } from '@/actions/login-action'
 import { FormMessage } from './ui/form'
+
+import { redirect } from 'next/navigation'
 
 const initialState = {
   message: '',
@@ -31,7 +33,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="username">Username</Label>
-                <Input name="username" id="username" type="text" placeholder="test" required />
+                <Input name="username" id="username" type="text" placeholder="" required />
                 {state.username && <FormMessage>{state.username}</FormMessage>}
               </div>
               <div className="grid gap-3">
@@ -48,7 +50,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   variant="link"
                   onClick={(e) => {
                     e.preventDefault()
-                    return false
+                    redirect('/register')
                   }}
                   className="w-full"
                 >
