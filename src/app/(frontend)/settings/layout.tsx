@@ -9,8 +9,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    //<html lang="en">
+      //<body>
+      <div>
+        {children}
+      </div>
+      //</body>
+    //</html>
   )
 }
+
+// had to modify auto generated file, probably a bad idea

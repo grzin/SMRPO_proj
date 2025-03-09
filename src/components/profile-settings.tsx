@@ -1,19 +1,30 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FormMessage } from '@/components/ui/form'
 import { useUser } from '@/contexts/user-context'
 import { updatePasswordAction, updateProfileAction } from '@/actions/user-actions'
 
 export function ProfileSettings() {
   const { user } = useUser()
+  const [error, setError] = useState<string | null>(null)
 
   if (!user) {
     return null
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const response = await updateProfileAction(formData)
+    if (response.error) {
+      setError(response.error)
+    } else {
+      setError(null)
+    }
   }
 
   return (
@@ -23,7 +34,7 @@ export function ProfileSettings() {
           <CardTitle>Profile Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={updateProfileAction} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="username">Name</Label>
               <Input
@@ -43,6 +54,7 @@ export function ProfileSettings() {
             </div>
             <Button type="submit">Update Profile</Button>
           </form>
+          {error && <div className="text-red-500">{error}</div>}
         </CardContent>
       </Card>
 

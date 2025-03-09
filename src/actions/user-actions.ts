@@ -38,25 +38,43 @@ export async function updateProfileAction(formData: FormData) {
   })
 
   if (!validatedFields.success) {
-    return validatedFields.error.flatten().fieldErrors
+    const errorMessages = validatedFields.error.flatten().fieldErrors
+    const firstError = Object.values(errorMessages).flat()[0]
+    return {error: firstError}
   }
 
   const userId = (await getUserFromCookies()).id
+
+  // Check for duplicate username
+  const existingUser = await payload.find({
+    collection: 'users',
+    where: {
+      username: {
+        equals: validatedFields.data.username,
+      },
+      id: {
+        not_equals: userId, // Exclude the current user from the check
+      },
+    },
+  })
+
+  if (existingUser.totalDocs > 0) {
+    return { error: 'Username already exists' }
+  }
 
   try {
     const { user } = await payload.update({
       collection: 'users',
       id: userId,
       data: {
+        name: validatedFields.data.username,
         username: validatedFields.data.username,
         email: validatedFields.data.email,
       },
       headers: headersList,
     })
-    console.log("success")
     return { success: true }
   } catch (error) {
-    console.log(error)
     return { error: 'Failed to update profile' }
   }
 }
