@@ -14,16 +14,30 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { ProjectProvider } from '@/contexts/project-context'
-import { Project } from '@/payload-types'
-import { FC } from 'react'
+import { Project, UserProjectRole, User, ProjectRole } from '@/payload-types'
+import { FC, useEffect, useState } from 'react'
+import Modal from '@/components/ui/addProjectModal'
+import { UIProject, ProjectUser } from './page'
+import { object } from 'zod'
 
 interface ProjectProps {
-  project: Project
+  projects: UIProject[]
 }
 
-const Projects: FC<ProjectProps> = ({ project }) => {
+const Projects: FC<ProjectProps> = ({ projects }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userProjectRoles, setUserProjectRoles] = useState<UserProjectRole[]>([]);
+  const [roles, setRoles] = useState<ProjectRole[]>([]);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const getUserRolesForProject = (projectId: number) => {
+    return userProjectRoles.filter(upr => upr.project === projectId);
+  };
+
   return (
-    <ProjectProvider project={project}>
+    <ProjectProvider project={projects[0].project}>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -38,18 +52,32 @@ const Projects: FC<ProjectProps> = ({ project }) => {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{project.name}</BreadcrumbPage>
+                    <BreadcrumbPage>Projects</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <AddProjectForm /> {/* Add the AddProjectForm component */}
+            <button onClick={openModal} className="mb-4 p-2 bg-blue-500 text-white rounded">
+              Add Project
+            </button>
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+              <AddProjectForm onClose={closeModal} />
+            </Modal>
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-              <div className="bg-muted/50 aspect-video rounded-xl" />
-              <div className="bg-muted/50 aspect-video rounded-xl" />
-              <div className="bg-muted/50 aspect-video rounded-xl" />
+              {projects.map((proj) => (
+                <div key={proj.id} className="bg-muted/50 aspect-video rounded-xl p-4">
+                  <h2>{proj.name}</h2>
+                  <ul>
+                  {proj.users?.map((user) => (
+                      <li key={user.id}>
+                        {user.name}{(user.role != null) ? ' - ' + user.role : ''}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
             <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
           </div>

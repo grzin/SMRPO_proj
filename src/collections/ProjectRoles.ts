@@ -6,7 +6,7 @@ export const ProjectRoles: CollectionConfig = {
     {
       name: 'role',
       type: 'text',
-      index: true,
+      index: false,
       required: true,
       unique: true,
     },

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Project } from '@/payload-types';
 
-const AddProjectForm = () => {
+const AddProjectForm = ({ onClose }: { onClose: () => void }) => {
   const [name, setName] = useState('');
   const project = { name: name };
 

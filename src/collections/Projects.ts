@@ -11,6 +11,7 @@ export const Projects: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      index: false,
     }
   ],
 }
