@@ -5,5 +5,5 @@ export async function GET() {
   const cookieStore = await cookies()
   cookieStore.delete('payload-token')
 
-  redirect('/')
+  redirect('/login')
 }

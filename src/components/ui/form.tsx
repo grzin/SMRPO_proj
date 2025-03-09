@@ -25,4 +25,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   )
 }
 
-export { FormDescription, FormMessage }
+function FormError({ className, ...props }: React.ComponentProps<'p'>) {
+  return (
+    <p data-slot="form-message" className={cn('text-destructive text-sm', className)} {...props}>
+      {props.children}
+    </p>
+  )
+}
+
+export { FormDescription, FormMessage, FormError }

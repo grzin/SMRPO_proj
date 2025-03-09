@@ -1,7 +1,7 @@
 'use client'
 
-import { getUser } from '@/actions/login-action'
 import { AppSidebar } from '@/components/app-sidebar'
+import AddProjectForm from '@/components/project/add-project'
 import { LoginForm } from '@/components/login-form'
 import {
   Breadcrumb,
@@ -13,17 +13,17 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { UserProvider } from '@/contexts/user-context'
-import { User } from '@/payload-types'
+import { ProjectProvider } from '@/contexts/project-context'
+import { Project } from '@/payload-types'
 import { FC } from 'react'
 
-interface DashboardProps {
-  user: User
+interface ProjectProps {
+  project: Project
 }
 
-const Dashboard: FC<DashboardProps> = ({ user }) => {
+const Projects: FC<ProjectProps> = ({ project }) => {
   return (
-    <UserProvider user={user}>
+    <ProjectProvider project={project}>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
@@ -34,17 +34,18 @@ const Dashboard: FC<DashboardProps> = ({ user }) => {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">{user.name}</BreadcrumbLink>
+                    <BreadcrumbLink href="#">Projects</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Sprint</BreadcrumbPage>
+                    <BreadcrumbPage>{project.name}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            <AddProjectForm /> {/* Add the AddProjectForm component */}
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
               <div className="bg-muted/50 aspect-video rounded-xl" />
               <div className="bg-muted/50 aspect-video rounded-xl" />
@@ -54,8 +55,8 @@ const Dashboard: FC<DashboardProps> = ({ user }) => {
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </UserProvider>
+    </ProjectProvider>
   )
 }
 
-export default Dashboard
+export default Projects
