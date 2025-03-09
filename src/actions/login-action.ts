@@ -57,16 +57,16 @@ const registerSchema = z.object({
 export async function loginAction({}, formData: FormData) {
   const payload = await getPayload({ config })
 
-  const validatedFields = loginSchema.safeParse({
+  const response = {
     username: formData.get('username')?.toString() ?? '',
     password: formData.get('password')?.toString() ?? '',
-  })
-
-  if (!validatedFields.success) {
-    return { ...validatedFields.error.flatten().fieldErrors, message: '' }
+    message: '',
   }
 
-  const data = validatedFields.data
+  const data = {
+    username: formData.get('username')?.toString() ?? '',
+    password: formData.get('password')?.toString() ?? '',
+  }
 
   const result: any = await payload
     .login({
@@ -77,11 +77,12 @@ export async function loginAction({}, formData: FormData) {
       },
     })
     .catch((error) => {
-      return { message: 'Failed to login', username: '', password: '' }
+      return {}
     })
 
   if (!result.token) {
-    return { message: 'Username or password incorrect', username: '', password: '' }
+    response.message = 'Username or password incorrect'
+    return response
   }
 
   const cookieStore = await cookies()
@@ -184,7 +185,9 @@ export async function registerAction({}, formData: FormData) {
         password: data.password,
       },
     })
-    .catch((error) => {})
+    .catch((error) => {
+      return {}
+    })
 
   if (!loginResult.token) {
     response.message = 'Failed to automatically login'

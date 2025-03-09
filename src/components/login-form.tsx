@@ -6,21 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import { useFormStatus } from 'react-dom'
 import { useActionState } from 'react'
 import { loginAction } from '@/actions/login-action'
-import { FormMessage } from './ui/form'
+import { FormError } from './ui/form'
 
 import { redirect } from 'next/navigation'
 
 const initialState = {
-  message: '',
   username: '',
   password: '',
+  message: '',
 }
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const [state, formAction] = useActionState(loginAction, initialState)
+  const [state, formAction, pending] = useActionState(loginAction, initialState)
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -33,19 +32,32 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="username">Username</Label>
-                <Input name="username" id="username" type="text" placeholder="" required />
-                {state.username && <FormMessage>{state.username}</FormMessage>}
+                <Input
+                  name="username"
+                  id="username"
+                  type="text"
+                  placeholder=""
+                  required
+                  defaultValue={state.username}
+                />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input name="password" id="password" type="password" required />
-                {state.password && <FormMessage>{state.password}</FormMessage>}
+                <Input
+                  name="password"
+                  id="password"
+                  type="password"
+                  required
+                  defaultValue={state.password}
+                />
               </div>
               <div className="flex flex-col gap-3">
-                <SubmitButton></SubmitButton>
-                {state.message && <FormMessage>{state.message}</FormMessage>}
+                <Button type="submit" className="w-full" disabled={pending}>
+                  Login
+                </Button>
+                {state.message && <FormError>{state.message}</FormError>}
                 <Button
                   variant="link"
                   onClick={(e) => {
@@ -62,14 +74,5 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardContent>
       </Card>
     </div>
-  )
-}
-
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <Button type="submit" className="w-full" disabled={pending}>
-      Login
-    </Button>
   )
 }
