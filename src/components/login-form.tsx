@@ -11,6 +11,7 @@ import { loginAction } from '@/actions/login-action'
 import { FormError } from './ui/form'
 
 import { redirect } from 'next/navigation'
+import PasswordInput from './ui/password'
 
 const initialState = {
   username: '',
@@ -45,13 +46,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input
-                  name="password"
-                  id="password"
-                  type="password"
-                  required
-                  defaultValue={state.password}
-                />
+                <PasswordInput name="password" />
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>

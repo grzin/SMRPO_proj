@@ -6,39 +6,66 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import { useActionState, useState } from 'react'
+import { useActionState } from 'react'
 import { registerAction } from '@/actions/login-action'
-import { FormError } from './ui/form'
 import { redirect } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
-import PasswordInput from './ui/password'
+import { FormError } from '../ui/form'
+import PasswordInput from '../ui/password'
+import { User } from '@/payload-types'
 
-const initialState = {
-  username: '',
-  password: '',
-  passwordRepeat: '',
-  name: '',
-  surname: '',
-  email: '',
-  message: '',
-  error: {
+export default function UserEdit({
+  className,
+  user,
+  ...props
+}: React.ComponentProps<'div'> & { user: User | null }) {
+  let initialState = {
+    id: -1,
     username: '',
     password: '',
     passwordRepeat: '',
     name: '',
     surname: '',
     email: '',
-  },
-}
+    message: '',
+    error: {
+      username: '',
+      password: '',
+      passwordRepeat: '',
+      name: '',
+      surname: '',
+      email: '',
+    },
+  }
+  if (user !== null) {
+    initialState = {
+      id: user.id,
+      username: user.username,
+      password: '',
+      passwordRepeat: '',
+      name: user.name,
+      surname: user.surname,
+      email: user.email ?? '',
+      message: '',
+      error: {
+        username: '',
+        password: '',
+        passwordRepeat: '',
+        name: '',
+        surname: '',
+        email: '',
+      },
+    }
+  }
 
-export function RegisterForm({ className, ...props }: React.ComponentProps<'div'>) {
   const [state, formAction, pending] = useActionState(registerAction, initialState)
+
+  const title = user == null ? 'Create new account' : 'Edit account'
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Register new account</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={formAction}>

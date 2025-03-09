@@ -40,11 +40,6 @@ const emailValidator = z
   })
   .email({ message: 'Invalid email' })
 
-const loginSchema = z.object({
-  username: usernameValidator,
-  password: passwordValidator,
-})
-
 const registerSchema = z.object({
   username: usernameValidator,
   password: passwordValidator,

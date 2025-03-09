@@ -4,38 +4,22 @@ import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 
 import { cn } from '@/lib/utils'
+import { useUser } from '@/contexts/user-context'
 
 function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+  const user = useUser().user
+  const firstLetter = user?.name[0].toUpperCase() || ''
+  const secondLetter = user?.surname[0].toUpperCase() || ''
+
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
       className={cn('relative flex size-8 shrink-0 overflow-hidden rounded-full', className)}
       {...props}
-    />
+    >
+      {firstLetter + '' + secondLetter}
+    </AvatarPrimitive.Root>
   )
 }
 
-function AvatarImage({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
-  return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      className={cn('aspect-square size-full', className)}
-      {...props}
-    />
-  )
-}
-
-function AvatarFallback({
-  className,
-  ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
-  return (
-    <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
-      className={cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
-      {...props}
-    />
-  )
-}
-
-export { Avatar, AvatarImage, AvatarFallback }
+export { Avatar }

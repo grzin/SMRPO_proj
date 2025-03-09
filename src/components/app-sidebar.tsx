@@ -47,7 +47,8 @@ const data = {
       items: [
         {
           title: 'Users',
-          url: '#',
+          url: '/users',
+          isActive: true,
         },
       ],
     },

@@ -46,9 +46,11 @@ async function createAdmin(payload: Payload) {
 
   const admin: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
     username: 'admin',
+    surname: 'Surname',
+    name: 'Name',
     password: 'admin',
-    name: 'admin user',
-    email: '',
+    email: 'admin@example.com',
+
     role: adminRole.docs[0].id,
   }
 
