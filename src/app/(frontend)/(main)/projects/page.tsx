@@ -1,9 +1,9 @@
-import Projects from './projects'
 import {Payload, getPayload, Where} from 'payload'
 import { getUser } from '@/actions/login-action'
 import { User, UserProjectRole, Project } from '@/payload-types'
 import config from '@/payload.config'
 import { number, object } from 'zod'
+import Projects from './projects'
 
 export interface UIProject {
   id: number,
