@@ -11,15 +11,17 @@ import { updatePasswordAction, updateProfileAction } from '@/actions/user-action
 export function ProfileSettings() {
   const { user } = useUser()
   const [error, setError] = useState<string | null>(null)
+  const [settingsTriggered, setSettingsTriggered] = useState(false)
+  const [passwordTriggered, setPasswordTriggered] = useState(false)
 
   if (!user) {
     return null
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, action: (formData: FormData) => Promise<any>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const response = await updateProfileAction(formData)
+    const response = await action(formData)
     if (response.error) {
       setError(response.error)
     } else {
@@ -34,7 +36,7 @@ export function ProfileSettings() {
           <CardTitle>Profile Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(event) => {setSettingsTriggered(true); handleSubmit(event, updateProfileAction)}} className="space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="username">Name</Label>
               <Input
@@ -49,12 +51,12 @@ export function ProfileSettings() {
               <Input 
                 name="email" 
                 type="email" 
-                defaultValue={user.email} 
+                defaultValue={user.email}
               />
             </div>
             <Button type="submit">Update Profile</Button>
           </form>
-          {error && <div className="text-red-500">{error}</div>}
+          {settingsTriggered && error && <div className="text-red-500">{error}</div>}
         </CardContent>
       </Card>
 
@@ -63,7 +65,7 @@ export function ProfileSettings() {
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <form action={updatePasswordAction} className="space-y-4">
+          <form onSubmit={(event) => {setPasswordTriggered(true); handleSubmit(event, updatePasswordAction)}} className="space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="currentPassword">Current Password</Label>
               <Input 
@@ -82,6 +84,7 @@ export function ProfileSettings() {
             </div>
             <Button type="submit">Change Password</Button>
           </form>
+          {passwordTriggered && error && <div className="text-red-500">{error}</div>}
         </CardContent>
       </Card>
     </div>

@@ -42,6 +42,3 @@ next-env.d.ts
 
 /media
 *.db
-
-# local database
-mydb

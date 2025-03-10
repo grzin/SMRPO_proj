@@ -25,7 +25,7 @@ const updateProfileSchema = z.object({
 
 const updatePasswordSchema = z.object({
   currentPassword: z.string(),
-  newPassword: z.string().min(8),
+  newPassword: z.string(),
 })
 
 export async function updateProfileAction(formData: FormData) {
@@ -63,7 +63,7 @@ export async function updateProfileAction(formData: FormData) {
   }
 
   try {
-    const { user } = await payload.update({
+    await payload.update({
       collection: 'users',
       id: userId,
       data: {
@@ -84,18 +84,46 @@ export async function updatePasswordAction(formData: FormData) {
   const headersList = headers()
 
   const validatedFields = updatePasswordSchema.safeParse({
-    currentPassword: formData.get('currentPassword')?.toString(),
-    newPassword: formData.get('newPassword')?.toString()
+    currentPassword: formData.get('currentPassword'),
+    newPassword: formData.get('newPassword')
   })
 
   if (!validatedFields.success) {
-    return { ...validatedFields.error.flatten().fieldErrors }
+    const errorMessages = validatedFields.error.flatten().fieldErrors
+    const firstError = Object.values(errorMessages).flat()[0]
+
+    return {error: firstError}
+  }
+
+  const userId = (await getUserFromCookies()).id
+
+  const user = await payload.findByID({
+    collection: 'users',
+    id: userId,
+  })
+
+  // Verify the current password
+  let isPasswordValid = true
+
+  await payload.login({
+    collection: 'users',
+    data: {
+      username: user.username,
+      password: validatedFields.data.currentPassword,
+    },
+  })
+  .catch((err) => {
+    isPasswordValid = false
+  })
+
+  if (!isPasswordValid) {
+    return { error: 'Current password is incorrect' }
   }
 
   try {
     await payload.update({
       collection: 'users',
-      id: 'me',
+      id: userId,
       data: {
         password: validatedFields.data.newPassword,
       },
