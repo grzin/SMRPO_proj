@@ -1,3 +1,5 @@
+'use client'
+
 import { User } from '@/payload-types'
 import { createContext, useContext, ReactNode } from 'react'
 

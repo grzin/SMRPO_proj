@@ -57,6 +57,14 @@ async function createAdmin(payload: Payload) {
     role: adminRole.docs[0].id,
   }
 
+  const djkhaleed: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
+    username: 'djk',
+    password: 'anotherone',
+    name: 'another one',
+    email: '',
+    role: adminRole.docs[0].id,
+  }
+
   await payload
     .create({
       collection: 'users',
@@ -64,6 +72,16 @@ async function createAdmin(payload: Payload) {
     })
     .catch((error) => {
       // Gracefully fail, if admin already exists
+      console.error(error)
+    })
+
+  await payload
+    .create({
+      collection: 'users',
+      data: djkhaleed,
+    })
+    .catch((error) => {
+      // Gracefully fail, if djkhaleed already exists
       console.error(error)
     })
 }
