@@ -3,20 +3,7 @@
 import { getPayload } from 'payload'
 import { z } from 'zod'
 import config from '@/payload.config'
-import { cookies, headers } from 'next/headers'
-import jwt from 'jsonwebtoken'
-
-async function getUserFromCookies() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('payload-token')?.value
-
-  if (!token) {
-    throw new Error('User not authenticated')
-  }
-
-  const decodedToken = jwt.decode(token)
-  return decodedToken
-}
+import { getUser } from '@/actions/login-action'
 
 const updateProfileSchema = z.object({
   username: z.string().min(3),
@@ -30,7 +17,6 @@ const updatePasswordSchema = z.object({
 
 export async function updateProfileAction(formData: FormData) {
   const payload = await getPayload({ config })
-  const headersList = headers()
 
   const validatedFields = updateProfileSchema.safeParse({
     username: formData.get('username'),
@@ -43,7 +29,7 @@ export async function updateProfileAction(formData: FormData) {
     return {error: firstError}
   }
 
-  const userId = (await getUserFromCookies()).id
+  const user = await getUser()
 
   // Check for duplicate username
   const existingUser = await payload.find({
@@ -53,7 +39,7 @@ export async function updateProfileAction(formData: FormData) {
         equals: validatedFields.data.username,
       },
       id: {
-        not_equals: userId, // Exclude the current user from the check
+        not_equals: user.id, // Exclude the current user from the check
       },
     },
   })
@@ -65,13 +51,12 @@ export async function updateProfileAction(formData: FormData) {
   try {
     await payload.update({
       collection: 'users',
-      id: userId,
+      id: user.id,
       data: {
         name: validatedFields.data.username,
         username: validatedFields.data.username,
         email: validatedFields.data.email,
       },
-      headers: headersList,
     })
     return { success: true }
   } catch (error) {
@@ -81,7 +66,6 @@ export async function updateProfileAction(formData: FormData) {
 
 export async function updatePasswordAction(formData: FormData) {
   const payload = await getPayload({ config })
-  const headersList = headers()
 
   const validatedFields = updatePasswordSchema.safeParse({
     currentPassword: formData.get('currentPassword'),
@@ -95,12 +79,7 @@ export async function updatePasswordAction(formData: FormData) {
     return {error: firstError}
   }
 
-  const userId = (await getUserFromCookies()).id
-
-  const user = await payload.findByID({
-    collection: 'users',
-    id: userId,
-  })
+  const user = await getUser()
 
   // Verify the current password
   let isPasswordValid = true
@@ -123,11 +102,10 @@ export async function updatePasswordAction(formData: FormData) {
   try {
     await payload.update({
       collection: 'users',
-      id: userId,
+      id: user.id,
       data: {
         password: validatedFields.data.newPassword,
       },
-      headers: headersList,
     })
     return { success: true }
   } catch (error) {

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUser } from '@/contexts/user-context'
 import { updatePasswordAction, updateProfileAction } from '@/actions/user-actions'
+import { set } from 'zod'
 
 export function ProfileSettings() {
   const { user } = useUser()
@@ -36,7 +37,14 @@ export function ProfileSettings() {
           <CardTitle>Profile Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => {setSettingsTriggered(true); handleSubmit(event, updateProfileAction)}} className="space-y-4">
+          <form onSubmit={
+              (event) => {
+                  setSettingsTriggered(true);
+                  setPasswordTriggered(false);
+                  handleSubmit(event, updateProfileAction)
+              }
+            }
+            className="space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="username">Name</Label>
               <Input
@@ -65,7 +73,14 @@ export function ProfileSettings() {
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => {setPasswordTriggered(true); handleSubmit(event, updatePasswordAction)}} className="space-y-4">
+          <form onSubmit={
+              (event) => {
+                setPasswordTriggered(true);
+                setSettingsTriggered(false);
+                handleSubmit(event, updatePasswordAction)
+              }
+            }
+            className="space-y-4">
             <div className="grid gap-3">
               <Label htmlFor="currentPassword">Current Password</Label>
               <Input 
