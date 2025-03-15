@@ -25,6 +25,7 @@ const data = {
       title: 'Documentation',
       url: '#',
       icon: BookOpen,
+      isActive: true,
       items: [
         {
           title: 'Introduction',
@@ -44,6 +45,7 @@ const data = {
       title: 'Settings',
       url: '#',
       icon: Settings2,
+      isActive: true,
       items: [
         {
           title: 'Users',

@@ -17,6 +17,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const payload = await getPayload({ config })
   const user = await payload.findByID({ collection: 'users', id: userId }).catch(() => null)
 
+  const name = user?.name || 'New user'
+
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -30,7 +32,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Sprint</BreadcrumbPage>
+                <BreadcrumbPage>{name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

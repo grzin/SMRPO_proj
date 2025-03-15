@@ -33,7 +33,15 @@ import {
 
 import { userColumns } from './users/columns'
 
-export function DataTable({ columns, data }: { columns: any; data: any }) {
+export function DataTable({
+  columns,
+  data,
+  children,
+}: {
+  columns: any
+  data: any
+  children?: React.ReactNode
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -67,9 +75,10 @@ export function DataTable({ columns, data }: { columns: any; data: any }) {
           onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
+        <div className="ml-auto">{children}</div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="ml-4">
               Columns <ChevronDown />
             </Button>
           </DropdownMenuTrigger>

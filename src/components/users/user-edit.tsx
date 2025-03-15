@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label'
 
 import { useActionState } from 'react'
 import { registerAction } from '@/actions/login-action'
-import { redirect } from 'next/navigation'
 import { FormError } from '../ui/form'
 import PasswordInput from '../ui/password'
 import { User } from '@/payload-types'
@@ -60,6 +59,7 @@ export default function UserEdit({
   const [state, formAction, pending] = useActionState(registerAction, initialState)
 
   const title = user == null ? 'Create new account' : 'Edit account'
+  const action = user == null ? 'Create' : 'Edit'
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -134,19 +134,9 @@ export default function UserEdit({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>
-                  Register
+                  {action}
                 </Button>
                 {state.message && <FormError>{state.message}</FormError>}
-                <Button
-                  variant="link"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    redirect('/login')
-                  }}
-                  className="w-full"
-                >
-                  Back to login
-                </Button>
               </div>
             </div>
           </form>
