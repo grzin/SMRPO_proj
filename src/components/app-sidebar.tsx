@@ -27,6 +27,7 @@ const data = {
       url: '#',
       icon: Settings2,
       isActive: true,
+      isAdmin: true,
       items: [
         {
           title: 'Users',
