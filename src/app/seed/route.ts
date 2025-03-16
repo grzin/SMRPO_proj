@@ -17,7 +17,7 @@ export async function GET() {
 }
 
 async function createTestUsers(payload: Payload) {
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 10; i++) {
     const user: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
       username: `user${i}`,
       surname: `Surname${i}`,

@@ -43,10 +43,6 @@ const Projects: FC<ProjectProps> = ({ projects }) => {
               <BreadcrumbItem>
                 <BreadcrumbLink href="/projects">Projects</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Sprint</BreadcrumbPage>
-              </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>

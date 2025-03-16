@@ -205,11 +205,15 @@ export async function logoutAction() {
   }
 }
 
-export async function getUser(): Promise<User> {
+export async function getUser(mustBeAdmin?: boolean): Promise<User> {
   const headers = await getHeaders()
   const payload: Payload = await getPayload({ config })
   const { user } = await payload.auth({ headers })
   if (!user) {
+    redirect('/login')
+  }
+
+  if (mustBeAdmin && user.role !== 'admin') {
     redirect('/login')
   }
 

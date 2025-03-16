@@ -11,11 +11,13 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { getUser } from '@/actions/login-action'
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: userId } = await params
   const payload = await getPayload({ config })
-  const user = await payload
+  const user = await getUser(true)
+  const editUser = await payload
     .findByID({ collection: 'users', id: userId, overrideAccess: false })
     .catch(() => null)
 
@@ -41,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <UserEdit user={user} />
+        <UserEdit user={editUser} />
       </div>
     </>
   )

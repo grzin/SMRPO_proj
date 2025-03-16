@@ -20,13 +20,13 @@ export async function updateProfileAction(formData: FormData) {
 
   const validatedFields = updateProfileSchema.safeParse({
     username: formData.get('username'),
-    email: formData.get('email')?.toString()
+    email: formData.get('email')?.toString(),
   })
 
   if (!validatedFields.success) {
     const errorMessages = validatedFields.error.flatten().fieldErrors
     const firstError = Object.values(errorMessages).flat()[0]
-    return {error: firstError}
+    return { error: firstError }
   }
 
   const user = await getUser()
@@ -69,14 +69,14 @@ export async function updatePasswordAction(formData: FormData) {
 
   const validatedFields = updatePasswordSchema.safeParse({
     currentPassword: formData.get('currentPassword'),
-    newPassword: formData.get('newPassword')
+    newPassword: formData.get('newPassword'),
   })
 
   if (!validatedFields.success) {
     const errorMessages = validatedFields.error.flatten().fieldErrors
     const firstError = Object.values(errorMessages).flat()[0]
 
-    return {error: firstError}
+    return { error: firstError }
   }
 
   const user = await getUser()
@@ -84,16 +84,17 @@ export async function updatePasswordAction(formData: FormData) {
   // Verify the current password
   let isPasswordValid = true
 
-  await payload.login({
-    collection: 'users',
-    data: {
-      username: user.username,
-      password: validatedFields.data.currentPassword,
-    },
-  })
-  .catch((err) => {
-    isPasswordValid = false
-  })
+  await payload
+    .login({
+      collection: 'users',
+      data: {
+        username: user.username,
+        password: validatedFields.data.currentPassword,
+      },
+    })
+    .catch((err) => {
+      isPasswordValid = false
+    })
 
   if (!isPasswordValid) {
     return { error: 'Current password is incorrect' }

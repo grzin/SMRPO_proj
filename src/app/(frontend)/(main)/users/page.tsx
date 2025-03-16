@@ -14,8 +14,13 @@ import { getUser } from '@/actions/login-action'
 
 export default async function Page() {
   const payload = await getPayload({ config })
-  const user = await getUser()
-  const users = await payload.find({ collection: 'users', overrideAccess: false, user: user })
+  const user = await getUser(true)
+  const users = await payload.find({
+    collection: 'users',
+    overrideAccess: false,
+    user: user,
+    limit: 10000,
+  })
 
   return (
     <>

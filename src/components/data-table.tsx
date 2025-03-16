@@ -70,9 +70,9 @@ export function DataTable({
     <div className="w-full">
       <div className="flex items-center pb-4">
         <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+          placeholder="Filter usernames..."
+          value={(table.getColumn('username')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('username')?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <div className="ml-auto">{children}</div>
