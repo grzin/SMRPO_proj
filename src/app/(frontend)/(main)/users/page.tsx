@@ -10,10 +10,12 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { getUser } from '@/actions/login-action'
 
 export default async function Page() {
   const payload = await getPayload({ config })
-  const users = await payload.find({ collection: 'users' })
+  const user = await getUser()
+  const users = await payload.find({ collection: 'users', overrideAccess: false, user: user })
 
   return (
     <>

@@ -161,6 +161,7 @@ export async function registerAction({}, formData: FormData) {
         name: data.name,
         surname: data.surname,
         email: data.email,
+        role: 'user',
       },
     })
     .catch((error) => {

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { BookOpen, Settings2, SquareTerminal } from 'lucide-react'
+import { BookOpen, Settings2, SquareKanban } from 'lucide-react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -10,34 +10,15 @@ import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/component
 const data = {
   navMain: [
     {
-      title: 'Projects',
-      url: '#',
-      icon: SquareTerminal,
+      title: 'Scrum',
+      url: '/projects',
+      icon: SquareKanban,
       isActive: true,
       items: [
         {
-          title: 'Sprint',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      isActive: true,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
+          title: 'My projects',
+          url: '/projects',
+          isActive: true,
         },
       ],
     },

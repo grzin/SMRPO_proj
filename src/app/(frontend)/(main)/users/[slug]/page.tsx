@@ -15,7 +15,9 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: userId } = await params
   const payload = await getPayload({ config })
-  const user = await payload.findByID({ collection: 'users', id: userId }).catch(() => null)
+  const user = await payload
+    .findByID({ collection: 'users', id: userId, overrideAccess: false })
+    .catch(() => null)
 
   const name = user?.name || 'New user'
 

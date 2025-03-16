@@ -8,7 +8,6 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Projects } from './collections/Projects'
-import { Roles } from './collections/Roles'
 import { ProjectRoles } from './collections/ProjectRoles'
 import { UserProjectRoles } from './collections/UserProjectRoles'
 
@@ -22,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Projects, Roles, ProjectRoles, UserProjectRoles],
+  collections: [Users, Projects, ProjectRoles, UserProjectRoles],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

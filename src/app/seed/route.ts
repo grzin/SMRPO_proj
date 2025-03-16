@@ -7,54 +7,41 @@ import { getPayload, Payload } from 'payload'
 export async function GET() {
   const payload = await getPayload({ config })
 
-  await createRoles(payload)
   await createAdmin(payload)
   await createProjectRoles(payload)
   await createProjects(payload)
   await createUserProjectRoles(payload)
+  await createTestUsers(payload)
 
   return NextResponse.json({ success: true })
 }
 
-async function createRoles(payload: Payload) {
-  const roles = [
-    {
-      role: 'admin',
-    },
-    {
+async function createTestUsers(payload: Payload) {
+  for (let i = 0; i < 100; i++) {
+    const user: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
+      username: `user${i}`,
+      surname: `Surname${i}`,
+      name: `Name${i}`,
+      password: `test`,
+      email: `user${i}@example.com`,
       role: 'user',
-    },
-  ]
+    }
 
-  for (let i = 0; i < roles.length; i++) {
-    await payload
-      .create({
-        collection: 'roles',
-        data: roles[i],
-      })
-      .catch((error) => {
-        // Gracefully fail, if the role already exists
-        console.error(error)
-      })
+    await payload.create({
+      collection: 'users',
+      data: user,
+    })
   }
 }
 
 async function createAdmin(payload: Payload) {
-  const adminRole = await payload.find({
-    collection: 'roles',
-    where: {
-      role: { equals: 'admin' },
-    },
-  })
-
   const admin: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
     username: 'admin',
     surname: 'Surname',
     name: 'Name',
     password: 'admin',
     email: 'admin@example.com',
-
-    role: adminRole.docs[0].id,
+    role: 'admin',
   }
 
   const djkhaleed: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
@@ -63,7 +50,7 @@ async function createAdmin(payload: Payload) {
     name: 'another',
     surname: 'one',
     email: '',
-    role: adminRole.docs[0].id,
+    role: 'admin',
   }
 
   await payload

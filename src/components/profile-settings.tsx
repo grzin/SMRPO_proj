@@ -37,7 +37,7 @@ export function ProfileSettings() {
     <div className="flex flex-col gap-6">
       <Card>
         <CardHeader>
-          <CardTitle>Profile Settings</CardTitle>
+          <CardTitle>Profile settings</CardTitle>
         </CardHeader>
         <CardContent>
           <form

@@ -1,7 +1,15 @@
-import type { CollectionConfig } from 'payload'
+import type { Access, CollectionConfig } from 'payload'
+import { isAdmin } from './access/is-admin'
+import { userAccess } from './access/user-access'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  access: {
+    read: userAccess,
+    create: userAccess,
+    update: userAccess,
+    delete: isAdmin,
+  },
   admin: {
     useAsTitle: 'username',
   },
@@ -24,8 +32,12 @@ export const Users: CollectionConfig = {
     },
     {
       name: 'role',
-      type: 'relationship',
-      relationTo: 'roles',
+      type: 'select',
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+      ],
+      defaultValue: 'user',
     },
   ],
   timestamps: true,

@@ -68,7 +68,6 @@ export interface Config {
   collections: {
     users: User;
     projects: Project;
-    roles: Role;
     'project-roles': ProjectRole;
     userProjectRoles: UserProjectRole;
     'payload-locked-documents': PayloadLockedDocument;
@@ -79,7 +78,6 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    roles: RolesSelect<false> | RolesSelect<true>;
     'project-roles': ProjectRolesSelect<false> | ProjectRolesSelect<true>;
     userProjectRoles: UserProjectRolesSelect<false> | UserProjectRolesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -124,7 +122,7 @@ export interface User {
   id: number;
   name: string;
   surname: string;
-  role?: (number | null) | Role;
+  role?: ('admin' | 'user') | null;
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -136,16 +134,6 @@ export interface User {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "roles".
- */
-export interface Role {
-  id: number;
-  role: string;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -193,10 +181,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
-      } | null)
-    | ({
-        relationTo: 'roles';
-        value: number | Role;
       } | null)
     | ({
         relationTo: 'project-roles';
@@ -273,15 +257,6 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "roles_select".
- */
-export interface RolesSelect<T extends boolean = true> {
-  role?: T;
   updatedAt?: T;
   createdAt?: T;
 }
