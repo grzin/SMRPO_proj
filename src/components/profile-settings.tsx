@@ -19,7 +19,10 @@ export function ProfileSettings() {
     return null
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, action: (formData: FormData) => Promise<any>) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    action: (formData: FormData) => Promise<any>,
+  ) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const response = await action(formData)
@@ -37,30 +40,21 @@ export function ProfileSettings() {
           <CardTitle>Profile Settings</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={
-              (event) => {
-                  setSettingsTriggered(true);
-                  setPasswordTriggered(false);
-                  handleSubmit(event, updateProfileAction)
-              }
-            }
-            className="space-y-4">
+          <form
+            onSubmit={(event) => {
+              setSettingsTriggered(true)
+              setPasswordTriggered(false)
+              handleSubmit(event, updateProfileAction)
+            }}
+            className="space-y-4"
+          >
             <div className="grid gap-3">
               <Label htmlFor="username">Name</Label>
-              <Input
-                id = "username"
-                name="username" 
-                defaultValue={user.username} 
-                required 
-              />
+              <Input id="username" name="username" defaultValue={user.username} required />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                name="email" 
-                type="email" 
-                defaultValue={user.email}
-              />
+              <Input name="email" type="email" defaultValue={user.email ?? ''} />
             </div>
             <Button type="submit">Update Profile</Button>
           </form>
@@ -73,29 +67,21 @@ export function ProfileSettings() {
           <CardTitle>Change Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={
-              (event) => {
-                setPasswordTriggered(true);
-                setSettingsTriggered(false);
-                handleSubmit(event, updatePasswordAction)
-              }
-            }
-            className="space-y-4">
+          <form
+            onSubmit={(event) => {
+              setPasswordTriggered(true)
+              setSettingsTriggered(false)
+              handleSubmit(event, updatePasswordAction)
+            }}
+            className="space-y-4"
+          >
             <div className="grid gap-3">
               <Label htmlFor="currentPassword">Current Password</Label>
-              <Input 
-                name="currentPassword"
-                type="text"
-                required 
-              />
+              <Input name="currentPassword" type="text" required />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="newPassword">New Password</Label>
-              <Input 
-                name="newPassword"
-                type="password" 
-                required 
-              />
+              <Input name="newPassword" type="password" required />
             </div>
             <Button type="submit">Change Password</Button>
           </form>

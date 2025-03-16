@@ -60,7 +60,8 @@ async function createAdmin(payload: Payload) {
   const djkhaleed: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
     username: 'djk',
     password: 'anotherone',
-    name: 'another one',
+    name: 'another',
+    surname: 'one',
     email: '',
     role: adminRole.docs[0].id,
   }
@@ -127,7 +128,7 @@ async function createProjects(payload: Payload) {
       name: 'Project Rockwell B-1 Lancer',
     },
   ]
-  
+
   for (let i = 0; i < names.length; i++) {
     await payload
       .create({
@@ -164,7 +165,7 @@ async function createUserProjectRoles(payload: Payload) {
       role: 2,
     },
   ]
-  
+
   for (let i = 0; i < uprs.length; i++) {
     await payload
       .create({
@@ -177,5 +178,3 @@ async function createUserProjectRoles(payload: Payload) {
       })
   }
 }
-
-
