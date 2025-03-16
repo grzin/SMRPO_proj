@@ -5,7 +5,14 @@ import { BookOpen, Settings2, SquareKanban } from 'lucide-react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
-import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarRail,
+  useSidebar,
+} from '@/components/ui/sidebar'
+import { useUser } from '@/contexts/user-context'
 
 const data = {
   navMain: [
@@ -40,10 +47,16 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useUser()
+  const { state } = useSidebar()
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser />
+        {state === 'expanded' && (
+          <span className="truncate text-xs">Last login: {user?.lastLogin}</span>
+        )}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

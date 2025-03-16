@@ -23,7 +23,7 @@ import { useUser } from '@/contexts/user-context'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const user = useUser().user
+  const { user } = useUser()
 
   return (
     <SidebarMenu>

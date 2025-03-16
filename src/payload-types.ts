@@ -123,6 +123,7 @@ export interface User {
   name: string;
   surname: string;
   role?: ('admin' | 'user') | null;
+  lastLogin?: string | null;
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -240,6 +241,7 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   surname?: T;
   role?: T;
+  lastLogin?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

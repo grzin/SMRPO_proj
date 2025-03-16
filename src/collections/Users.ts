@@ -1,6 +1,20 @@
-import type { Access, CollectionConfig } from 'payload'
+import type { CollectionBeforeLoginHook, CollectionConfig } from 'payload'
 import { isAdmin } from './access/is-admin'
 import { userAccess } from './access/user-access'
+import { User } from '@/payload-types'
+
+const beforeLoginHook: CollectionBeforeLoginHook<User> = async ({ req, user }) => {
+  const payload = req.payload
+  const loginDate = new Date()
+  await payload.update({
+    collection: 'users',
+    id: user.id,
+    data: {
+      lastLogin: loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString(),
+    },
+  })
+  return user
+}
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -18,6 +32,9 @@ export const Users: CollectionConfig = {
       allowEmailLogin: false,
       requireEmail: false,
     },
+  },
+  hooks: {
+    beforeLogin: [beforeLoginHook],
   },
   fields: [
     {
@@ -38,6 +55,11 @@ export const Users: CollectionConfig = {
         { label: 'User', value: 'user' },
       ],
       defaultValue: 'user',
+    },
+    {
+      name: 'lastLogin',
+      type: 'text',
+      required: false,
     },
   ],
   timestamps: true,

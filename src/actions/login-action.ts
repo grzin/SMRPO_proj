@@ -130,7 +130,6 @@ export async function registerAction({}, formData: FormData) {
 
   if (!validatedFields.success) {
     response.error = firstError(validatedFields.error.flatten().fieldErrors)
-    console.log(response)
     return response
   }
 
