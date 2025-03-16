@@ -17,7 +17,9 @@ function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimi
       className={cn('relative flex size-8 shrink-0 overflow-hidden rounded-full', className)}
       {...props}
     >
-      {firstLetter + '' + secondLetter}
+      <div className="bg-muted flex size-full items-center justify-center rounded-full">
+        {firstLetter + '' + secondLetter}
+      </div>
     </AvatarPrimitive.Root>
   )
 }
