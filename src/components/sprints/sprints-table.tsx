@@ -2,24 +2,24 @@
 
 import React from 'react'
 
-import { userColumns } from './columns'
+import { sprintColumns } from './columns'
 import { DataTable } from '../data-table'
-import { User } from '@/payload-types'
+import { Sprint } from '@/payload-types'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 
-export default function Users({ users }: { users: User[] }) {
+export default function Sprints({ sprints }: { sprints: Sprint[] }) {
   const Actions = () => {
     return (
       <Button>
-        <Link href="/users/-1">Create user</Link>
+        <Link href="/sprints/-1">Create sprint</Link>
       </Button>
     )
   }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <DataTable columns={userColumns} data={users} filterColumnName={"username"} filterPlaceholder={"Filter usernames..."} >
+      <DataTable columns={sprintColumns} data={sprints} filterColumnName={"name"} filterPlaceholder={"Filter sprint names..."} >
         <Actions />
       </DataTable>
     </div>

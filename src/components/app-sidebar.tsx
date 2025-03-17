@@ -27,6 +27,11 @@ const data = {
           url: '/projects',
           isActive: true,
         },
+        {
+          title: 'My sprints',
+          url: '/sprints',
+          isActive: true,
+        },
       ],
     },
     {

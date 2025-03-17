@@ -49,3 +49,17 @@ export const emailValidator = z
 export const roleValidator = z.enum(['admin', 'user']).default('user')
 
 export const idValidator = z.preprocess((val) => Number(val), z.number())
+
+export const sprintNameValidator = z
+  .string({
+    invalid_type_error: 'Invalid sprint name',
+  })
+  .min(1, 'Name is required')
+
+export const sprintStartDateValidator = z
+  .date()
+  .min(new Date(), 'Sprint must start after current date')
+
+export const sprintEndDateValidator = z.date()
+
+export const sprintSpeedValidator = z.number().min(1, 'Enter valid (positive) sprint speed')

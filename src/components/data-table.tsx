@@ -34,10 +34,14 @@ import {
 export function DataTable({
   columns,
   data,
+  filterColumnName,
+  filterPlaceholder,
   children,
 }: {
   columns: any
   data: any
+  filterColumnName: any
+  filterPlaceholder: any
   children?: React.ReactNode
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -68,9 +72,9 @@ export function DataTable({
     <div className="w-full">
       <div className="flex items-center pb-4">
         <Input
-          placeholder="Filter usernames..."
-          value={(table.getColumn('username')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('username')?.setFilterValue(event.target.value)}
+          placeholder={filterPlaceholder}
+          value={(table.getColumn(filterColumnName)?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn(filterColumnName)?.setFilterValue(event.target.value)}
           className="max-w-sm"
         />
         <div className="ml-auto">{children}</div>

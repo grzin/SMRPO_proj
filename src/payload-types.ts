@@ -177,8 +177,8 @@ export interface UserProjectRole {
 export interface Sprint {
   id: number;
   name: string;
-  start: string;
-  end: string;
+  startDate: string;
+  endDate: string;
   speed: number;
   updatedAt: string;
   createdAt: string;
@@ -307,8 +307,8 @@ export interface UserProjectRolesSelect<T extends boolean = true> {
  */
 export interface SprintsSelect<T extends boolean = true> {
   name?: T;
-  start?: T;
-  end?: T;
+  startDate?: T;
+  endDate?: T;
   speed?: T;
   updatedAt?: T;
   createdAt?: T;
