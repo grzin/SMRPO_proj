@@ -16,6 +16,11 @@ const beforeLoginHook: CollectionBeforeLoginHook<User> = async ({ req, user }) =
   return user
 }
 
+const userRoles = [
+  { label: 'Admin', value: 'admin' },
+  { label: 'User', value: 'user' },
+]
+
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
@@ -50,10 +55,7 @@ export const Users: CollectionConfig = {
     {
       name: 'role',
       type: 'select',
-      options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
-      ],
+      options: userRoles,
       defaultValue: 'user',
       required: true,
       access: {

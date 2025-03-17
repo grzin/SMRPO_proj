@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { UserProjectRole, ProjectRole } from '@/payload-types'
 import { FC, useState } from 'react'
 import Modal from '@/components/ui/addProjectModal'
 import { UIProject } from './page'
@@ -20,15 +19,9 @@ interface ProjectProps {
 
 const Projects: FC<ProjectProps> = ({ projects }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [userProjectRoles, setUserProjectRoles] = useState<UserProjectRole[]>([])
-  const [roles, setRoles] = useState<ProjectRole[]>([])
 
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
-
-  const getUserRolesForProject = (projectId: number) => {
-    return userProjectRoles.filter((upr) => upr.project === projectId)
-  }
 
   return (
     <>

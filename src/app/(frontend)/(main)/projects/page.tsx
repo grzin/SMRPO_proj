@@ -1,5 +1,5 @@
 import { Payload, getPayload } from 'payload'
-import { UserProjectRole, Project } from '@/payload-types'
+import { Project } from '@/payload-types'
 import config from '@/payload.config'
 import Projects from './projects'
 
@@ -28,37 +28,8 @@ export default async function Page() {
     return projects
   }
 
-  const getDeepUserProjRoles = async (payload: Payload) => {
-    const userProjRoles = await payload.find({
-      collection: 'userProjectRoles',
-      depth: 2,
-    })
-    return userProjRoles
-  }
-
-  const getUserProjRoles = async (payload: Payload, projId: number) => {
-    const userProjRoles = await payload.find({
-      collection: 'userProjectRoles',
-      where: {
-        'project.id': {
-          equals: projId,
-        },
-      },
-    })
-    return userProjRoles
-  }
   const getUsersForProj = async (payload: Payload, projId: number) => {
     const users: ProjectUser[] = []
-
-    const userProjRoles = await (await getUserProjRoles(payload, projId)).docs
-
-    userProjRoles.forEach(async (upr: UserProjectRole) => {
-      users.push({
-        id: typeof upr.user === 'object' ? upr.user.id : null,
-        name: typeof upr.user === 'object' ? upr.user.name : null,
-        role: typeof upr.role === 'object' ? upr.role?.role : null,
-      })
-    })
 
     return users
   }

@@ -8,11 +8,9 @@ export async function GET() {
   const payload = await getPayload({ config })
 
   await createAdmin(payload)
-  await createProjectRoles(payload)
-  await createProjects(payload)
-  await createUserProjectRoles(payload)
   await createTestUsers(payload)
   await createSprints(payload)
+  await createProjects(payload)
 
   return NextResponse.json({ success: true })
 }
@@ -75,32 +73,6 @@ async function createAdmin(payload: Payload) {
     })
 }
 
-async function createProjectRoles(payload: Payload) {
-  const roles = [
-    {
-      role: 'Član razvojne skupine',
-    },
-    {
-      role: 'Produktni vodja',
-    },
-    {
-      role: 'Skrbnik metodologije',
-    },
-  ]
-
-  for (let i = 0; i < roles.length; i++) {
-    await payload
-      .create({
-        collection: 'project-roles',
-        data: roles[i],
-      })
-      .catch((error) => {
-        // Gracefully fail, if the role already exists
-        console.error(error)
-      })
-  }
-}
-
 async function createProjects(payload: Payload) {
   const names = [
     {
@@ -121,47 +93,25 @@ async function createProjects(payload: Payload) {
     await payload
       .create({
         collection: 'projects',
-        data: names[i],
+        data: {
+          name: names[i].name,
+          members: [
+            {
+              user: 1,
+              role: 'methodology_manager',
+            },
+            {
+              user: 2,
+              role: 'product_manager',
+            },
+            {
+              user: 3,
+              role: 'developer',
+            },
+          ],
+        },
       })
       .catch((error) => {
-        // Gracefully fail, if the role already exists
-        console.error(error)
-      })
-  }
-}
-
-async function createUserProjectRoles(payload: Payload) {
-  const uprs = [
-    {
-      user: 10,
-      project: 4,
-      role: 1,
-    },
-    {
-      user: 9,
-      project: 1,
-      role: 1,
-    },
-    {
-      user: 9,
-      project: 1,
-      role: 2,
-    },
-    {
-      user: 10,
-      project: 4,
-      role: 2,
-    },
-  ]
-
-  for (let i = 0; i < uprs.length; i++) {
-    await payload
-      .create({
-        collection: 'userProjectRoles',
-        data: uprs[i],
-      })
-      .catch((error) => {
-        // Gracefully fail, if the role already exists
         console.error(error)
       })
   }
