@@ -1,7 +1,5 @@
 import type { CollectionConfig } from 'payload'
 import { userAccess } from './access/user-access'
-import { date } from 'payload/shared'
-import { Sprint } from '@/payload-types'
 
 export const Sprints: CollectionConfig = {
   slug: 'sprints',
@@ -21,23 +19,11 @@ export const Sprints: CollectionConfig = {
       name: 'startDate',
       type: 'date',
       required: true,
-      validate: (value, args) => {
-        if (value && new Date(value) < new Date())
-          return 'Start date cannot be before current date.'
-        return date(value, args)
-      },
     },
     {
       name: 'endDate',
       type: 'date',
       required: true,
-      validate: (value, args) => {
-        // @ts-ignore
-        let data: Sprint = args.data
-        if (value && new Date(value) < new Date(data.startDate))
-          return 'End date cannot be before start date.'
-        return date(value, args)
-      },
     },
     {
       name: 'speed',
