@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useUser } from '@/contexts/user-context'
 import { updatePasswordAction, updateProfileAction } from '@/actions/user-actions'
-import { set } from 'zod'
 
 export function ProfileSettings() {
   const { user } = useUser()

@@ -18,7 +18,7 @@ export default async function ProfilePage() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink>Profile</BreadcrumbLink>
+                <BreadcrumbLink href="/settings/profile">Profile</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { User } from '@/payload-types'
 
 export default function Dashboard() {
   return (

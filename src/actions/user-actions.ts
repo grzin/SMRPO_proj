@@ -59,7 +59,7 @@ export async function updateProfileAction(formData: FormData) {
       },
     })
     return { success: true }
-  } catch (error) {
+  } catch (_errors) {
     return { error: 'Failed to update profile' }
   }
 }
@@ -92,7 +92,7 @@ export async function updatePasswordAction(formData: FormData) {
         password: validatedFields.data.currentPassword,
       },
     })
-    .catch((err) => {
+    .catch(() => {
       isPasswordValid = false
     })
 
@@ -109,7 +109,7 @@ export async function updatePasswordAction(formData: FormData) {
       },
     })
     return { success: true }
-  } catch (error) {
+  } catch (_error) {
     return { error: 'Failed to update password' }
   }
 }

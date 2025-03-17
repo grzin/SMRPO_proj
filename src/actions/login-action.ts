@@ -6,39 +6,14 @@ import { redirect } from 'next/navigation'
 import { getPayload, Payload } from 'payload'
 import { z } from 'zod'
 import { headers as getHeaders } from 'next/headers'
-
-const usernameValidator = z
-  .string({
-    invalid_type_error: 'Invalid username',
-  })
-  .min(1, {
-    message: 'Username is required',
-  })
-
-const passwordValidator = z
-  .string({
-    invalid_type_error: 'Invalid password',
-  })
-  .min(12, { message: 'Password must be at leas 12 characters long' })
-  .max(128, { message: 'Password must be at most 128 characters long' })
-
-const nameValidators = z
-  .string({
-    invalid_type_error: 'Invalid name',
-  })
-  .min(1, { message: 'Name is required' })
-
-const surnameValidators = z
-  .string({
-    invalid_type_error: 'Invalid surname',
-  })
-  .min(1, { message: 'Surname is required' })
-
-const emailValidator = z
-  .string({
-    invalid_type_error: 'Invalid email',
-  })
-  .email({ message: 'Invalid email' })
+import {
+  emailValidator,
+  firstError,
+  nameValidators,
+  passwordValidator,
+  surnameValidators,
+  usernameValidator,
+} from './validators'
 
 const registerSchema = z.object({
   username: usernameValidator,
@@ -71,7 +46,7 @@ export async function loginAction({}, formData: FormData) {
         password: data.password,
       },
     })
-    .catch((error) => {
+    .catch((_error) => {
       return {}
     })
 
@@ -85,19 +60,6 @@ export async function loginAction({}, formData: FormData) {
   redirect('/')
 }
 
-function firstError(fieldErrors: any) {
-  const keys = Object.keys(fieldErrors)
-  const errors: any = {}
-
-  for (const key of keys) {
-    errors[key] = ''
-    if (fieldErrors[key].length > 0) {
-      errors[key] = fieldErrors[key][0]
-    }
-  }
-  return errors
-}
-
 export async function registerAction({}, formData: FormData) {
   const payload = await getPayload({ config })
 
@@ -108,6 +70,7 @@ export async function registerAction({}, formData: FormData) {
     name: formData.get('name')?.toString() ?? '',
     surname: formData.get('surname')?.toString() ?? '',
     email: formData.get('email')?.toString() ?? '',
+    role: formData.get('role')?.toString() ?? '',
     message: '',
     error: {
       username: '',
@@ -163,7 +126,7 @@ export async function registerAction({}, formData: FormData) {
         role: 'user',
       },
     })
-    .catch((error) => {
+    .catch((_error) => {
       isError = true
     })
 
@@ -180,7 +143,7 @@ export async function registerAction({}, formData: FormData) {
         password: data.password,
       },
     })
-    .catch((error) => {
+    .catch((_error) => {
       return {}
     })
 
@@ -200,7 +163,7 @@ export async function logoutAction() {
     cookieStore.delete('payload-token')
 
     redirect('/login')
-  } catch (error) {
+  } catch (_error) {
     return { success: false, error: 'An error occurred during logout' }
   }
 }

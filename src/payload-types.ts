@@ -122,7 +122,7 @@ export interface User {
   id: number;
   name: string;
   surname: string;
-  role?: ('admin' | 'user') | null;
+  role: 'admin' | 'user';
   lastLogin?: string | null;
   updatedAt: string;
   createdAt: string;

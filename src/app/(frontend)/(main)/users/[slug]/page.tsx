@@ -1,5 +1,5 @@
 import UserEdit from '@/components/users/user-edit'
-import { getPayload, Payload } from 'payload'
+import { getPayload } from 'payload'
 import config from '@/payload.config'
 import {
   Breadcrumb,
@@ -18,10 +18,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const payload = await getPayload({ config })
   const user = await getUser(true)
   const editUser = await payload
-    .findByID({ collection: 'users', id: userId, overrideAccess: false })
+    .findByID({ collection: 'users', id: userId, overrideAccess: false, user: user })
     .catch(() => null)
-
-  const name = user?.name || 'New user'
 
   return (
     <>
@@ -36,14 +34,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>{name}</BreadcrumbPage>
+                <BreadcrumbPage>{editUser?.username}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <UserEdit user={editUser} />
+        <UserEdit editUser={editUser} />
       </div>
     </>
   )

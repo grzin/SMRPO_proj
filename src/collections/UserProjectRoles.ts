@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload';
+import type { CollectionConfig } from 'payload'
 
 export const UserProjectRoles: CollectionConfig = {
   slug: 'userProjectRoles',
@@ -23,4 +23,4 @@ export const UserProjectRoles: CollectionConfig = {
     },
   ],
   timestamps: true,
-};
+}

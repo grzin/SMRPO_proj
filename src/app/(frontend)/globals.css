@@ -4,6 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -60,6 +61,63 @@
     --chart-5: 340 75% 55%;
   }
 }
+*/
+@layer base {
+  :root {
+    --background: 199 59% 100%;
+    --foreground: 199 52% 4%;
+    --muted: 199 9% 95%;
+    --muted-foreground: 199 6% 32%;
+    --popover: 199 59% 100%;
+    --popover-foreground: 199 52% 4%;
+    --card: 199 59% 100%;
+    --card-foreground: 199 52% 4%;
+    --border: 199 10% 91%;
+    --input: 199 10% 91%;
+    --primary: 199 72% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 1% 81%;
+    --secondary-foreground: 199 1% 21%;
+    --accent: 199 1% 81%;
+    --accent-foreground: 199 1% 21%;
+    --destructive: 9 92% 25%;
+    --destructive-foreground: 9 92% 85%;
+    --ring: 199 72% 40%;
+    --chart-1: 199 72% 40%;
+    --chart-2: 199 1% 81%;
+    --chart-3: 199 1% 81%;
+    --chart-4: 199 1% 84%;
+    --chart-5: 199 75% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 199 40% 3%;
+    --foreground: 199 14% 98%;
+    --muted: 199 9% 5%;
+    --muted-foreground: 199 6% 68%;
+    --popover: 199 40% 3%;
+    --popover-foreground: 199 14% 98%;
+    --card: 199 40% 3%;
+    --card-foreground: 199 14% 98%;
+    --border: 199 10% 11%;
+    --input: 199 10% 11%;
+    --primary: 199 72% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 199 5% 18%;
+    --secondary-foreground: 199 5% 78%;
+    --accent: 199 5% 18%;
+    --accent-foreground: 199 5% 78%;
+    --destructive: 9 92% 53%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 199 72% 40%;
+    --chart-1: 199 72% 40%;
+    --chart-2: 199 5% 18%;
+    --chart-3: 199 5% 18%;
+    --chart-4: 199 5% 21%;
+    --chart-5: 199 75% 40%;
+  }
+}
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -106,6 +164,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  button,
+  [role='button'],
+  [role='menuitemcheckbox'] {
+    cursor: pointer !important;
   }
 }
 

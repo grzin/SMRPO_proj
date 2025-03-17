@@ -1,5 +1,5 @@
 import Users from '@/components/users/users-table'
-import { getPayload, Payload } from 'payload'
+import { getPayload } from 'payload'
 import config from '@/payload.config'
 
 import {

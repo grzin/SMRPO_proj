@@ -6,11 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import { useActionState, useState } from 'react'
+import { useActionState } from 'react'
 import { registerAction } from '@/actions/login-action'
 import { FormError } from './ui/form'
 import { redirect } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
 import PasswordInput from './ui/password'
 
 const initialState = {

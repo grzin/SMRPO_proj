@@ -1,5 +1,5 @@
 import type { CollectionBeforeLoginHook, CollectionConfig } from 'payload'
-import { isAdmin } from './access/is-admin'
+import { isAdmin, isAdminField } from './access/is-admin'
 import { userAccess } from './access/user-access'
 import { User } from '@/payload-types'
 
@@ -20,8 +20,8 @@ export const Users: CollectionConfig = {
   slug: 'users',
   access: {
     read: userAccess,
-    create: userAccess,
     update: userAccess,
+    create: isAdmin,
     delete: isAdmin,
   },
   admin: {
@@ -55,6 +55,11 @@ export const Users: CollectionConfig = {
         { label: 'User', value: 'user' },
       ],
       defaultValue: 'user',
+      required: true,
+      access: {
+        update: isAdminField,
+        create: isAdminField,
+      },
     },
     {
       name: 'lastLogin',

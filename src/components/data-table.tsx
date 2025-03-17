@@ -31,8 +31,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { userColumns } from './users/columns'
-
 export function DataTable({
   columns,
   data,
@@ -141,8 +139,7 @@ export function DataTable({
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} results.
         </div>
         <div className="space-x-2">
           <Button
