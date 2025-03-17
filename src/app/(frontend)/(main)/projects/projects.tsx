@@ -1,6 +1,5 @@
 'use client'
 
-import AddProjectForm from '@/components/project/add-project'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,20 +8,34 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { FC, useState } from 'react'
-import Modal from '@/components/ui/addProjectModal'
-import { UIProject } from './page'
+import { FC, useActionState } from 'react'
+import { Project } from '@/payload-types'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import Link from 'next/link'
+import { createProjectAction } from '@/actions/project-action'
+import { FormMessage } from '@/components/ui/form'
 
 interface ProjectProps {
-  projects: UIProject[]
+  projects: Project[]
 }
 
 const Projects: FC<ProjectProps> = ({ projects }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
-
+  const initialState = {
+    name: '',
+    message: '',
+  }
+  const [state, formAction, pending] = useActionState(createProjectAction, initialState)
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -39,28 +52,41 @@ const Projects: FC<ProjectProps> = ({ projects }) => {
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <button onClick={openModal} className="mb-4 p-2 bg-blue-500 text-white rounded">
-          Add Project
-        </button>
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <AddProjectForm onClose={closeModal} />
-        </Modal>
-        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          {projects.map((proj) => (
-            <div key={proj.name} className="bg-muted/50 aspect-video rounded-xl p-4">
-              <h2>{proj.name}</h2>
-              <ul>
-                {proj.users?.map((user) => (
-                  <li key={user.name}>
-                    {user.name}
-                    {user.role != null ? ' - ' + user.role : ''}
-                  </li>
-                ))}
-              </ul>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="default">Create project</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create new project</DialogTitle>
+              <DialogDescription></DialogDescription>
+            </DialogHeader>
+            <form action={formAction}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Project name
+                  </Label>
+                  <Input name="name" defaultValue={state.name} className="col-span-3" />
+                  <FormMessage className="col-span-4">{state.message}</FormMessage>
+                </div>
+                <Button type="submit" disabled={pending}>
+                  Create
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+        {projects.map((project) => (
+          <Link href={`/projects/${project.id}`} key={project.id}>
+            <div
+              key={project.id}
+              className="flex items-start justify-between p-4 bg-white rounded-md shadow-sm flex-col"
+            >
+              <h2 className="font-medium">{project.name}</h2>
             </div>
-          ))}
-        </div>
-        <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          </Link>
+        ))}
       </div>
     </>
   )

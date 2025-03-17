@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { isProjectMember } from './access/is-project-member'
 
 const projectRoles = [
   {
@@ -18,7 +19,7 @@ const projectRoles = [
 export const Projects: CollectionConfig = {
   slug: 'projects',
   access: {
-    read: () => true,
+    read: isProjectMember,
   },
   fields: [
     {
