@@ -70,6 +70,7 @@ export interface Config {
     projects: Project;
     'project-roles': ProjectRole;
     userProjectRoles: UserProjectRole;
+    sprints: Sprint;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -80,6 +81,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'project-roles': ProjectRolesSelect<false> | ProjectRolesSelect<true>;
     userProjectRoles: UserProjectRolesSelect<false> | UserProjectRolesSelect<true>;
+    sprints: SprintsSelect<false> | SprintsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -170,6 +172,19 @@ export interface UserProjectRole {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sprints".
+ */
+export interface Sprint {
+  id: number;
+  name: string;
+  start: string;
+  end: string;
+  speed: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -190,6 +205,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'userProjectRoles';
         value: number | UserProjectRole;
+      } | null)
+    | ({
+        relationTo: 'sprints';
+        value: number | Sprint;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -279,6 +298,18 @@ export interface UserProjectRolesSelect<T extends boolean = true> {
   user?: T;
   project?: T;
   role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sprints_select".
+ */
+export interface SprintsSelect<T extends boolean = true> {
+  name?: T;
+  start?: T;
+  end?: T;
+  speed?: T;
   updatedAt?: T;
   createdAt?: T;
 }

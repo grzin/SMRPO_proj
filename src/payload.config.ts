@@ -10,6 +10,7 @@ import { Users } from './collections/Users'
 import { Projects } from './collections/Projects'
 import { ProjectRoles } from './collections/ProjectRoles'
 import { UserProjectRoles } from './collections/UserProjectRoles'
+import { Sprints } from './collections/Sprints'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +22,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Projects, ProjectRoles, UserProjectRoles],
+  collections: [Users, Projects, ProjectRoles, UserProjectRoles, Sprints],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
