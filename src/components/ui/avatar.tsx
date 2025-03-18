@@ -5,6 +5,7 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar'
 
 import { cn } from '@/lib/utils'
 import { useUser } from '@/contexts/user-context'
+import { User } from '@/payload-types'
 
 function stringToHslColor(str: string, s: number, l: number) {
   let hash = 0
@@ -14,6 +15,15 @@ function stringToHslColor(str: string, s: number, l: number) {
 
   const h = hash % 360
   return 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
+}
+
+function UserAvatar({ user, ...props }: { user: User }) {
+  return (
+    <div className="flex flex-row gap-2 items-center">
+      <Avatar name={user.name} surname={user.surname} {...props} />
+      {user.username}
+    </div>
+  )
 }
 
 function Avatar({
@@ -48,4 +58,4 @@ function Avatar({
   )
 }
 
-export { Avatar }
+export { Avatar, UserAvatar }

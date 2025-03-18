@@ -11,6 +11,8 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
+import { redirect } from 'next/navigation'
+import { ProjectDashboard } from '@/components/project/project'
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: projectId } = await params
@@ -19,6 +21,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const project = await payload
     .findByID({ collection: 'projects', id: projectId, overrideAccess: false, user: user })
     .catch(() => null)
+
+  if (project === null) {
+    redirect('/projects')
+  }
 
   return (
     <>
@@ -39,7 +45,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0"></div>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <ProjectDashboard project={project} />
+      </div>
     </>
   )
 }
