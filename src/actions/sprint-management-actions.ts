@@ -86,20 +86,20 @@ export async function createSprintAction({}, formData: FormData) {
       or: [
         {
           and: [
-            { startDate: { greater_than: data.startDate } },
-            { startDate: { less_than: data.endDate } },
+            { startDate: { greater_than: data.startDate.toISOString() } },
+            { startDate: { less_than: data.endDate.toISOString() } },
           ],
         },
         {
           and: [
-            { endDate: { greater_than: data.startDate } },
-            { endDate: { less_than: data.endDate } },
+            { endDate: { greater_than: data.startDate.toISOString() } },
+            { endDate: { less_than: data.endDate.toISOString() } },
           ],
         },
         {
           and: [
-            { startDate: { less_than: data.startDate } },
-            { endDate: { greater_than: data.endDate } },
+            { startDate: { less_than: data.startDate.toISOString() } },
+            { endDate: { greater_than: data.endDate.toISOString() } },
           ],
         },
       ],
@@ -117,8 +117,8 @@ export async function createSprintAction({}, formData: FormData) {
       collection: 'sprints',
       data: {
         name: data.name,
-        startDate: data.startDate.toString(),
-        endDate: data.endDate.toString(),
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
         speed: data.speed,
       },
       overrideAccess: false,
@@ -180,7 +180,7 @@ export async function editSprintAction({}, formData: FormData) {
 
   const duplicateSprints = await payload.find({
     collection: 'sprints',
-    where: { name: { equals: data.name } },
+    where: { and: [{ name: { equals: data.name } }, { id: { not_equals: data.id } }] },
   })
 
   if (duplicateSprints.totalDocs > 0) {
@@ -191,23 +191,28 @@ export async function editSprintAction({}, formData: FormData) {
   const overlapingSprints = await payload.find({
     collection: 'sprints',
     where: {
-      or: [
+      and: [
+        { id: { not_equals: data.id } },
         {
-          and: [
-            { startDate: { greater_than: data.startDate } },
-            { startDate: { less_than: data.endDate } },
-          ],
-        },
-        {
-          and: [
-            { endDate: { greater_than: data.startDate } },
-            { endDate: { less_than: data.endDate } },
-          ],
-        },
-        {
-          and: [
-            { startDate: { less_than: data.startDate } },
-            { endDate: { greater_than: data.endDate } },
+          or: [
+            {
+              and: [
+                { startDate: { greater_than: data.startDate.toISOString() } },
+                { startDate: { less_than: data.endDate.toISOString() } },
+              ],
+            },
+            {
+              and: [
+                { endDate: { greater_than: data.startDate.toISOString() } },
+                { endDate: { less_than: data.endDate.toISOString() } },
+              ],
+            },
+            {
+              and: [
+                { startDate: { less_than: data.startDate.toISOString() } },
+                { endDate: { greater_than: data.endDate.toISOString() } },
+              ],
+            },
           ],
         },
       ],
@@ -225,8 +230,8 @@ export async function editSprintAction({}, formData: FormData) {
       collection: 'sprints',
       data: {
         name: data.name,
-        startDate: data.startDate.toString(),
-        endDate: data.endDate.toString(),
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
         speed: data.speed,
       },
       where: {

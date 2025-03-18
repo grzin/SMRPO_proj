@@ -32,7 +32,7 @@ function CreateSprint({ className, ...props }: React.ComponentProps<'div'>) {
     name: '',
     startDate: '',
     endDate: '',
-    speed: null,
+    speed: 0,
     message: '',
     error: {
       name: '',
@@ -96,6 +96,7 @@ function CreateSprint({ className, ...props }: React.ComponentProps<'div'>) {
                   id="speed"
                   type="number"
                   placeholder=""
+                  min={0}
                   required
                   defaultValue={state.speed}
                 />

@@ -121,20 +121,20 @@ async function createSprints(payload: Payload) {
   const sprints: Omit<Sprint, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>[] = [
     {
       name: 'Sprint #1',
-      startDate: '2025-03-17:00:00.000Z',
-      endDate: '2025-03-20:00:00.000Z',
+      startDate: '2025-03-17T00:00:00.000Z',
+      endDate: '2025-03-20T00:00:00.000Z',
       speed: 3,
     },
     {
       name: 'Sprint #2',
-      startDate: '2025-03-24:00:00.000Z',
+      startDate: '2025-03-24T00:00:00.000Z',
       endDate: '2025-03-28T12:00:00.000Z',
       speed: 6,
     },
     {
       name: 'Sprint #3',
-      startDate: '2025-03-30:00:00.000Z',
-      endDate: '2025-03-31:00:00.000Z',
+      startDate: '2025-03-30T00:00:00.000Z',
+      endDate: '2025-03-31T00:00:00.000Z',
       speed: 4,
     },
   ]
