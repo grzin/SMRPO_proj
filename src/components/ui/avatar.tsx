@@ -16,10 +16,19 @@ function stringToHslColor(str: string, s: number, l: number) {
   return 'hsl(' + h + ', ' + s + '%, ' + l + '%)'
 }
 
-function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+function Avatar({
+  className,
+  name = '',
+  surname = '',
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Root> & { name?: string; surname?: string }) {
   const user = useUser().user
-  const firstLetter = user?.name[0].toUpperCase() || ''
-  const secondLetter = user?.surname[0].toUpperCase() || ''
+  if (!name && !surname) {
+    name = user?.name ?? ''
+    surname = user?.surname ?? ''
+  }
+  const firstLetter = name[0].toUpperCase() || ''
+  const secondLetter = surname[0].toUpperCase() || ''
 
   return (
     <AvatarPrimitive.Root
@@ -29,7 +38,7 @@ function Avatar({ className, ...props }: React.ComponentProps<typeof AvatarPrimi
     >
       <div
         style={{
-          backgroundColor: stringToHslColor(user?.name ?? '' + user?.surname ?? '', 50, 80),
+          backgroundColor: stringToHslColor(name + surname, 50, 80),
         }}
         className="flex size-full items-center justify-center rounded-full font-bold"
       >

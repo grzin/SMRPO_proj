@@ -6,6 +6,7 @@ import { User } from '@/payload-types'
 import { Button } from '../ui/button'
 import { ArrowUpDown } from 'lucide-react'
 import Link from 'next/link'
+import { Avatar } from '../ui/avatar'
 
 export const userColumns: ColumnDef<User>[] = [
   {
@@ -29,7 +30,8 @@ export const userColumns: ColumnDef<User>[] = [
     },
     enableHiding: false,
     cell: ({ row }) => (
-      <div className="capitalize">
+      <div className="capitalize flex flex-row gap-2 items-center">
+        <Avatar name={row.getValue('name')} surname={row.getValue('surname')} />
         <Link href={`/users/${row.getValue('id')}`}>{row.getValue('username')}</Link>
       </div>
     ),
