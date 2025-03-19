@@ -16,6 +16,7 @@ import {
   TableRow,
 } from '../ui/table'
 import { UserAvatar } from '../ui/avatar'
+import { Stories } from '../stories/stories'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -23,7 +24,7 @@ const roleNames = {
   developer: 'Developer',
 }
 
-export const ProjectDashboard: FC<{ project: Project }> = ({ project }) => {
+export const ProjectDashboard: FC<{ project: Project; canAddStory: boolean }> = ({ project, canAddStory }) => {
   const { user } = useUser()
 
   console.log(project.members)
@@ -83,17 +84,7 @@ export const ProjectDashboard: FC<{ project: Project }> = ({ project }) => {
           </CardContent>
         </Card>
       </div>
-      <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Tasks</CardTitle>
-            <CardDescription>Define and assign project tasks</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow">
-            <p>-- Task here --</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Stories project={project} canAddStory={canAddStory}/>
     </div>
   )
 }

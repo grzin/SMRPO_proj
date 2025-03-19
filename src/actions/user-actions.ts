@@ -15,6 +15,10 @@ const updatePasswordSchema = z.object({
   newPassword: z.string(),
 })
 
+export async function isAdminOrMethodologyManager(user) {
+  return user.role === 'admin' || user.role === 'methodology_manager'
+}
+
 export async function updateProfileAction(formData: FormData) {
   const payload = await getPayload({ config })
 
