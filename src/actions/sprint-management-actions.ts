@@ -76,9 +76,23 @@ export async function createSprintAction({}, formData: FormData) {
     return response
   }
 
+  const projectExists = await payload.find({
+    collection: 'projects',
+    where: {
+      id: { equals: data.project_id },
+    },
+  })
+
+  if (projectExists.totalDocs === 0) {
+    response.error.project_id = 'Invalid project'
+    return response
+  }
+
   const duplicateSprints = await payload.find({
     collection: 'sprints',
-    where: { name: { equals: data.name } },
+    where: {
+      and: [{ project: { equals: data.project_id } }, { name: { equals: data.name } }],
+    },
   })
 
   if (duplicateSprints.totalDocs > 0) {
@@ -89,23 +103,28 @@ export async function createSprintAction({}, formData: FormData) {
   const overlapingSprints = await payload.find({
     collection: 'sprints',
     where: {
-      or: [
+      and: [
+        { project: { equals: data.project_id } },
         {
-          and: [
-            { startDate: { greater_than: data.startDate.toISOString() } },
-            { startDate: { less_than: data.endDate.toISOString() } },
-          ],
-        },
-        {
-          and: [
-            { endDate: { greater_than: data.startDate.toISOString() } },
-            { endDate: { less_than: data.endDate.toISOString() } },
-          ],
-        },
-        {
-          and: [
-            { startDate: { less_than: data.startDate.toISOString() } },
-            { endDate: { greater_than: data.endDate.toISOString() } },
+          or: [
+            {
+              and: [
+                { startDate: { greater_than: data.startDate.toISOString() } },
+                { startDate: { less_than: data.endDate.toISOString() } },
+              ],
+            },
+            {
+              and: [
+                { endDate: { greater_than: data.startDate.toISOString() } },
+                { endDate: { less_than: data.endDate.toISOString() } },
+              ],
+            },
+            {
+              and: [
+                { startDate: { less_than: data.startDate.toISOString() } },
+                { endDate: { greater_than: data.endDate.toISOString() } },
+              ],
+            },
           ],
         },
       ],
@@ -189,7 +208,13 @@ export async function editSprintAction({}, formData: FormData) {
 
   const duplicateSprints = await payload.find({
     collection: 'sprints',
-    where: { and: [{ name: { equals: data.name } }, { id: { not_equals: data.id } }] },
+    where: {
+      and: [
+        { project: { equals: data.project_id } },
+        { name: { equals: data.name } },
+        { id: { not_equals: data.id } },
+      ],
+    },
   })
 
   if (duplicateSprints.totalDocs > 0) {
@@ -201,6 +226,7 @@ export async function editSprintAction({}, formData: FormData) {
     collection: 'sprints',
     where: {
       and: [
+        { project: { equals: data.project_id } },
         { id: { not_equals: data.id } },
         {
           or: [

@@ -38,7 +38,7 @@ function CreateSprint({
     startDate: '',
     endDate: '',
     speed: 0,
-    project_id: 0,
+    project_id: 1,
     message: '',
     error: {
       name: '',
