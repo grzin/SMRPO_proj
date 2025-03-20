@@ -1,8 +1,9 @@
-import StoriesAdd from '@/components/stories/stories-add'
+import StoriesEdit from '@/components/stories/stories-edit'
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
+import { canBeDeleted } from '@/actions/user-actions'
 
 export default async function Page() {
   return (
@@ -14,14 +15,14 @@ export default async function Page() {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="#">Add User Story</BreadcrumbLink>
+                <BreadcrumbLink href="#">Edit User Story</BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <StoriesAdd />
+        <StoriesEdit />
       </div>
     </>
   )

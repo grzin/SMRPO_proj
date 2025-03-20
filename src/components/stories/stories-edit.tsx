@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { addStoryAction } from '@/actions/story-action'
+import { editStoryAction } from '@/actions/story-action'
 
-export default function StoryAdd() {
+export default function StoryEdit() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -19,6 +19,7 @@ export default function StoryAdd() {
   const [error, setError] = useState<string | null>(null)
 
   const projectId = searchParams.get('projectId')
+  const storyId = searchParams.get('storyId')
 
   const handleAddAcceptanceTest = () => {
     setAcceptanceTests([...acceptanceTests, ''])
@@ -33,9 +34,9 @@ export default function StoryAdd() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    formData.append('project', projectId)
+    formData.append('storyId', storyId)
 
-    const result = await addStoryAction(formData)
+    const result = await editStoryAction(formData)
     if (result.error) {
       setError(result.error)
       return
@@ -48,7 +49,7 @@ export default function StoryAdd() {
     <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle>Add User Story</CardTitle>
+          <CardTitle>Edit User Story</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,7 +114,10 @@ export default function StoryAdd() {
                 required
               />
             </div>
-            <Button type="submit">Add User Story</Button>
+            <div className="flex space-x-4">
+              <Button type="submit">Edit User Story</Button>
+              <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white">Delete User Story</Button>
+            </div>
           </form>
 
         </CardContent>

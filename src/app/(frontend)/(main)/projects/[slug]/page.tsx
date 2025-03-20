@@ -20,8 +20,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const payload = await getPayload({ config })
   const user = await getUser(false)
   const project = await payload
-    .findByID({ collection: 'projects', id: projectId, overrideAccess: false, user: user })
+    .findByID({ collection: 'projects', id: projectId, overrideAccess: false, user: user, depth: 3 })
     .catch(() => null)
+
+  // dirty patch
+  const stories = await payload.find({
+    collection: 'stories',
+    where: { project: { equals: projectId } },
+  }).catch(() => ({ docs: [] }));
+
+  project.stories = stories.docs;
 
   const canAddStory = await isAdminOrMethodologyManager(user)
 

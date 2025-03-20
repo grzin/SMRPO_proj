@@ -47,5 +47,11 @@ export const Projects: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'stories',
+      type: 'relationship',
+      relationTo: 'stories',
+      hasMany: true
+    },
   ],
 }

@@ -1,18 +1,35 @@
 'use client'
-
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { useRouter, redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { FC } from 'react'
+import Link from 'next/link'
+import { canDeleteStory } from '@/actions/user-actions'
+import { useUser } from '@/contexts/user-context'
+import { useEffect, useState } from 'react';
 
 export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({ project, canAddStory }) => {
+  const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({});
   const router = useRouter()
+  const user = useUser().user
 
   const handleGoToAdd = () => {
     router.push(`/stories/add?projectId=${project.id}`)
   }
+
+  useEffect(() => {
+    const checkDeletableStories = async () => {
+      const results: Record<int, boolean> = {};
+      for (const story of project.stories) {
+        results[story.id] = await canDeleteStory(user, story);
+      }
+      setDeletableStories(results);
+    };
+
+    checkDeletableStories();
+  }, [project.stories, user]);
+
+  console.log(deletableStories)
 
   return (
     <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
@@ -25,7 +42,31 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({ projec
           </div>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p>-- Story here --</p>
+        {project.stories && project.stories.length > 0 ? (
+            <ul className="space-y-4">
+              {project.stories.map((story) => (
+                deletableStories[story.id] ? (
+                  <Link key={story.id} href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`}>
+                    <li className="border rounded p-4 hover:bg-gray-100 cursor-pointer">
+                      <h3 className="text-lg font-semibold">{story.title}</h3>
+                      <p>Description: {story.description}</p>
+                      <p className="text-sm text-gray-500">Priority: {story.priority}</p>
+                      <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                    </li>
+                  </Link>
+                ) : (
+                  <li key={story.id} className="border rounded p-4">
+                    <h3 className="text-lg font-semibold">{story.title}</h3>
+                    <p>Description: {story.description}</p>
+                    <p className="text-sm text-gray-500">Priority: {story.priority}</p>
+                    <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                  </li>
+                  )
+              ))}
+            </ul>
+          ) : (
+            <p>No stories found for this project.</p>
+          )}
         </CardContent>
       </Card>
     </div>

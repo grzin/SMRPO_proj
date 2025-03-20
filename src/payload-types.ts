@@ -150,19 +150,7 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sprints".
- */
-export interface Sprint {
-  id: number;
-  name: string;
-  startDate: string;
-  endDate: string;
-  speed: number;
+  stories?: (number | Story)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -181,6 +169,19 @@ export interface Story {
   priority: 'must have' | 'should have' | 'could have' | "won't have this time";
   businessValue: number;
   project: number | Project;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sprints".
+ */
+export interface Sprint {
+  id: number;
+  name: string;
+  startDate: string;
+  endDate: string;
+  speed: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -282,6 +283,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         role?: T;
         id?: T;
       };
+  stories?: T;
   updatedAt?: T;
   createdAt?: T;
 }
