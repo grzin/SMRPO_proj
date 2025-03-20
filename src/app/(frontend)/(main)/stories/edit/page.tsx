@@ -3,7 +3,6 @@ import StoriesEdit from '@/components/stories/stories-edit'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { canBeDeleted } from '@/actions/user-actions'
 
 export default async function Page() {
   return (

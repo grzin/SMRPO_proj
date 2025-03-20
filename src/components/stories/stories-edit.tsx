@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { editStoryAction } from '@/actions/story-action'
+import { editStoryAction, deleteStoryAction } from '@/actions/story-action'
 
 export default function StoryEdit() {
   const router = useRouter()
@@ -43,6 +43,16 @@ export default function StoryEdit() {
     }
 
     router.push(`/projects/${projectId}`) // Redirect to the stories page
+  }
+
+  const handleDelete = async () => {
+    const result = await deleteStoryAction(storyId)
+    if (result.error) {
+      setError(result.error)
+      return
+    }
+
+    router.push(`/projects/${projectId}`)
   }
 
   return (
@@ -100,7 +110,7 @@ export default function StoryEdit() {
                 <option value="must have">Must Have</option>
                 <option value="should have">Should Have</option>
                 <option value="could have">Could Have</option>
-                <option value="won't have this time">Won't Have This Time</option>
+                <option value="won't have this time">Won&apos;t Have This Time</option>
               </select>
             </div>
             <div className="grid gap-3">
@@ -116,7 +126,7 @@ export default function StoryEdit() {
             </div>
             <div className="flex space-x-4">
               <Button type="submit">Edit User Story</Button>
-              <Button type="submit" className="bg-red-500 hover:bg-red-600 text-white">Delete User Story</Button>
+              <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white">Delete User Story</Button>
             </div>
           </form>
 

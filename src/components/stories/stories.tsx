@@ -46,14 +46,20 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({ projec
             <ul className="space-y-4">
               {project.stories.map((story) => (
                 deletableStories[story.id] ? (
-                  <Link key={story.id} href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`}>
-                    <li className="border rounded p-4 hover:bg-gray-100 cursor-pointer">
+                    <li key={story.id} className="border rounded p-4 hover:bg-gray-100 cursor-pointer">
+                      <Link href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`}>
                       <h3 className="text-lg font-semibold">{story.title}</h3>
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      <p className="text-sm text-gray-500">Acceptance Tests: </p>
+                      <ul>
+                        {story.acceptanceTests.map((testObj, index) => (
+                          <li key={index}>{testObj.test}</li>
+                        ))}
+                      </ul>
+                      </Link>
                     </li>
-                  </Link>
                 ) : (
                   <li key={story.id} className="border rounded p-4">
                     <h3 className="text-lg font-semibold">{story.title}</h3>
