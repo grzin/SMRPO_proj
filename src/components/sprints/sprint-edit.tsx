@@ -34,7 +34,6 @@ function CreateSprint({
   ...props
 }: React.ComponentProps<'div'> & { projects: Project[] }) {
   const initialState = {
-    id: -1,
     name: '',
     startDate: '',
     endDate: '',
@@ -46,6 +45,7 @@ function CreateSprint({
       startDate: '',
       endDate: '',
       speed: '',
+      project_id: '',
     },
   }
 
@@ -117,7 +117,7 @@ function CreateSprint({
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map(project => (
-                    <SelectItem value={`${project.id}`}>{project.name}</SelectItem>
+                    <SelectItem value={`${project.id}`} key={project.id}>{project.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
