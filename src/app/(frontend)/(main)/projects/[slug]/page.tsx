@@ -51,7 +51,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   project.stories = stories.docs
 
-  const canAddStory = await isAdminOrMethodologyManager(user)
+  const canAddStory = await isAdminOrMethodologyManager(user, project.members)
 
   return (
     <>

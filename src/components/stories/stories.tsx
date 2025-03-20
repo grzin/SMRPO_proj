@@ -28,17 +28,19 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
     const checkDeletableStories = async () => {
       const results: Record<number, boolean> = {}
       for (const story of (project.stories as Story[]) ?? []) {
-        results[story.id] = await canDeleteStory(user, story)
+        results[story.id] = await canDeleteStory(user, story, project.members)
       }
       setDeletableStories(results)
     }
 
     checkDeletableStories()
-  }, [project.stories, user])
+  }, [project.stories, user, project.members])
 
-  console.log(deletableStories)
-  console.log(user)
-  console.log(project.stories)
+  //console.log(deletableStories)
+  //console.log(user)
+  //console.log(project.stories)
+
+  console.log(project.members)
 
   return (
     <div className="rounded-xl md:min-h-min">

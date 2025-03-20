@@ -1,5 +1,11 @@
 # Dokumentacija
 
+## #3 - Spreminjanje lastnih uporabniških podatkov
+
+Uporabnik v zavihku "Profile Settings" lahko spreminja svoje uporabniško ime, e-poštni naslov in geslo. Za spremembo gesla mora vnesti staro geslo, za katero se preveri, da je pravo. Podvajanje uporabniškega imena se preverja in če pride do kakšne neregularnosti ali napake vmesnik uporabnika obvesti o tem.
+
+![img/3.png](img/3.png)
+
 ## #6 - Ustvarjanje novega sprinta
 
 Uporabniku so predstavljeni vsi sprinti na projektu.
@@ -36,6 +42,31 @@ Aplikacija preveri ustreznost vnesenih polj:
 - Sprint se ne prekriva s katerimkoli drugim sprintom v projektu.
 
 V primeru zaznane napake aplikacija obvesti uporabnika in onemogoči izdelavo sprinta, dokler napaka ni razrešena.
+
+## #8 - Dodajanje uporabniških zgodb
+
+Administrator, prodkutni vodja in skrbnik metodologije lahko s klikom na gumb "Add Story" na nadzorni plošči za projekt ustvarjajo nove uporabniške zgodbe. Preverjajo se vsa dovoljenja, povezana z vlogami, tako v uporabniškem vmesniku kot na strežniku.
+
+- Naslov uporabniške zgodbe se ne podvaja.
+- Preverja se, da je poslovna vrednost število.
+- Preverja se, da je prioriteta ena od 4 zahtevanih opcij.
+
+Za primer, gumb "Add Story" vidijo le pooblaščene osebe (administrator in zgornji vlogi).
+
+![img/8.png](img/8.png)
+![img/8-add.png](img/8-add.png)
+
+## #9 - Urejanje in brisanje uporabniških zgodb
+
+Administrator, prodkutni vodja in skrbnik metodologije lahko s klikom na prikazano uporabniško zgodbo urejajo njene parametre, lahko pa jo tudi zbrišejo s klikom na rdeč gumb. Preverjajo se vsa dovoljenja, povezana z vlogami, tako v uporabniškem vmesniku kot na strežniku.
+
+- Naslov uporabniške zgodbe se ne podvaja.
+- Preverja se, da je poslovna vrednost število.
+- Preverja se, da je prioriteta ena od 4 zahtevanih opcij.
+
+Za primer, če uporabnik nima primernih pravic, sicer vidi seznam nalog, ne more pa s klikom odpreti obrazca za urejanje. 
+
+![img/9.png](img/9.png)
 
 ## #11 - Ocena časovne zahtevnosti
 

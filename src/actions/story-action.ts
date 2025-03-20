@@ -5,11 +5,7 @@ import config from '@/payload.config'
 import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-actions'
 import { getUser } from '@/actions/login-action'
 
-function isNumeric(value: any) {
-  return /^-?\d+$/.test(value)
-}
-
-export async function addStoryAction(formData: FormData) {
+export async function addStoryAction(formData: FormData, members) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
@@ -26,13 +22,14 @@ export async function addStoryAction(formData: FormData) {
     | 'should have'
     | 'could have'
     | "won't have this time"
-  const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
+  const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
   const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const projectId = Number(formData.get('project')?.toString())
 
   console.log(title, description, acceptanceTests, priority, businessValue, timeEstimate, projectId)
+  console.log("lel", members)
 
-  if (!isAdminOrMethodologyManager(user)) {
+  if (!isAdminOrMethodologyManager(user, members)) {
     return { error: 'You do not have permission to add a user story' }
   }
 
@@ -69,7 +66,7 @@ export async function addStoryAction(formData: FormData) {
   }
 
   // Check business value
-  if (!isNumeric(businessValue)) {
+  if (isNaN(businessValue)) {
     return { error: 'Business value must be a number' }
   }
 
@@ -99,7 +96,7 @@ export async function addStoryAction(formData: FormData) {
   }
 }
 
-export async function editStoryAction(formData: FormData) {
+export async function editStoryAction(formData: FormData, members) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
@@ -114,7 +111,7 @@ export async function editStoryAction(formData: FormData) {
     | 'should have'
     | 'could have'
     | "won't have this time"
-  const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
+  const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
   const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const storyId = Number(formData.get('storyId')?.toString())
 
@@ -133,7 +130,7 @@ export async function editStoryAction(formData: FormData) {
     return story
   }
 
-  if (!canDeleteStory(user, story)) {
+  if (!canDeleteStory(user, story, members)) {
     return { error: 'You do not have permission to edit a user story' }
   }
 
@@ -157,7 +154,7 @@ export async function editStoryAction(formData: FormData) {
   }
 
   // Check business value
-  if (isNumeric(businessValue)) {
+  if (isNaN(businessValue)) {
     return { error: 'Business value must be a number' }
   }
 
@@ -202,7 +199,7 @@ export async function deleteStoryAction(storyId: any) {
     return story
   }
 
-  if (!canDeleteStory(user, story)) {
+  if (!canDeleteStory(user, story, members)) {
     return { error: 'You do not have permission to delete a user story' }
   }
 

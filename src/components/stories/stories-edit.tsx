@@ -20,11 +20,6 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
   const storyId = searchParams.get('storyId')
   const projectId = project.id
 
-  const members = project.members.map((member) => member.user)
-
-  console.log(project)
-  console.log(members)
-
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [acceptanceTests, setAcceptanceTests] = useState<string[]>([''])
@@ -50,7 +45,7 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
     const formData = new FormData(event.currentTarget)
     formData.append('storyId', storyId)
 
-    const result = await editStoryAction(formData)
+    const result = await editStoryAction(formData, project.members)
     if ('error' in result) {
       setError(result.error)
       return

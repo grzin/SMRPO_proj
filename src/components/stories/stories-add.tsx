@@ -7,7 +7,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addStoryAction } from '@/actions/story-action'
 
-export default function StoryAdd() {
+interface StoryAddProps {
+  project: Project;
+  user: User;
+}
+
+export default function StoryAdd({ project, user }: StoryEditProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -38,7 +43,7 @@ export default function StoryAdd() {
     const formData = new FormData(event.currentTarget)
     formData.append('project', projectId as string)
 
-    const result = await addStoryAction(formData)
+    const result = await addStoryAction(formData, project.members)
     if (result.error) {
       setError(result.error)
       return
