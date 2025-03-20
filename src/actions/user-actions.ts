@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import { z } from 'zod'
 import config from '@/payload.config'
 import { getUser } from '@/actions/login-action'
+import { Story, User } from '@/payload-types'
 
 const updateProfileSchema = z.object({
   username: z.string().min(3),
@@ -15,12 +16,12 @@ const updatePasswordSchema = z.object({
   newPassword: z.string(),
 })
 
-export async function isAdminOrMethodologyManager(user) {
-  return user.role === 'admin' || user.role === 'methodology_manager'
+export async function isAdminOrMethodologyManager(user: User) {
+  return user.role === 'admin' // || user.role === 'methodology_manager'
 }
 
-export async function canDeleteStory(user, story) {
-  return (await isAdminOrMethodologyManager(user)) && !story.realized && !story.sprint
+export async function canDeleteStory(user: User, story: Story) {
+  return (await isAdminOrMethodologyManager(user)) && !story.sprint // !story.realized
 }
 
 export async function updateProfileAction(formData: FormData) {

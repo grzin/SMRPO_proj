@@ -5,8 +5,8 @@ import config from '@/payload.config'
 import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-actions'
 import { getUser } from '@/actions/login-action'
 
-function isNumeric(value) {
-  return /^-?\d+$/.test(value);
+function isNumeric(value: any) {
+  return /^-?\d+$/.test(value)
 }
 
 export async function addStoryAction(formData: FormData) {
@@ -14,10 +14,18 @@ export async function addStoryAction(formData: FormData) {
   const user = await getUser()
 
   // Extract values from FormData
-  const title = formData.get('title')?.toString()
-  const description = formData.get('description')?.toString()
-  const acceptanceTests = formData.getAll('acceptanceTests').map((str) => ({ test: str }))
-  const priority = formData.get('priority')?.toString() as 'must have' | 'should have' | 'could have' | 'won\'t have this time'
+  const title = formData.get('title')?.toString() ?? ''
+  const description = formData.get('description')?.toString() ?? ''
+  const acceptanceTests = formData
+    .getAll('acceptanceTests')
+    .map((str) => ({ test: str.toString() }))
+
+  console.log(acceptanceTests)
+  const priority = formData.get('priority')?.toString() as
+    | 'must have'
+    | 'should have'
+    | 'could have'
+    | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
   const projectId = Number(formData.get('project')?.toString())
 
@@ -27,11 +35,15 @@ export async function addStoryAction(formData: FormData) {
     return { error: 'You do not have permission to add a user story' }
   }
 
-  const projectExists = await payload.findByID({
-    collection: 'projects',
-    id: projectId,
-  }).catch(() => { return { error: 'Failed fetching project' }})
-  
+  const projectExists = await payload
+    .findByID({
+      collection: 'projects',
+      id: projectId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching project' }
+    })
+
   if (!projectExists) {
     return { error: 'Invalid project ID' }
   }
@@ -51,7 +63,7 @@ export async function addStoryAction(formData: FormData) {
   }
 
   // Check valid priorities
-  if (!['must have', 'should have', 'could have', 'won\'t have this time'].includes(priority)) {
+  if (!['must have', 'should have', 'could have', "won't have this time"].includes(priority)) {
     return { error: 'Invalid priority' }
   }
 
@@ -70,7 +82,7 @@ export async function addStoryAction(formData: FormData) {
         priority: priority,
         businessValue: businessValue,
         project: projectId,
-        sprint: 0
+        sprint: 1,
       },
     })
     return { data: savedStory }
@@ -87,17 +99,31 @@ export async function editStoryAction(formData: FormData) {
   // Extract values from FormData
   const title = formData.get('title')?.toString()
   const description = formData.get('description')?.toString()
-  const acceptanceTests = formData.getAll('acceptanceTests').map((str) => ({ test: str }))
-  const priority = formData.get('priority')?.toString() as 'must have' | 'should have' | 'could have' | 'won\'t have this time'
+  const acceptanceTests = formData
+    .getAll('acceptanceTests')
+    .map((str) => ({ test: str.toString() }))
+  const priority = formData.get('priority')?.toString() as
+    | 'must have'
+    | 'should have'
+    | 'could have'
+    | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
   const storyId = Number(formData.get('storyId')?.toString())
 
   console.log(title, description, acceptanceTests, priority, businessValue, storyId)
 
-  const story = await payload.findByID({
-    collection: 'stories',
-    id: storyId,
-  }).catch(() => {return {error: 'Failed fetching story'}})
+  const story = await payload
+    .findByID({
+      collection: 'stories',
+      id: storyId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching story' }
+    })
+
+  if ('error' in story) {
+    return story
+  }
 
   if (!canDeleteStory(user, story)) {
     return { error: 'You do not have permission to edit a user story' }
@@ -118,7 +144,7 @@ export async function editStoryAction(formData: FormData) {
   }
 
   // Check valid priorities
-  if (!['must have', 'should have', 'could have', 'won\'t have this time'].includes(priority)) {
+  if (!['must have', 'should have', 'could have', "won't have this time"].includes(priority)) {
     return { error: 'Invalid priority' }
   }
 
@@ -136,7 +162,7 @@ export async function editStoryAction(formData: FormData) {
         description: description,
         acceptanceTests: acceptanceTests,
         priority: priority,
-        businessValue: businessValue
+        businessValue: businessValue,
       },
     })
     return { data: updatedStory }
@@ -146,13 +172,21 @@ export async function editStoryAction(formData: FormData) {
   }
 }
 
-export async function deleteStoryAction(storyId) {
+export async function deleteStoryAction(storyId: any) {
   const payload = await getPayload({ config })
   const user = await getUser()
-  const story = await payload.findByID({
-    collection: 'stories',
-    id: storyId,
-  }).catch(() => {return {error: 'Failed fetching story'}})
+  const story = await payload
+    .findByID({
+      collection: 'stories',
+      id: storyId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching story' }
+    })
+
+  if ('error' in story) {
+    return story
+  }
 
   if (!canDeleteStory(user, story)) {
     return { error: 'You do not have permission to delete a user story' }

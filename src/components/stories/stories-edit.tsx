@@ -14,12 +14,14 @@ export default function StoryEdit() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [acceptanceTests, setAcceptanceTests] = useState<string[]>([''])
-  const [priority, setPriority] = useState<'must have' | 'should have' | 'could have' | 'won\'t have this time'>('must have')
+  const [priority, setPriority] = useState<
+    'must have' | 'should have' | 'could have' | "won't have this time"
+  >('must have')
   const [businessValue, setBusinessValue] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
 
-  const projectId = searchParams.get('projectId')
-  const storyId = searchParams.get('storyId')
+  const projectId = searchParams.get('projectId') ?? ''
+  const storyId = searchParams.get('storyId') ?? ''
 
   const handleAddAcceptanceTest = () => {
     setAcceptanceTests([...acceptanceTests, ''])
@@ -37,7 +39,7 @@ export default function StoryEdit() {
     formData.append('storyId', storyId)
 
     const result = await editStoryAction(formData)
-    if (result.error) {
+    if ('error' in result) {
       setError(result.error)
       return
     }
@@ -47,7 +49,7 @@ export default function StoryEdit() {
 
   const handleDelete = async () => {
     const result = await deleteStoryAction(storyId)
-    if (result.error) {
+    if ('error' in result) {
       setError(result.error)
       return
     }
@@ -93,7 +95,9 @@ export default function StoryEdit() {
                     required
                   />
                   {index === acceptanceTests.length - 1 && (
-                    <Button type="button" onClick={handleAddAcceptanceTest}>Add</Button>
+                    <Button type="button" onClick={handleAddAcceptanceTest}>
+                      Add
+                    </Button>
                   )}
                 </div>
               ))}
@@ -104,7 +108,7 @@ export default function StoryEdit() {
                 id="priority"
                 name="priority"
                 value={priority}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => setPriority(e.target.value as any)}
                 required
               >
                 <option value="must have">Must Have</option>
@@ -126,10 +130,11 @@ export default function StoryEdit() {
             </div>
             <div className="flex space-x-4">
               <Button type="submit">Edit User Story</Button>
-              <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white">Delete User Story</Button>
+              <Button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white">
+                Delete User Story
+              </Button>
             </div>
           </form>
-
         </CardContent>
       </Card>
       {error && <div className="text-red-500">{error}</div>}

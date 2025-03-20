@@ -14,7 +14,9 @@ export default function StoryAdd() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [acceptanceTests, setAcceptanceTests] = useState<string[]>([''])
-  const [priority, setPriority] = useState<'must have' | 'should have' | 'could have' | 'won\'t have this time'>('must have')
+  const [priority, setPriority] = useState<
+    'must have' | 'should have' | 'could have' | "won't have this time"
+  >('must have')
   const [businessValue, setBusinessValue] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +35,7 @@ export default function StoryAdd() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    formData.append('project', projectId)
+    formData.append('project', projectId as string)
 
     const result = await addStoryAction(formData)
     if (result.error) {
@@ -82,7 +84,9 @@ export default function StoryAdd() {
                     required
                   />
                   {index === acceptanceTests.length - 1 && (
-                    <Button type="button" onClick={handleAddAcceptanceTest}>Add</Button>
+                    <Button type="button" onClick={handleAddAcceptanceTest}>
+                      Add
+                    </Button>
                   )}
                 </div>
               ))}
@@ -93,7 +97,7 @@ export default function StoryAdd() {
                 id="priority"
                 name="priority"
                 value={priority}
-                onChange={(e) => setPriority(e.target.value)}
+                onChange={(e) => setPriority(e.target.value as any)}
                 required
               >
                 <option value="must have">Must Have</option>
@@ -115,7 +119,6 @@ export default function StoryAdd() {
             </div>
             <Button type="submit">Add User Story</Button>
           </form>
-
         </CardContent>
       </Card>
       {error && <div className="text-red-500">{error}</div>}
