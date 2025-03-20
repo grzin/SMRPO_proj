@@ -9,8 +9,8 @@ export async function GET() {
 
   await createAdmin(payload)
   await createTestUsers(payload)
-  await createSprints(payload)
   await createProjects(payload)
+  await createSprints(payload)
 
   return NextResponse.json({ success: true })
 }
@@ -124,18 +124,28 @@ async function createSprints(payload: Payload) {
       startDate: '2025-03-17T00:00:00.000Z',
       endDate: '2025-03-20T00:00:00.000Z',
       speed: 3,
+      project: 1,
     },
     {
       name: 'Sprint #2',
       startDate: '2025-03-24T00:00:00.000Z',
       endDate: '2025-03-28T12:00:00.000Z',
       speed: 6,
+      project: 2,
     },
     {
       name: 'Sprint #3',
       startDate: '2025-03-30T00:00:00.000Z',
       endDate: '2025-03-31T00:00:00.000Z',
       speed: 4,
+      project: 3,
+    },
+    {
+      name: 'Sprint #4',
+      startDate: '2025-04-02T00:00:00.000Z',
+      endDate: '2025-04-06T00:00:00.000Z',
+      speed: 5,
+      project: 2,
     },
   ]
 

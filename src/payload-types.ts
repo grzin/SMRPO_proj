@@ -183,6 +183,7 @@ export interface Sprint {
   startDate: string;
   endDate: string;
   speed: number;
+  project: number | Project;
   updatedAt: string;
   createdAt: string;
 }
@@ -297,6 +298,7 @@ export interface SprintsSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   speed?: T;
+  project?: T;
   updatedAt?: T;
   createdAt?: T;
 }

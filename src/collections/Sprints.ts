@@ -31,6 +31,12 @@ export const Sprints: CollectionConfig = {
       required: true,
       min: 0,
     },
+    {
+      name: 'project',
+      type: 'relationship',
+      relationTo: 'projects',
+      required: true,
+    },
   ],
   timestamps: true,
 }

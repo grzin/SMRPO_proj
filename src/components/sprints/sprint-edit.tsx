@@ -9,14 +9,16 @@ import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
 import { createSprintAction, editSprintAction, deleteSprintAction } from '@/actions/sprint-management-actions'
 import { FormError } from '../ui/form'
-import { Sprint } from '@/payload-types'
+import { Project, Sprint } from '@/payload-types'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 export default function SprintEdit({
   sprintEdit,
+  sprintEditProjects,
   ...props
-}: React.ComponentProps<'div'> & { sprintEdit: Sprint | null }) {
+}: React.ComponentProps<'div'> & { sprintEdit: Sprint | null, sprintEditProjects: Project[] }) {
   if (sprintEdit == null) {
-    return <CreateSprint {...props}></CreateSprint>
+    return <CreateSprint projects={sprintEditProjects} {...props}></CreateSprint>
   } else {
     return (
       <>
@@ -26,13 +28,18 @@ export default function SprintEdit({
   }
 }
 
-function CreateSprint({ className, ...props }: React.ComponentProps<'div'>) {
+function CreateSprint({
+  className,
+  projects,
+  ...props
+}: React.ComponentProps<'div'> & { projects: Project[] }) {
   const initialState = {
     id: -1,
     name: '',
     startDate: '',
     endDate: '',
     speed: 0,
+    project_id: 0,
     message: '',
     error: {
       name: '',
@@ -101,6 +108,20 @@ function CreateSprint({ className, ...props }: React.ComponentProps<'div'>) {
                   defaultValue={state.speed}
                 />
                 {state.error.speed && <FormError>{state.error.speed}</FormError>}
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="role">Project</Label>
+                <Select defaultValue={state.project_id.toString()} name="project_id">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map(project => (
+                    <SelectItem value={`${project.id}`}>{project.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {state.error.project_id && <FormError>{state.error.project_id}</FormError>}
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>

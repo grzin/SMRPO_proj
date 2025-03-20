@@ -10,6 +10,7 @@ import {
   sprintStartDateValidator,
   sprintEndDateValidator,
   sprintSpeedValidator,
+  sprintProjectValidator,
 } from './validators'
 import { getUser } from './login-action'
 import { redirect } from 'next/navigation'
@@ -19,6 +20,7 @@ const createSchema = z.object({
   startDate: sprintStartDateValidator,
   endDate: sprintEndDateValidator,
   speed: sprintSpeedValidator,
+  project_id: sprintProjectValidator,
 })
 
 const editSchema = z.object({
@@ -27,6 +29,7 @@ const editSchema = z.object({
   startDate: sprintStartDateValidator,
   endDate: sprintEndDateValidator,
   speed: sprintSpeedValidator,
+  project_id: sprintProjectValidator,
 })
 
 const deleteSchema = z.object({
@@ -42,12 +45,14 @@ export async function createSprintAction({}, formData: FormData) {
     startDate: formData.get('startDate')?.toString() ?? '',
     endDate: formData.get('endDate')?.toString() ?? '',
     speed: Number(formData.get('speed')?.toString()),
+    project_id: Number(formData.get('project_id')?.toString()),
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
       speed: '',
+      project_id: '',
     },
   }
 
@@ -56,6 +61,7 @@ export async function createSprintAction({}, formData: FormData) {
     startDate: new Date(formData.get('startDate')?.toString() ?? ''),
     endDate: new Date(formData.get('endDate')?.toString() ?? ''),
     speed: Number(formData.get('speed')?.toString()),
+    project_id: Number(formData.get('project_id')?.toString()),
   })
 
   if (!validatedFields.success) {
@@ -120,6 +126,7 @@ export async function createSprintAction({}, formData: FormData) {
         startDate: data.startDate.toISOString(),
         endDate: data.endDate.toISOString(),
         speed: data.speed,
+        project: data.project_id,
       },
       overrideAccess: false,
       user: user,
@@ -149,12 +156,14 @@ export async function editSprintAction({}, formData: FormData) {
     startDate: formData.get('startDate')?.toString() ?? '',
     endDate: formData.get('endDate')?.toString() ?? '',
     speed: Number(formData.get('speed')?.toString()),
+    project_id: Number(formData.get('project_id')?.toString()),
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
       speed: '',
+      project_id: '',
     },
   }
 
@@ -233,6 +242,7 @@ export async function editSprintAction({}, formData: FormData) {
         startDate: data.startDate.toISOString(),
         endDate: data.endDate.toISOString(),
         speed: data.speed,
+        project: data.project_id,
       },
       where: {
         id: { equals: data.id },
