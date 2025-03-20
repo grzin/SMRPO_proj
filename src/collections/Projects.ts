@@ -11,7 +11,7 @@ const projectRoles = [
     value: 'product_manager',
   },
   {
-    label: 'Član razvojne  skupine',
+    label: 'Član razvojne skupine',
     value: 'developer',
   },
 ]
@@ -51,7 +51,7 @@ export const Projects: CollectionConfig = {
       name: 'stories',
       type: 'relationship',
       relationTo: 'stories',
-      hasMany: true
+      hasMany: true,
     },
   ],
 }

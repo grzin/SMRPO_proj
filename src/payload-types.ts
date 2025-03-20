@@ -168,6 +168,7 @@ export interface Story {
   }[];
   priority: 'must have' | 'should have' | 'could have' | "won't have this time";
   businessValue: number;
+  timeEstimate?: number | null;
   project: number | Project;
   sprint: number | Sprint;
   updatedAt: string;
@@ -317,6 +318,7 @@ export interface StoriesSelect<T extends boolean = true> {
       };
   priority?: T;
   businessValue?: T;
+  timeEstimate?: T;
   project?: T;
   sprint?: T;
   updatedAt?: T;

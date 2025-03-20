@@ -27,9 +27,10 @@ export async function addStoryAction(formData: FormData) {
     | 'could have'
     | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
+  const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const projectId = Number(formData.get('project')?.toString())
 
-  console.log(title, description, acceptanceTests, priority, businessValue, projectId)
+  console.log(title, description, acceptanceTests, priority, businessValue, timeEstimate, projectId)
 
   if (!isAdminOrMethodologyManager(user)) {
     return { error: 'You do not have permission to add a user story' }
@@ -72,6 +73,11 @@ export async function addStoryAction(formData: FormData) {
     return { error: 'Business value must be a number' }
   }
 
+  // Check time estimate
+  if (timeEstimate < 0) {
+    return { error: 'Time estimate must be a positive number' }
+  }
+
   try {
     const savedStory = await payload.create({
       collection: 'stories',
@@ -81,6 +87,7 @@ export async function addStoryAction(formData: FormData) {
         acceptanceTests: acceptanceTests,
         priority: priority,
         businessValue: businessValue,
+        timeEstimate: timeEstimate,
         project: projectId,
         sprint: 1,
       },
@@ -108,6 +115,7 @@ export async function editStoryAction(formData: FormData) {
     | 'could have'
     | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || '0', 10)
+  const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const storyId = Number(formData.get('storyId')?.toString())
 
   console.log(title, description, acceptanceTests, priority, businessValue, storyId)
@@ -153,6 +161,11 @@ export async function editStoryAction(formData: FormData) {
     return { error: 'Business value must be a number' }
   }
 
+  // Check time estimate
+  if (timeEstimate < 0) {
+    return { error: 'Time estimate must be a positive number' }
+  }
+
   try {
     const updatedStory = await payload.update({
       collection: 'stories',
@@ -163,6 +176,7 @@ export async function editStoryAction(formData: FormData) {
         acceptanceTests: acceptanceTests,
         priority: priority,
         businessValue: businessValue,
+        timeEstimate: timeEstimate,
       },
     })
     return { data: updatedStory }

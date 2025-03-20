@@ -62,6 +62,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      <p className="text-sm text-gray-500">Time estimate: {story.timeEstimate}</p>
                       <p className="text-sm text-gray-500">Acceptance Tests: </p>
                       <ul>
                         {story.acceptanceTests.map((testObj, index) => (
@@ -76,6 +77,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
                     <p>Description: {story.description}</p>
                     <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                     <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                    <p className="text-sm text-gray-500">Time estimate: {story.timeEstimate}</p>
                   </li>
                 ),
               )}
