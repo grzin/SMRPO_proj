@@ -59,13 +59,15 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                <Link href="/settings/profile">Profile Settings</Link>
-              </DropdownMenuItem>
+              <Link href="/settings/profile">
+                <DropdownMenuItem>
+                  <BadgeCheck />
+                  Profile Settings
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <Link href="/logout">
+            <Link prefetch={false} href="/logout">
               {' '}
               <DropdownMenuItem>
                 <LogOut />
