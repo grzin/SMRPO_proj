@@ -39,7 +39,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
   console.log(deletableStories)
 
   return (
-    <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+    <div className="rounded-xl md:min-h-min">
       <Card className="col-span-2">
         <CardHeader>
           <CardTitle>User Stories</CardTitle>

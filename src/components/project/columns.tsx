@@ -2,10 +2,11 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 
-import { User } from '@/payload-types'
+import { Project, User } from '@/payload-types'
 import { Button } from '../ui/button'
 import { ArrowUpDown } from 'lucide-react'
 import Link from 'next/link'
+import { Avatar, UserAvatar } from '../ui/avatar'
 
 export const projectColumns: ColumnDef<User>[] = [
   {
@@ -39,6 +40,19 @@ export const projectColumns: ColumnDef<User>[] = [
     header: ({ column }) => {
       return <div>Members</div>
     },
-    cell: ({ row }) => <div className="lowercase"></div>,
+    cell: ({ row }) => {
+      const members = row.getValue('members') as
+        | {
+            user: User
+            role: 'methodology_manager' | 'product_manager' | 'developer'
+            id?: string | null
+          }[]
+        | null
+      return (
+        <div className="lowercase flex flex-row flex-wrap gap-6">
+          {members?.map((member) => <UserAvatar key={member.id} user={member.user} />)}
+        </div>
+      )
+    },
   },
 ]
