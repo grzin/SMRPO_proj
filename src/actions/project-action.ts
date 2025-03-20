@@ -66,3 +66,18 @@ export async function createProjectAction({}, formData: FormData) {
 
   redirect(`/projects/${newProject?.id}`)
 }
+
+export const getProjectById = async (projectId: string) => {
+  const payload = await getPayload({ config })
+
+  const project = await payload
+    .findByID({
+      collection: 'projects',
+      id: projectId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching project' }
+    })
+
+    return project
+}

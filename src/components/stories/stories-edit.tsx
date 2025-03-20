@@ -1,15 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { editStoryAction, deleteStoryAction } from '@/actions/story-action'
+import { useUser } from '@/contexts/user-context'
 
-export default function StoryEdit() {
+interface StoryEditProps {
+  project: Project;
+  user: User;
+}
+
+export default function StoryEdit({ project, user }: StoryEditProps) {
   const router = useRouter()
+  // const user = useUser()
   const searchParams = useSearchParams()
+  const storyId = searchParams.get('storyId')
+  const projectId = project.id
+
+  const members = project.members.map((member) => member.user)
+
+  console.log(project)
+  console.log(members)
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -20,9 +34,6 @@ export default function StoryEdit() {
   const [businessValue, setBusinessValue] = useState<number>(0)
   const [timeEstimate, setTimeEstimate] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
-
-  const projectId = searchParams.get('projectId') ?? ''
-  const storyId = searchParams.get('storyId') ?? ''
 
   const handleAddAcceptanceTest = () => {
     setAcceptanceTests([...acceptanceTests, ''])

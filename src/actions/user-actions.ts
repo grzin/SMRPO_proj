@@ -21,7 +21,7 @@ export async function isAdminOrMethodologyManager(user: User) {
 }
 
 export async function canDeleteStory(user: User, story: Story) {
-  return (await isAdminOrMethodologyManager(user)) && !story.sprint // !story.realized
+  return (await isAdminOrMethodologyManager(user)) && (!story.sprint || !story.realized)
 }
 
 export async function updateProfileAction(formData: FormData) {

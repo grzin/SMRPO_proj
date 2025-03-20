@@ -37,6 +37,8 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
   }, [project.stories, user])
 
   console.log(deletableStories)
+  console.log(user)
+  console.log(project.stories)
 
   return (
     <div className="rounded-xl md:min-h-min">
@@ -78,6 +80,11 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
                     <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                     <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
                     <p className="text-sm text-gray-500">Time estimate: {story.timeEstimate}</p>
+                    <ul>
+                      {story.acceptanceTests.map((testObj, index) => (
+                        <li key={index}>{testObj.test}</li>
+                      ))}
+                    </ul>
                   </li>
                 ),
               )}
