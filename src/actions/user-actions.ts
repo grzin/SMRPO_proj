@@ -16,19 +16,20 @@ const updatePasswordSchema = z.object({
   newPassword: z.string(),
 })
 
-export async function isMember(user: User, members: {id: string, user: User, role: string}[]) {
+export async function isMember(user: User, members: { user: User; role: string }[]) {
   return members.some((member) => member.user.id === user.id)
 }
 
-export async function isAdminOrMethodologyManager(user: User, members: {id: string, user: User, role: string}[]) {
+export async function isAdminOrMethodologyManager(user: User, members: any[]) {
   const ourUser = members.find((member) => member.user.id === user.id)
-  return user.role === 'admin' || isMember(user, members) && (
-  ourUser?.role === 'methodology_manager' ||
-  ourUser?.role === 'product_manager'
+  return (
+    user.role === 'admin' ||
+    ((await isMember(user, members)) &&
+      (ourUser?.role === 'methodology_manager' || ourUser?.role === 'product_manager'))
   )
 }
 
-export async function canDeleteStory(user: User, story: Story, members: {id: string, user: User, role: string}[]) {
+export async function canDeleteStory(user: User, story: any, members: any[]) {
   return (await isAdminOrMethodologyManager(user, members)) && (!story.sprint || !story.realized)
 }
 

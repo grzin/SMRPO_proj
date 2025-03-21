@@ -49,9 +49,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     redirect('/projects')
   }
 
+  const users = await payload.find({
+    collection: 'users',
+    limit: 1000,
+  })
+
   project.stories = stories.docs
 
-  const canAddStory = await isAdminOrMethodologyManager(user, project.members)
+  const canAddStory = await isAdminOrMethodologyManager(user, project.members ?? [])
 
   return (
     <>
@@ -77,6 +82,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           project={project}
           sprints={sprints?.docs || []}
           canAddStory={canAddStory}
+          users={users.docs}
         />
       </div>
     </>

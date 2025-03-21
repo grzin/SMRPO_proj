@@ -4,8 +4,9 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-actions'
 import { getUser } from '@/actions/login-action'
+import { Project } from '@/payload-types'
 
-export async function addStoryAction(formData: FormData, members) {
+export async function addStoryAction(formData: FormData, members: any) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
@@ -27,7 +28,7 @@ export async function addStoryAction(formData: FormData, members) {
   const projectId = Number(formData.get('project')?.toString())
 
   console.log(title, description, acceptanceTests, priority, businessValue, timeEstimate, projectId)
-  console.log("lel", members)
+  console.log('lel', members)
 
   if (!isAdminOrMethodologyManager(user, members)) {
     return { error: 'You do not have permission to add a user story' }
@@ -96,7 +97,7 @@ export async function addStoryAction(formData: FormData, members) {
   }
 }
 
-export async function editStoryAction(formData: FormData, members) {
+export async function editStoryAction(formData: FormData, members: any) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
@@ -198,6 +199,8 @@ export async function deleteStoryAction(storyId: any) {
   if ('error' in story) {
     return story
   }
+
+  const members = (story?.project as Project)?.members ?? []
 
   if (!canDeleteStory(user, story, members)) {
     return { error: 'You do not have permission to delete a user story' }

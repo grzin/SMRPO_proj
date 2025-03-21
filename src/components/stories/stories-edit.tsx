@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { editStoryAction, deleteStoryAction } from '@/actions/story-action'
 import { useUser } from '@/contexts/user-context'
+import { Project, User } from '@/payload-types'
 
 interface StoryEditProps {
-  project: Project;
-  user: User;
+  project: Project
+  user: User
 }
 
 export default function StoryEdit({ project, user }: StoryEditProps) {
@@ -43,7 +44,7 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    formData.append('storyId', storyId)
+    formData.append('storyId', storyId ?? '')
 
     const result = await editStoryAction(formData, project.members)
     if ('error' in result) {

@@ -1,20 +1,30 @@
 import StoryEdit from '@/components/stories/stories-edit'
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList } from '@/components/ui/breadcrumb'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+} from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjectById } from '@/actions/project-action'
 import { getUser } from '@/actions/login-action'
+import { Project } from '@/payload-types'
 
-export default async function Page({ searchParams }: { searchParams: { projectId: string; storyId: string } }) {
-  const { projectId, storyId } = await searchParams;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ projectId: string; storyId: string }>
+}) {
+  const { projectId, storyId } = await searchParams
 
-  const project = await getProjectById(projectId);
-  const user = await getUser();
+  const project = (await getProjectById(projectId)) as Project
+  const user = await getUser()
 
-  console.log(project);
-  console.log(user);
+  console.log(project)
+  console.log(user)
 
   return (
     <>

@@ -28,7 +28,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
     const checkDeletableStories = async () => {
       const results: Record<number, boolean> = {}
       for (const story of (project.stories as Story[]) ?? []) {
-        results[story.id] = await canDeleteStory(user, story, project.members)
+        results[story.id] = await canDeleteStory(user, story, project.members ?? [])
       }
       setDeletableStories(results)
     }

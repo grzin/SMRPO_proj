@@ -6,13 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addStoryAction } from '@/actions/story-action'
+import { Project, User } from '@/payload-types'
 
 interface StoryAddProps {
-  project: Project;
-  user: User;
+  project: Project
+  user: User
 }
 
-export default function StoryAdd({ project, user }: StoryEditProps) {
+export default function StoryAdd({ project, user }: StoryAddProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { Project, Sprint, User } from '@/payload-types'
-import { FC } from 'react'
+import { FC, useActionState, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { useUser } from '@/contexts/user-context'
@@ -17,6 +17,9 @@ import {
 import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Edit } from 'lucide-react'
+import { addUserAction } from '@/actions/project-action'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -24,12 +27,42 @@ const roleNames = {
   developer: 'Developer',
 }
 
+export const UserSelect: FC<{ users: User[]; defaultValue?: string }> = ({
+  users,
+  defaultValue,
+}) => {
+  return (
+    <Select defaultValue={defaultValue} name="user">
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select user" />
+      </SelectTrigger>
+      <SelectContent>
+        {users.map((user) => (
+          <SelectItem key={user.id} value={user.id.toString()}>
+            <UserAvatar user={user} />
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
 export const ProjectDashboard: FC<{
   project: Project
   sprints: Sprint[]
   canAddStory: boolean
-}> = ({ project, sprints, canAddStory }) => {
+  users: User[]
+}> = ({ project, sprints, canAddStory, users }) => {
   const { user } = useUser()
+  const [editMembers, setEditMembers] = useState<null | number>(null)
+  const [addMember, setAddMembers] = useState(false)
+  const [editDetails, setEditDetails] = useState(false)
+  const [members, setMembers] = useState(project.members)
+
+  const initialState = {
+    message: '',
+  }
+  const [state, formAction, pending] = useActionState(addUserAction, initialState)
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -58,31 +91,101 @@ export const ProjectDashboard: FC<{
             <CardDescription>Project members and roles</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[200px]">User</TableHead>
-                  <TableHead className="text-right">Role</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {project?.members?.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell className="font-medium">
-                      <UserAvatar user={member.user as User} />
-                    </TableCell>
-                    <TableCell className="text-right">{roleNames[member.role]}</TableCell>
+            <form action={formAction}>
+              <input type="hidden" name="project" value={project.id} />
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[200px]">User</TableHead>
+                    <TableHead className="text-right">Role</TableHead>
+                    {editMembers && <TableHead className="text-right">Action</TableHead>}
                   </TableRow>
-                ))}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={2}>
-                    <Button variant="default">Add member</Button>
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {!editMembers && (
+                    <>
+                      {project?.members?.map((member) => (
+                        <TableRow key={member.id}>
+                          <TableCell className="font-medium">
+                            <UserAvatar user={member.user as User} />
+                          </TableCell>
+                          <TableCell className="text-right">{roleNames[member.role]}</TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  )}
+                  {editMembers && (
+                    <>
+                      {members?.map((member) => (
+                        <TableRow key={member.id}>
+                          <TableCell className="font-medium">
+                            <UserAvatar user={member.user as User} />
+                          </TableCell>
+                          <Select defaultValue={member.role} name="project_id">
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Project" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="methodology_manager">
+                                Methodology Manager
+                              </SelectItem>
+                              <SelectItem value="product_manager">Product Manager</SelectItem>
+                              <SelectItem value="developer">Developer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <TableCell className="text-right">{roleNames[member.role]}</TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={2}>
+                      {!addMember && (
+                        <Button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setAddMembers(true)
+                            return false
+                          }}
+                          variant="default"
+                        >
+                          Add member
+                        </Button>
+                      )}
+                    </TableCell>
+                    {addMember && (
+                      <>
+                        <TableCell>
+                          <UserSelect users={users} />
+                        </TableCell>
+                        <TableCell>
+                          <Select defaultValue="developer" name="role">
+                            <SelectTrigger className="w-[180px]">
+                              <SelectValue placeholder="Project" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="methodology_manager">
+                                Methodology Manager
+                              </SelectItem>
+                              <SelectItem value="product_manager">Product Manager</SelectItem>
+                              <SelectItem value="developer">Developer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="flex flex-row gap-2">
+                          <Button variant="default" type="submit">
+                            Add
+                          </Button>
+                          <Button variant="destructive">Cancel</Button>
+                        </TableCell>
+                      </>
+                    )}
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </form>
           </CardContent>
         </Card>
       </div>
