@@ -141,20 +141,6 @@ export const ProjectDashboard: FC<{
                 </TableBody>
                 <TableFooter>
                   <TableRow>
-                    <TableCell colSpan={2}>
-                      {!addMember && (
-                        <Button
-                          onClick={(e) => {
-                            e.preventDefault()
-                            setAddMembers(true)
-                            return false
-                          }}
-                          variant="default"
-                        >
-                          Add member
-                        </Button>
-                      )}
-                    </TableCell>
                     {addMember && (
                       <>
                         <TableCell>

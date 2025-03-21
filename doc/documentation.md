@@ -1,5 +1,28 @@
 # Dokumentacija
 
+## #1 - Dodajanje uporabnikov
+
+Uporabnik z administratorskimi pravicami ima dostop do zavihka `Users`, kjer mu akcija `Create user` omogoča dodajanje novega uporabnika v sistem. Novemu uporabniku mora določiti unikatno uporabniško ime, ime, priimek, e-poštni naslov, vlogo v sistemu in geslo.
+
+![img/1.png](img/1.png)
+
+## #2 - Vzdrževanje uporabniških računov
+
+Uporabnik z administratorskimi pravicami ima dostop do zavihka `Users`, kjer se prikaže tabela vseh uporabnikov sistema. S klikom na uporabnika lahko administrator vidi in spreminja uporabniške podatke in pravice. Uporabniku lahko nastavi tudi novo geslo ali uporabnika izbriše.
+
+![img/2.png](img/2.png)
+
+## #30 - Prijava v sistem
+
+Uporabnik si lahko ustvari nov uporabniški račun s klikom na `Register`. Izbrati si mora unikatno uporabniško ime, izpolniti podatke o imenu, priimku, e-pošti in dvakrat vpisati izbrano geslo. Geslo mora biti dolgo vsaj 12 znakov.
+
+S klikom na ikono ob polju za geslu lahko uporabnik geslo razkrije.
+
+Po registraciji se lahko v sistem prijavi z izbranim uporabniškim imenom in geslom.
+
+![img/30-1.png](img/30-1.png)
+![img/30-2.png](img/30-2.png)
+
 ## #3 - Spreminjanje lastnih uporabniških podatkov
 
 Uporabnik v zavihku "Profile Settings" lahko spreminja svoje uporabniško ime, e-poštni naslov in geslo. Za spremembo gesla mora vnesti staro geslo, za katero se preveri, da je pravo. Podvajanje uporabniškega imena se preverja in če pride do kakšne neregularnosti ali napake vmesnik uporabnika obvesti o tem.
@@ -64,7 +87,7 @@ Administrator, prodkutni vodja in skrbnik metodologije lahko s klikom na prikaza
 - Preverja se, da je poslovna vrednost število.
 - Preverja se, da je prioriteta ena od 4 zahtevanih opcij.
 
-Za primer, če uporabnik nima primernih pravic, sicer vidi seznam nalog, ne more pa s klikom odpreti obrazca za urejanje. 
+Za primer, če uporabnik nima primernih pravic, sicer vidi seznam nalog, ne more pa s klikom odpreti obrazca za urejanje.
 
 ![img/9.png](img/9.png)
 
