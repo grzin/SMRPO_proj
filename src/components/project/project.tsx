@@ -200,6 +200,7 @@ export const ProjectDashboard: FC<{
                   </TableRow>
                 ))}
               </TableBody>
+              {canAddStory ? (
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={2}>
@@ -209,6 +210,7 @@ export const ProjectDashboard: FC<{
                   </TableCell>
                 </TableRow>
               </TableFooter>
+              ) : (<></>)}
             </Table>
           </CardContent>
         </Card>
