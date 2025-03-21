@@ -109,20 +109,20 @@ export async function createSprintAction({}, formData: FormData) {
           or: [
             {
               and: [
-                { startDate: { greater_than: data.startDate.toISOString() } },
-                { startDate: { less_than: data.endDate.toISOString() } },
+                { startDate: { greater_than_equal: data.startDate.toISOString() } },
+                { startDate: { less_than_equal: data.endDate.toISOString() } },
               ],
             },
             {
               and: [
-                { endDate: { greater_than: data.startDate.toISOString() } },
-                { endDate: { less_than: data.endDate.toISOString() } },
+                { endDate: { greater_than_equal: data.startDate.toISOString() } },
+                { endDate: { less_than_equal: data.endDate.toISOString() } },
               ],
             },
             {
               and: [
-                { startDate: { less_than: data.startDate.toISOString() } },
-                { endDate: { greater_than: data.endDate.toISOString() } },
+                { startDate: { less_than_equal: data.startDate.toISOString() } },
+                { endDate: { greater_than_equal: data.endDate.toISOString() } },
               ],
             },
           ],
@@ -192,6 +192,7 @@ export async function editSprintAction({}, formData: FormData) {
     startDate: new Date(formData.get('startDate')?.toString() ?? ''),
     endDate: new Date(formData.get('endDate')?.toString() ?? ''),
     speed: Number(formData.get('speed')?.toString()),
+    project_id: Number(formData.get('project_id')?.toString()),
   })
 
   if (!validatedFields.success) {
@@ -232,20 +233,20 @@ export async function editSprintAction({}, formData: FormData) {
           or: [
             {
               and: [
-                { startDate: { greater_than: data.startDate.toISOString() } },
-                { startDate: { less_than: data.endDate.toISOString() } },
+                { startDate: { greater_than_equal: data.startDate.toISOString() } },
+                { startDate: { less_than_equal: data.endDate.toISOString() } },
               ],
             },
             {
               and: [
-                { endDate: { greater_than: data.startDate.toISOString() } },
-                { endDate: { less_than: data.endDate.toISOString() } },
+                { endDate: { greater_than_equal: data.startDate.toISOString() } },
+                { endDate: { less_than_equal: data.endDate.toISOString() } },
               ],
             },
             {
               and: [
-                { startDate: { less_than: data.startDate.toISOString() } },
-                { endDate: { greater_than: data.endDate.toISOString() } },
+                { startDate: { less_than_equal: data.startDate.toISOString() } },
+                { endDate: { greater_than_equal: data.endDate.toISOString() } },
               ],
             },
           ],
