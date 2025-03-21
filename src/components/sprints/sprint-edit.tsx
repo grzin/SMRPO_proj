@@ -22,7 +22,7 @@ export default function SprintEdit({
   } else {
     return (
       <>
-        <EditSprint editSprint={sprintEdit} {...props}></EditSprint>
+        <EditSprint editSprint={sprintEdit} projects={sprintEditProjects} {...props}></EditSprint>
       </>
     )
   }
@@ -38,7 +38,7 @@ function CreateSprint({
     startDate: '',
     endDate: '',
     speed: 0,
-    project_id: 1,
+    project_id: 0,
     message: '',
     error: {
       name: '',
@@ -111,13 +111,13 @@ function CreateSprint({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="role">Project</Label>
-                <Select defaultValue={state.project_id.toString()} name="project_id">
+                <Select name="project_id" required>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Project" />
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map(project => (
-                    <SelectItem value={`${project.id}`} key={project.id}>{project.name}</SelectItem>
+                    <SelectItem value={project.id.toString()} key={project.id}>{project.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -140,8 +140,9 @@ function CreateSprint({
 function EditSprint({
   className,
   editSprint,
+  projects,
   ...props
-}: React.ComponentProps<'div'> & { editSprint: Sprint }) {
+}: React.ComponentProps<'div'> & { editSprint: Sprint, projects: Project[] }) {
   const formatDate = (date: string) => new Date(date).toISOString().substring(0, 10)
 
   const initialState = {
@@ -149,12 +150,14 @@ function EditSprint({
     startDate: formatDate(editSprint.startDate),
     endDate: formatDate(editSprint.endDate),
     speed: editSprint.speed,
+    project_id: editSprint.project,
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
       speed: '',
+      project_id: '',
     },
   }
 
@@ -225,6 +228,22 @@ function EditSprint({
                   defaultValue={state.speed}
                 />
                 {state.error.speed && <FormError>{state.error.speed}</FormError>}
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="role">Project</Label>
+                <Select name="project_id"
+                        defaultValue={projects.find(p => p.id === (state.project_id as Project).id)?.id.toString()}
+                        required>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map(project => (
+                    <SelectItem value={project.id.toString()} key={project.id}>{project.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {state.error.project_id && <FormError>{state.error.project_id}</FormError>}
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>
