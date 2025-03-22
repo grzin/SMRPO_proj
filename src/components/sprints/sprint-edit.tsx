@@ -37,14 +37,14 @@ function CreateSprint({
     name: '',
     startDate: '',
     endDate: '',
-    speed: 0,
+    velocity: 0,
     project_id: 0,
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
-      speed: '',
+      velocity: '',
       project_id: '',
     },
   }
@@ -97,17 +97,17 @@ function CreateSprint({
                 {state.error.endDate && <FormError>{state.error.endDate.toString()}</FormError>}
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="speed">Speed</Label>
+                <Label htmlFor="velocity">Velocity</Label>
                 <Input
-                  name="speed"
-                  id="speed"
+                  name="velocity"
+                  id="velocity"
                   type="number"
                   placeholder=""
                   min={0}
                   required
-                  defaultValue={state.speed}
+                  defaultValue={state.velocity}
                 />
-                {state.error.speed && <FormError>{state.error.speed}</FormError>}
+                {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="role">Project</Label>
@@ -149,14 +149,14 @@ function EditSprint({
     name: editSprint.name,
     startDate: formatDate(editSprint.startDate),
     endDate: formatDate(editSprint.endDate),
-    speed: editSprint.speed,
+    velocity: editSprint.velocity,
     project_id: editSprint.project,
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
-      speed: '',
+      velocity: '',
       project_id: '',
     },
   }
@@ -218,16 +218,16 @@ function EditSprint({
                 {state.error.endDate && <FormError>{state.error.endDate.toString()}</FormError>}
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="speed">Speed</Label>
+                <Label htmlFor="velocity">Velocity</Label>
                 <Input
-                  name="speed"
-                  id="speed"
+                  name="velocity"
+                  id="velocity"
                   type="number"
                   placeholder=""
                   required
-                  defaultValue={state.speed}
+                  defaultValue={state.velocity}
                 />
-                {state.error.speed && <FormError>{state.error.speed}</FormError>}
+                {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="role">Project</Label>

@@ -62,7 +62,7 @@ export const sprintStartDateValidator = z
 
 export const sprintEndDateValidator = z.date()
 
-export const sprintSpeedValidator = z.number().min(1, 'Enter valid (positive) sprint speed')
+export const sprintVelocityValidator = z.number().min(1, 'Enter valid (positive) sprint velocity')
 
 export const sprintProjectValidator = z.number().min(0, 'Invalid project id')
 

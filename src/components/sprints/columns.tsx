@@ -75,11 +75,11 @@ export const sprintColumns: ColumnDef<Sprint>[] = [
     ),
   },
   {
-    accessorKey: 'speed',
-    header: () => <div>Speed</div>,
+    accessorKey: 'velocity',
+    header: () => <div>Velocity</div>,
     cell: ({ row }) => (
       <div>
-        <Link href={`/sprints/${row.getValue('id')}`}>{row.getValue('speed')}</Link>
+        <Link href={`/sprints/${row.getValue('id')}`}>{row.getValue('velocity')}</Link>
       </div>
     ),
   },

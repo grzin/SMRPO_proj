@@ -9,7 +9,7 @@ import {
   sprintNameValidator,
   sprintStartDateValidator,
   sprintEndDateValidator,
-  sprintSpeedValidator,
+  sprintVelocityValidator,
   sprintProjectValidator,
 } from './validators'
 import { getUser } from './login-action'
@@ -19,7 +19,7 @@ const createSchema = z.object({
   name: sprintNameValidator,
   startDate: sprintStartDateValidator,
   endDate: sprintEndDateValidator,
-  speed: sprintSpeedValidator,
+  velocity: sprintVelocityValidator,
   project_id: sprintProjectValidator,
 })
 
@@ -28,7 +28,7 @@ const editSchema = z.object({
   name: sprintNameValidator,
   startDate: sprintStartDateValidator,
   endDate: sprintEndDateValidator,
-  speed: sprintSpeedValidator,
+  velocity: sprintVelocityValidator,
   project_id: sprintProjectValidator,
 })
 
@@ -44,14 +44,14 @@ export async function createSprintAction({}, formData: FormData) {
     name: formData.get('name')?.toString() ?? '',
     startDate: formData.get('startDate')?.toString() ?? '',
     endDate: formData.get('endDate')?.toString() ?? '',
-    speed: Number(formData.get('speed')?.toString()),
+    velocity: Number(formData.get('velocity')?.toString()),
     project_id: Number(formData.get('project_id')?.toString()),
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
-      speed: '',
+      velocity: '',
       project_id: '',
     },
   }
@@ -60,7 +60,7 @@ export async function createSprintAction({}, formData: FormData) {
     name: formData.get('name')?.toString() ?? '',
     startDate: new Date(formData.get('startDate')?.toString() ?? ''),
     endDate: new Date(formData.get('endDate')?.toString() ?? ''),
-    speed: Number(formData.get('speed')?.toString()),
+    velocity: Number(formData.get('velocity')?.toString()),
     project_id: Number(formData.get('project_id')?.toString()),
   })
 
@@ -144,7 +144,7 @@ export async function createSprintAction({}, formData: FormData) {
         name: data.name,
         startDate: data.startDate.toISOString(),
         endDate: data.endDate.toISOString(),
-        speed: data.speed,
+        velocity: data.velocity,
         project: data.project_id,
       },
       overrideAccess: false,
@@ -174,14 +174,14 @@ export async function editSprintAction({}, formData: FormData) {
     name: formData.get('name')?.toString() ?? '',
     startDate: formData.get('startDate')?.toString() ?? '',
     endDate: formData.get('endDate')?.toString() ?? '',
-    speed: Number(formData.get('speed')?.toString()),
+    velocity: Number(formData.get('velocity')?.toString()),
     project_id: Number(formData.get('project_id')?.toString()),
     message: '',
     error: {
       name: '',
       startDate: '',
       endDate: '',
-      speed: '',
+      velocity: '',
       project_id: '',
     },
   }
@@ -191,7 +191,7 @@ export async function editSprintAction({}, formData: FormData) {
     name: formData.get('name')?.toString() ?? '',
     startDate: new Date(formData.get('startDate')?.toString() ?? ''),
     endDate: new Date(formData.get('endDate')?.toString() ?? ''),
-    speed: Number(formData.get('speed')?.toString()),
+    velocity: Number(formData.get('velocity')?.toString()),
     project_id: Number(formData.get('project_id')?.toString()),
   })
 
@@ -268,7 +268,7 @@ export async function editSprintAction({}, formData: FormData) {
         name: data.name,
         startDate: data.startDate.toISOString(),
         endDate: data.endDate.toISOString(),
-        speed: data.speed,
+        velocity: data.velocity,
         project: data.project_id,
       },
       where: {

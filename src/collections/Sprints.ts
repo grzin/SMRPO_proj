@@ -26,7 +26,7 @@ export const Sprints: CollectionConfig = {
       required: true,
     },
     {
-      name: 'speed',
+      name: 'velocity',
       type: 'number',
       required: true,
       min: 0,
