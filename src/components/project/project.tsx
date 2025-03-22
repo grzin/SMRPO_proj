@@ -208,9 +208,11 @@ export const ProjectDashboard: FC<{
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={2}>
-                    <Button variant="default">
-                      <Link href="/sprints/-1">Add sprint</Link>
-                    </Button>
+                    <Link href={`/sprints/-1?projectId=${project.id}`}>
+                      <Button variant="default">
+                      Add sprint
+                      </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               </TableFooter>

@@ -10,7 +10,7 @@ import { useActionState } from 'react'
 import { createSprintAction, editSprintAction, deleteSprintAction } from '@/actions/sprint-management-actions'
 import { FormError } from '../ui/form'
 import { Project, Sprint } from '@/payload-types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { useSearchParams } from 'next/navigation'
 
 export default function SprintEdit({
   sprintEdit,
@@ -33,12 +33,15 @@ function CreateSprint({
   projects,
   ...props
 }: React.ComponentProps<'div'> & { projects: Project[] }) {
+  const searchParams = useSearchParams()
+  const projectId = Number(searchParams.get('projectId'))
+
   const initialState = {
     name: '',
     startDate: '',
     endDate: '',
     velocity: 0,
-    project_id: 0,
+    project_id: projectId,
     message: '',
     error: {
       name: '',
@@ -50,6 +53,7 @@ function CreateSprint({
   }
 
   const [state, formAction, pending] = useActionState(createSprintAction, initialState)
+  state.project_id = projectId
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -109,20 +113,11 @@ function CreateSprint({
                 />
                 {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="role">Project</Label>
-                <Select name="project_id" required>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                    <SelectItem value={project.id.toString()} key={project.id}>{project.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {state.error.project_id && <FormError>{state.error.project_id}</FormError>}
-              </div>
+              <Input name='project_id'
+                     id="project_id"
+                     type='number'
+                     defaultValue={projectId}
+                     hidden/>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>
                   Create
@@ -229,22 +224,11 @@ function EditSprint({
                 />
                 {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
-              <div className="grid gap-3">
-                <Label htmlFor="role">Project</Label>
-                <Select name="project_id"
-                        defaultValue={projects.find(p => p.id === (state.project_id as Project).id)?.id.toString()}
-                        required>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Project" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {projects.map(project => (
-                    <SelectItem value={project.id.toString()} key={project.id}>{project.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {state.error.project_id && <FormError>{state.error.project_id}</FormError>}
-              </div>
+              <Input name='project_id'
+                     id="project_id"
+                     type='number'
+                     defaultValue={(state.project_id as Project).id}
+                     hidden/>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>
                   Save
