@@ -189,7 +189,7 @@ export const ProjectDashboard: FC<{
                   <TableHead>Name</TableHead>
                   <TableHead>Start date</TableHead>
                   <TableHead>End date</TableHead>
-                  <TableHead>Velocity</TableHead>
+                  <TableHead>Velocity (in story points)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

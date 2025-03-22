@@ -97,7 +97,7 @@ function CreateSprint({
                 {state.error.endDate && <FormError>{state.error.endDate.toString()}</FormError>}
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="velocity">Velocity</Label>
+                <Label htmlFor="velocity">Velocity (in story points)</Label>
                 <Input
                   name="velocity"
                   id="velocity"
@@ -218,7 +218,7 @@ function EditSprint({
                 {state.error.endDate && <FormError>{state.error.endDate.toString()}</FormError>}
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="velocity">Velocity</Label>
+                <Label htmlFor="velocity">Velocity (in story points)</Label>
                 <Input
                   name="velocity"
                   id="velocity"
