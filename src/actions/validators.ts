@@ -58,7 +58,7 @@ export const sprintNameValidator = z
 
 export const sprintStartDateValidator = z
   .date()
-  .min(new Date(), 'Sprint must start after current date')
+  .min(new Date(new Date().setUTCHours(0, 0, 0, 0)), 'Sprint must start after current date')
 
 export const sprintEndDateValidator = z.date()
 
