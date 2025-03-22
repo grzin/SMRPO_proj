@@ -135,6 +135,11 @@ function CreateSprint({
   )
 }
 
+function isSprintActive(sprint: Sprint) {
+  const currentDate = new Date()
+  return (new Date(sprint.startDate) < currentDate) && (new Date(sprint.endDate) > currentDate)
+}
+
 function EditSprint({
   className,
   editSprint,
@@ -169,6 +174,10 @@ function EditSprint({
     initialDeleteState,
   )
 
+  const currentDate = new Date()
+  const activeSprint = new Date(state.startDate) < currentDate && new Date(state.endDate) > currentDate
+  const pastSprint = new Date(state.endDate) < currentDate
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -188,6 +197,7 @@ function EditSprint({
                   placeholder=""
                   required
                   defaultValue={state.name}
+                  disabled={activeSprint || pastSprint}
                 />
                 {state.error.name && <FormError>{state.error.name}</FormError>}
               </div>
@@ -200,6 +210,7 @@ function EditSprint({
                   placeholder=""
                   required
                   defaultValue={state.startDate}
+                  disabled={activeSprint || pastSprint}
                 />
                 {state.error.startDate && <FormError>{state.error.startDate.toString()}</FormError>}
               </div>
@@ -212,6 +223,7 @@ function EditSprint({
                   placeholder=""
                   required
                   defaultValue={state.endDate}
+                  disabled={activeSprint || pastSprint}
                 />
                 {state.error.endDate && <FormError>{state.error.endDate.toString()}</FormError>}
               </div>
@@ -224,6 +236,7 @@ function EditSprint({
                   placeholder=""
                   required
                   defaultValue={state.velocity}
+                  disabled={pastSprint}
                 />
                 {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
@@ -233,7 +246,7 @@ function EditSprint({
                      defaultValue={(state.project_id as Project).id}
                      hidden/>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={pending}>
+                <Button type="submit" className="w-full" disabled={pending || pastSprint}>
                   Save
                 </Button>
                 {state.message && <FormError>{state.message}</FormError>}
@@ -243,7 +256,7 @@ function EditSprint({
           <form action={deleteFormAction}>
             <div className="flex flex-col gap-6 mt-8">
               <input type="hidden" name="id" value={editSprint.id} />
-              <Button variant={'destructive'} disabled={deletePending}>
+              <Button variant={'destructive'} disabled={deletePending || activeSprint || pastSprint}>
                 Delete sprint
               </Button>
               {deleteState.message && <FormError>{deleteState.message}</FormError>}
