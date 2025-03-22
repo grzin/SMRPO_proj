@@ -186,8 +186,10 @@ export const ProjectDashboard: FC<{
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[200px]">Name</TableHead>
-                  <TableHead className="text-right">Velocity</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Start date</TableHead>
+                  <TableHead>End date</TableHead>
+                  <TableHead>Velocity</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -196,7 +198,9 @@ export const ProjectDashboard: FC<{
                     <TableCell className="font-medium">
                       <Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>
                     </TableCell>
-                    <TableCell className="text-right">{sprint.velocity}</TableCell>
+                    <TableCell>{new Date(sprint.startDate).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(sprint.endDate).toLocaleString()}</TableCell>
+                    <TableCell>{sprint.velocity}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
