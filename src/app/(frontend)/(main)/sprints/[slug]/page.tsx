@@ -16,6 +16,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const editSprintProjects = await payload
     .find({collection: 'projects'})
     .catch(() => null)
+  const sprints = await payload
+    .find({ collection: 'sprints' })
+    .catch(() => null)
 
   return (
     <>
@@ -37,7 +40,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <SprintEdit sprintEdit={editSprint} sprintEditProjects={editSprintProjects?.docs || []} />
+        <SprintEdit sprintEdit={editSprint} sprintEditProjects={editSprintProjects?.docs || []} sprints={sprints?.docs || []} />
       </div>
     </>
   )

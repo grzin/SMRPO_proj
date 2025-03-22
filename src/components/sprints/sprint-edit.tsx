@@ -15,10 +15,11 @@ import { useSearchParams } from 'next/navigation'
 export default function SprintEdit({
   sprintEdit,
   sprintEditProjects,
+  sprints,
   ...props
-}: React.ComponentProps<'div'> & { sprintEdit: Sprint | null, sprintEditProjects: Project[] }) {
+}: React.ComponentProps<'div'> & { sprintEdit: Sprint | null, sprintEditProjects: Project[], sprints: Sprint[] }) {
   if (sprintEdit == null) {
-    return <CreateSprint projects={sprintEditProjects} {...props}></CreateSprint>
+    return <CreateSprint projects={sprintEditProjects} sprints={sprints} {...props}></CreateSprint>
   } else {
     return (
       <>
@@ -31,13 +32,15 @@ export default function SprintEdit({
 function CreateSprint({
   className,
   projects,
+  sprints,
   ...props
-}: React.ComponentProps<'div'> & { projects: Project[] }) {
+}: React.ComponentProps<'div'> & { projects: Project[], sprints: Sprint[] }) {
   const searchParams = useSearchParams()
   const projectId = Number(searchParams.get('projectId'))
+  const n_sprints = sprints.filter(s => (s.project as Project).id === projectId).length
 
   const initialState = {
-    name: '',
+    name: `Sprint #${n_sprints+1}`,
     startDate: '',
     endDate: '',
     velocity: 0,
