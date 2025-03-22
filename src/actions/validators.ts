@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import Holidays from 'date-holidays'
 
 export function firstError(fieldErrors: any) {
   const keys = Object.keys(fieldErrors)
@@ -59,8 +60,41 @@ export const sprintNameValidator = z
 export const sprintStartDateValidator = z
   .date()
   .min(new Date(new Date().setUTCHours(0, 0, 0, 0)), 'Sprint must start after current date')
+  .superRefine((date, ctx) => {
+    let hd = new Holidays('SI')
+    let day = date.getDay()
 
-export const sprintEndDateValidator = z.date()
+    if (day === 6 || day === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.invalid_date,
+        message: 'Sprint cannot start on a weekend',
+      })
+    }
+    if (hd.isHoliday(date)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.invalid_date,
+        message: 'Sprint cannot start on a holiday',
+      })
+    }
+  })
+
+export const sprintEndDateValidator = z.date().superRefine((date, ctx) => {
+  let hd = new Holidays('SI')
+  let day = date.getDay()
+
+  if (day === 6 || day === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_date,
+      message: 'Sprint cannot end on a weekend',
+    })
+  }
+  if (hd.isHoliday(date)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_date,
+      message: 'Sprint cannot end on a holiday',
+    })
+  }
+})
 
 export const sprintVelocityValidator = z.number().min(1, 'Enter valid (positive) sprint velocity')
 
