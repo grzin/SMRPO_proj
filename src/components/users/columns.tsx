@@ -30,7 +30,7 @@ export const userColumns: ColumnDef<User>[] = [
     },
     enableHiding: false,
     cell: ({ row }) => (
-      <div className="capitalize flex flex-row gap-2 items-center">
+      <div className="flex flex-row gap-2 items-center">
         <Avatar name={row.getValue('name')} surname={row.getValue('surname')} />
         <Link href={`/users/${row.getValue('id')}`}>{row.getValue('username')}</Link>
       </div>

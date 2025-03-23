@@ -21,6 +21,7 @@ export const usernameValidator = z
   .min(1, {
     message: 'Username is required',
   })
+  .transform((val) => val.toLowerCase())
 
 export const passwordValidator = z
   .string({
@@ -46,6 +47,7 @@ export const emailValidator = z
     invalid_type_error: 'Invalid email',
   })
   .email({ message: 'Invalid email' })
+  .transform((val) => val.toLowerCase())
 
 export const roleValidator = z.enum(['admin', 'user']).default('user')
 
@@ -61,8 +63,8 @@ export const sprintStartDateValidator = z
   .date()
   .min(new Date(new Date().setUTCHours(0, 0, 0, 0)), 'Sprint must start after current date')
   .superRefine((date, ctx) => {
-    let hd = new Holidays('SI')
-    let day = date.getDay()
+    const hd = new Holidays('SI')
+    const day = date.getDay()
 
     if (day === 6 || day === 0) {
       ctx.addIssue({
@@ -79,8 +81,8 @@ export const sprintStartDateValidator = z
   })
 
 export const sprintEndDateValidator = z.date().superRefine((date, ctx) => {
-  let hd = new Holidays('SI')
-  let day = date.getDay()
+  const hd = new Holidays('SI')
+  const day = date.getDay()
 
   if (day === 6 || day === 0) {
     ctx.addIssue({

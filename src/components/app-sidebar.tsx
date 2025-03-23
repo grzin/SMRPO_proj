@@ -60,7 +60,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <NavUser />
         {state === 'expanded' && (
-          <span className="truncate text-xs">Last login: {user?.lastLogin}</span>
+          <span className="truncate text-xs">
+            Last login: {user?.lastLoginDate ?? user?.loginDate}
+          </span>
         )}
       </SidebarHeader>
       <SidebarContent>

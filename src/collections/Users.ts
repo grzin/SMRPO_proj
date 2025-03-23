@@ -10,10 +10,10 @@ const beforeLoginHook: CollectionBeforeLoginHook<User> = async ({ req, user }) =
     collection: 'users',
     id: user.id,
     data: {
-      lastLogin: loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString(),
+      lastLoginDate: user.loginDate,
+      loginDate: loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString(),
     },
   })
-  return user
 }
 
 const userRoles = [
@@ -35,7 +35,6 @@ export const Users: CollectionConfig = {
   auth: {
     loginWithUsername: {
       allowEmailLogin: false,
-      requireEmail: false,
     },
   },
   hooks: {
@@ -46,6 +45,12 @@ export const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'email',
+      type: 'text',
+      required: true,
+      unique: true,
     },
     {
       name: 'surname',
@@ -64,7 +69,12 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: 'lastLogin',
+      name: 'loginDate',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'lastLoginDate',
       type: 'text',
       required: false,
     },

@@ -123,10 +123,11 @@ export interface User {
   name: string;
   surname: string;
   role: 'admin' | 'user';
-  lastLogin?: string | null;
+  loginDate?: string | null;
+  lastLoginDate?: string | null;
   updatedAt: string;
   createdAt: string;
-  email?: string | null;
+  email: string;
   username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -261,7 +262,8 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   surname?: T;
   role?: T;
-  lastLogin?: T;
+  loginDate?: T;
+  lastLoginDate?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
