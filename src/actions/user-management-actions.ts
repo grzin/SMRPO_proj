@@ -93,11 +93,16 @@ export async function createUserAction({}, formData: FormData) {
 
   const duplicateUsers = await payload.find({
     collection: 'users',
-    where: { username: { equals: data.username } },
+    where: { or: [{ username: { equals: data.username } }, { email: { equals: data.email } }] },
   })
 
   if (duplicateUsers.totalDocs > 0) {
-    response.error.username = 'Username already exists'
+    if (duplicateUsers.docs[0].username === data.username) {
+      response.error.username = 'Username already exists'
+    }
+    if (duplicateUsers.docs[0].email === data.email) {
+      response.error.email = 'Email already exists'
+    }
     return response
   }
 
@@ -170,11 +175,21 @@ export async function editUserAction({}, formData: FormData) {
 
   const duplicateUsers = await payload.find({
     collection: 'users',
-    where: { username: { equals: data.username }, id: { not_equals: data.id } },
+    where: {
+      and: [
+        { or: [{ username: { equals: data.username } }, { email: { equals: data.email } }] },
+        { id: { not_equals: data.id } },
+      ],
+    },
   })
 
   if (duplicateUsers.totalDocs > 0) {
-    response.error.username = 'Username already exists'
+    if (duplicateUsers.docs[0].username === data.username) {
+      response.error.username = 'Username already exists'
+    }
+    if (duplicateUsers.docs[0].email === data.email) {
+      response.error.email = 'Email already exists'
+    }
     return response
   }
 
