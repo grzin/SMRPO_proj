@@ -70,7 +70,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
                       <p className="text-sm text-gray-500">Acceptance Tests: </p>
                       <ul>
                         {story.acceptanceTests.map((testObj, index) => (
-                          <li key={index}>{testObj.test}</li>
+                          <li key={index}>#{testObj.test}</li>
                         ))}
                       </ul>
                     </Link>
@@ -84,7 +84,7 @@ export const Stories: FC<{ project: Project; canAddStory: boolean }> = ({
                     <p className="text-sm text-gray-500">Time estimate: {story.timeEstimate}</p>
                     <ul>
                       {story.acceptanceTests.map((testObj, index) => (
-                        <li key={index}>{testObj.test}</li>
+                        <li key={index}>#{testObj.test}</li>
                       ))}
                     </ul>
                   </li>

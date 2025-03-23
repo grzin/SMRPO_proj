@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addStoryAction } from '@/actions/story-action'
 import { Project, User } from '@/payload-types'
@@ -73,7 +74,7 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
             </div>
             <div className="grid gap-3">
               <label htmlFor="description">Description</label>
-              <Input
+              <Textarea
                 id="description"
                 name="description"
                 value={description}

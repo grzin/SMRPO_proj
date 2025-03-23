@@ -10,8 +10,9 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getProjectById } from '@/actions/project-action'
+import { getStoryById } from '@/actions/story-action'
 import { getUser } from '@/actions/login-action'
-import { Project } from '@/payload-types'
+import { Project, Story } from '@/payload-types'
 
 export default async function Page({
   searchParams,
@@ -21,6 +22,7 @@ export default async function Page({
   const { projectId, storyId } = await searchParams
 
   const project = (await getProjectById(projectId)) as Project
+  const story = (await getStoryById(storyId)) as Story
   const user = await getUser()
 
   console.log(project)
@@ -42,7 +44,7 @@ export default async function Page({
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <StoryEdit project={project} user={user} />
+        <StoryEdit project={project} story={story} />
       </div>
     </>
   )

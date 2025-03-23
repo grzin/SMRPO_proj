@@ -4,17 +4,26 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { editStoryAction, deleteStoryAction } from '@/actions/story-action'
 import { useUser } from '@/contexts/user-context'
-import { Project, User } from '@/payload-types'
+import { Project, Story } from '@/payload-types'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface StoryEditProps {
   project: Project
-  user: User
+  story: Story
 }
 
-export default function StoryEdit({ project, user }: StoryEditProps) {
+export default function StoryEdit({ project, story }: StoryEditProps) {
   const router = useRouter()
   // const user = useUser()
   const searchParams = useSearchParams()
@@ -31,8 +40,24 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
   const [timeEstimate, setTimeEstimate] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
 
+  console.log(story)
+  console.log(story.acceptanceTests)
+
+  useEffect(() => {
+    setTitle(story.title || '')
+    setDescription(story.description || '')
+    setAcceptanceTests(story.acceptanceTests?.map((test) => test.test) || [''])
+    setPriority(story.priority || 'must have')
+    setBusinessValue(story.businessValue || 0)
+    setTimeEstimate(story.timeEstimate || 0)
+  }, [story])
+
   const handleAddAcceptanceTest = () => {
     setAcceptanceTests([...acceptanceTests, ''])
+  }
+
+  const handleRemoveAcceptanceTest = (index: number) => {
+    setAcceptanceTests(acceptanceTests.filter((_, i) => i !== index))
   }
 
   const handleAcceptanceTestChange = (index: number, value: string) => {
@@ -85,7 +110,7 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
             </div>
             <div className="grid gap-3">
               <label htmlFor="description">Description</label>
-              <Input
+              <Textarea
                 id="description"
                 name="description"
                 value={description}
@@ -99,12 +124,18 @@ export default function StoryEdit({ project, user }: StoryEditProps) {
                 <div key={index} className="flex items-center gap-2">
                   <Input
                     name="acceptanceTests"
+                    value={test}
                     onChange={(e) => handleAcceptanceTestChange(index, e.target.value)}
                     required
                   />
                   {index === acceptanceTests.length - 1 && (
                     <Button type="button" onClick={handleAddAcceptanceTest}>
                       Add
+                    </Button>
+                  )}
+                  {index === acceptanceTests.length - 1 && acceptanceTests.length > 1 && (
+                    <Button type="button" onClick={() => handleRemoveAcceptanceTest(index)} className="bg-red-500 hover:bg-red-600 text-white">
+                      Delete
                     </Button>
                   )}
                 </div>

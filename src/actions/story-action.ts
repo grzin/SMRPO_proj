@@ -4,7 +4,21 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-actions'
 import { getUser } from '@/actions/login-action'
-import { Project } from '@/payload-types'
+import { Project, Story } from '@/payload-types'
+
+export async function getStoryById(storyId: string) {
+  const payload = await getPayload({ config })
+  const story = await payload
+    .findByID({
+      collection: 'stories',
+      id: storyId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching story' }
+    })
+    
+  return story
+}
 
 export async function addStoryAction(formData: FormData, members: any) {
   const payload = await getPayload({ config })
@@ -52,7 +66,7 @@ export async function addStoryAction(formData: FormData, members: any) {
     collection: 'stories',
     where: {
       title: {
-        equals: title,
+        like: title,
       },
     },
   })
@@ -140,10 +154,16 @@ export async function editStoryAction(formData: FormData, members: any) {
     collection: 'stories',
     where: {
       title: {
-        equals: title,
+        like: title,
       },
+      id: {
+        not_equals: storyId, // Exclude the current user from the check
+      }
     },
   })
+
+  console.log(title)
+  console.log(existingStory)
 
   if (existingStory.totalDocs > 0) {
     return { error: 'Story already exists' }
