@@ -29,6 +29,11 @@ export async function isAdminOrMethodologyManager(user: User, members: any[]) {
   )
 }
 
+export async function isMethodologyManager(user: User, members: any[]) {
+  const ourUser = members.find((member) => member.user.id === user.id)
+  return (await isMember(user, members)) && ourUser?.role === 'methodology_manager'
+}
+
 export async function canDeleteStory(user: User, story: any, members: any[]) {
   return (await isAdminOrMethodologyManager(user, members)) && (!story.sprint || !story.realized)
 }

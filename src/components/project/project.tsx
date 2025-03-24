@@ -51,8 +51,9 @@ export const ProjectDashboard: FC<{
   project: Project
   sprints: Sprint[]
   canAddStory: boolean
+  canAddSprint: boolean
   users: User[]
-}> = ({ project, sprints, canAddStory, users }) => {
+}> = ({ project, sprints, canAddStory, canAddSprint, users }) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
@@ -196,7 +197,7 @@ export const ProjectDashboard: FC<{
                 {sprints.map((sprint) => (
                   <TableRow key={sprint.id}>
                     <TableCell className="font-medium">
-                      <Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>
+                      {canAddSprint ? (<Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>) : (<>{sprint.name}</>)}
                     </TableCell>
                     <TableCell>{new Date(sprint.startDate).toLocaleString()}</TableCell>
                     <TableCell>{new Date(sprint.endDate).toLocaleString()}</TableCell>
@@ -204,7 +205,7 @@ export const ProjectDashboard: FC<{
                   </TableRow>
                 ))}
               </TableBody>
-              {canAddStory ? (
+              {canAddSprint ? (
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={2}>
