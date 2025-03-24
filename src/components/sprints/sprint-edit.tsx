@@ -135,11 +135,6 @@ function CreateSprint({
   )
 }
 
-function isSprintActive(sprint: Sprint) {
-  const currentDate = new Date()
-  return (new Date(sprint.startDate) < currentDate) && (new Date(sprint.endDate) > currentDate)
-}
-
 function EditSprint({
   className,
   editSprint,

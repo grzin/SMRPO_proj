@@ -39,7 +39,6 @@ export const Stories: CollectionConfig = {
     {
       name: 'timeEstimate',
       type: 'number',
-      required: false,
     },
     {
       name: 'project',

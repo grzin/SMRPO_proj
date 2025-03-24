@@ -57,6 +57,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   project.stories = stories.docs
 
   const canAddStory = await isAdminOrMethodologyManager(user, project.members ?? [])
+  const canUpdateTimeEstimate = await isMethodologyManager(user, project.members ?? [])
   const canAddSprint = await isMethodologyManager(user, project.members ?? [])
 
   return (
@@ -83,6 +84,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           project={project}
           sprints={sprints?.docs || []}
           canAddStory={canAddStory}
+          canUpdateTimeEstimate={canUpdateTimeEstimate}
           canAddSprint={canAddSprint}
           users={users.docs}
         />

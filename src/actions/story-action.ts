@@ -4,7 +4,8 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-actions'
 import { getUser } from '@/actions/login-action'
-import { Project, Story } from '@/payload-types'
+import { Project, Story, User } from '@/payload-types'
+import { redirect } from 'next/navigation'
 
 export async function getStoryById(storyId: string) {
   const payload = await getPayload({ config })
@@ -16,7 +17,7 @@ export async function getStoryById(storyId: string) {
     .catch(() => {
       return { error: 'Failed fetching story' }
     })
-    
+
   return story
 }
 
@@ -38,10 +39,9 @@ export async function addStoryAction(formData: FormData, members: any) {
     | 'could have'
     | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
-  const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const projectId = Number(formData.get('project')?.toString())
 
-  console.log(title, description, acceptanceTests, priority, businessValue, timeEstimate, projectId)
+  console.log(title, description, acceptanceTests, priority, businessValue, projectId)
   console.log('lel', members)
 
   if (!isAdminOrMethodologyManager(user, members)) {
@@ -85,11 +85,6 @@ export async function addStoryAction(formData: FormData, members: any) {
     return { error: 'Business value must be a number' }
   }
 
-  // Check time estimate
-  if (timeEstimate < 0) {
-    return { error: 'Time estimate must be a positive number' }
-  }
-
   try {
     const savedStory = await payload.create({
       collection: 'stories',
@@ -99,7 +94,6 @@ export async function addStoryAction(formData: FormData, members: any) {
         acceptanceTests: acceptanceTests,
         priority: priority,
         businessValue: businessValue,
-        timeEstimate: timeEstimate,
         project: projectId,
         sprint: 1,
       },
@@ -127,7 +121,6 @@ export async function editStoryAction(formData: FormData, members: any) {
     | 'could have'
     | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
-  const timeEstimate = Number(formData.get('timeEstimate')?.toString())
   const storyId = Number(formData.get('storyId')?.toString())
 
   console.log(title, description, acceptanceTests, priority, businessValue, storyId)
@@ -158,7 +151,7 @@ export async function editStoryAction(formData: FormData, members: any) {
       },
       id: {
         not_equals: storyId, // Exclude the current user from the check
-      }
+      },
     },
   })
 
@@ -179,11 +172,6 @@ export async function editStoryAction(formData: FormData, members: any) {
     return { error: 'Business value must be a number' }
   }
 
-  // Check time estimate
-  if (timeEstimate < 0) {
-    return { error: 'Time estimate must be a positive number' }
-  }
-
   try {
     const updatedStory = await payload.update({
       collection: 'stories',
@@ -194,7 +182,6 @@ export async function editStoryAction(formData: FormData, members: any) {
         acceptanceTests: acceptanceTests,
         priority: priority,
         businessValue: businessValue,
-        timeEstimate: timeEstimate,
       },
     })
     return { data: updatedStory }
@@ -236,4 +223,27 @@ export async function deleteStoryAction(storyId: any) {
     console.error('Failed to delete user story:', error)
     return { error: 'Failed to delete user story' }
   }
+}
+
+export async function editStoryTimeEstimateAction({}, formData: FormData) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const projectId = Number(formData.get('projectId')?.toString())
+  const response = {
+    storyId: Number(formData.get('storyId')?.toString()),
+    timeEstimate: Number(formData.get('timeEstimate')?.toString()),
+    message: '',
+  }
+
+  await payload.update({
+    collection: 'stories',
+    id: response.storyId,
+    data: {
+      timeEstimate: response.timeEstimate,
+    },
+  })
+
+  redirect(`/projects/${projectId}`)
+  return response
 }

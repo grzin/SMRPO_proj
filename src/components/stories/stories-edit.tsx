@@ -37,7 +37,6 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
     'must have' | 'should have' | 'could have' | "won't have this time"
   >('must have')
   const [businessValue, setBusinessValue] = useState<number>(0)
-  const [timeEstimate, setTimeEstimate] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
 
   console.log(story)
@@ -49,7 +48,6 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
     setAcceptanceTests(story.acceptanceTests?.map((test) => test.test) || [''])
     setPriority(story.priority || 'must have')
     setBusinessValue(story.businessValue || 0)
-    setTimeEstimate(story.timeEstimate || 0)
   }, [story])
 
   const handleAddAcceptanceTest = () => {
@@ -164,18 +162,6 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
                 type="number"
                 value={businessValue}
                 onChange={(e) => setBusinessValue(Number(e.target.value))}
-                required
-              />
-            </div>
-            <div className="grid gap-3">
-              <label htmlFor="timeEstimate">Time Estimate</label>
-              <Input
-                id="timeEstimate"
-                name="timeEstimate"
-                type="number"
-                value={timeEstimate}
-                onChange={(e) => setTimeEstimate(Number(e.target.value))}
-                min={0}
                 required
               />
             </div>

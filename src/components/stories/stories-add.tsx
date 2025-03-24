@@ -25,7 +25,6 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
     'must have' | 'should have' | 'could have' | "won't have this time"
   >('must have')
   const [businessValue, setBusinessValue] = useState<number>(0)
-  const [timeEstimate, setTimeEstimate] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
 
   const projectId = searchParams.get('projectId')
@@ -122,18 +121,6 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
                 type="number"
                 value={businessValue}
                 onChange={(e) => setBusinessValue(Number(e.target.value))}
-                required
-              />
-            </div>
-            <div className="grid gap-3">
-              <label htmlFor="timeEstimate">Time Estimate</label>
-              <Input
-                id="timeEstimate"
-                name="timeEstimate"
-                type="number"
-                value={timeEstimate}
-                onChange={(e) => setTimeEstimate(Number(e.target.value))}
-                min={0}
                 required
               />
             </div>
