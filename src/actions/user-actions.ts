@@ -9,6 +9,8 @@ import { Story, User } from '@/payload-types'
 const updateProfileSchema = z.object({
   username: z.string().min(3),
   email: z.union([z.string().email().optional(), z.literal('')]),
+  name: z.string().min(1),
+  surname: z.string().min(1),
 })
 
 const updatePasswordSchema = z.object({
@@ -44,6 +46,8 @@ export async function updateProfileAction(formData: FormData) {
   const validatedFields = updateProfileSchema.safeParse({
     username: formData.get('username'),
     email: formData.get('email')?.toString(),
+    name: formData.get('name'),
+    surname: formData.get('surname')
   })
 
   if (!validatedFields.success) {
@@ -76,9 +80,10 @@ export async function updateProfileAction(formData: FormData) {
       collection: 'users',
       id: user.id,
       data: {
-        name: validatedFields.data.username,
         username: validatedFields.data.username,
         email: validatedFields.data.email,
+        name: validatedFields.data.name,
+        surname: validatedFields.data.surname
       },
     })
     return { success: true }

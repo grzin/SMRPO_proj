@@ -48,8 +48,16 @@ export function ProfileSettings() {
             className="space-y-4"
           >
             <div className="grid gap-3">
-              <Label htmlFor="username">Name</Label>
+              <Label htmlFor="username">Username</Label>
               <Input id="username" name="username" defaultValue={user.username} required />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" name="name" defaultValue={user.name} required />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="username">Surname</Label>
+              <Input id="surname" name="surname" defaultValue={user.surname} required />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="email">Email</Label>

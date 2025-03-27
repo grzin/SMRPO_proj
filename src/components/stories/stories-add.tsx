@@ -8,6 +8,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addStoryAction } from '@/actions/story-action'
 import { Project, User } from '@/payload-types'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface StoryAddProps {
   project: Project
@@ -24,7 +31,7 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
   const [priority, setPriority] = useState<
     'must have' | 'should have' | 'could have' | "won't have this time"
   >('must have')
-  const [businessValue, setBusinessValue] = useState<number>(0)
+  const [businessValue, setBusinessValue] = useState<string>('1')
   const [error, setError] = useState<string | null>(null)
 
   const projectId = searchParams.get('projectId')
@@ -100,29 +107,32 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
             </div>
             <div className="grid gap-3">
               <label htmlFor="priority">Priority</label>
-              <select
-                id="priority"
-                name="priority"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as any)}
-                required
-              >
-                <option value="must have">Must Have</option>
-                <option value="should have">Should Have</option>
-                <option value="could have">Could Have</option>
-                <option value="won't have this time">Won&apos;t Have This Time</option>
-              </select>
+              <Select value={priority} onValueChange={(e) => setPriority(e as any)} name="priority">
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem key="1" value="must have">Must Have</SelectItem>
+                  <SelectItem key="2" value="should have">Should Have</SelectItem>
+                  <SelectItem key="3" value="could have">Could Have</SelectItem>
+                  <SelectItem key="4" value="won't have this time">Won&apos;t Have This Time</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-3">
               <label htmlFor="businessValue">Business Value</label>
-              <Input
-                id="businessValue"
-                name="businessValue"
-                type="number"
-                value={businessValue}
-                onChange={(e) => setBusinessValue(Number(e.target.value))}
-                required
-              />
+              <Select value={businessValue} onValueChange={setBusinessValue} name="businessValue">
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select business value" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[...Array(10)].map((_, index) => (
+                    <SelectItem key={index + 1} value={(index + 1).toString()}>
+                      {index + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit">Add User Story</Button>
           </form>

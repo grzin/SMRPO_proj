@@ -36,7 +36,7 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
   const [priority, setPriority] = useState<
     'must have' | 'should have' | 'could have' | "won't have this time"
   >('must have')
-  const [businessValue, setBusinessValue] = useState<number>(0)
+  const [businessValue, setBusinessValue] = useState<string>(story.businessValue.toString())
   const [error, setError] = useState<string | null>(null)
 
   console.log(story)
@@ -47,7 +47,7 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
     setDescription(story.description || '')
     setAcceptanceTests(story.acceptanceTests?.map((test) => test.test) || [''])
     setPriority(story.priority || 'must have')
-    setBusinessValue(story.businessValue || 0)
+    setBusinessValue(story.businessValue.toString() || '1')
   }, [story])
 
   const handleAddAcceptanceTest = () => {
@@ -141,29 +141,32 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
             </div>
             <div className="grid gap-3">
               <label htmlFor="priority">Priority</label>
-              <select
-                id="priority"
-                name="priority"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value as any)}
-                required
-              >
-                <option value="must have">Must Have</option>
-                <option value="should have">Should Have</option>
-                <option value="could have">Could Have</option>
-                <option value="won't have this time">Won&apos;t Have This Time</option>
-              </select>
+              <Select value={priority} onValueChange={(e) => setPriority(e as any)} name="priority">
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem key="1" value="must have">Must Have</SelectItem>
+                  <SelectItem key="2" value="should have">Should Have</SelectItem>
+                  <SelectItem key="3" value="could have">Could Have</SelectItem>
+                  <SelectItem key="4" value="won't have this time">Won&apos;t Have This Time</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-3">
               <label htmlFor="businessValue">Business Value</label>
-              <Input
-                id="businessValue"
-                name="businessValue"
-                type="number"
-                value={businessValue}
-                onChange={(e) => setBusinessValue(Number(e.target.value))}
-                required
-              />
+                <Select defaultValue={businessValue} onValueChange={setBusinessValue} name="businessValue">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue>{businessValue || "Select a value"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[...Array(10)].map((_, index) => (
+                      <SelectItem key={index + 1} value={(index + 1).toString()}>
+                        {index + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
             </div>
             <div className="flex space-x-4">
               <Button type="submit">Edit User Story</Button>
