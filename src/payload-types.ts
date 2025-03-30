@@ -162,6 +162,7 @@ export interface Project {
 export interface Story {
   id: number;
   title: string;
+  titleLowerCase: string;
   description: string;
   acceptanceTests: {
     test: string;
@@ -311,6 +312,7 @@ export interface SprintsSelect<T extends boolean = true> {
  */
 export interface StoriesSelect<T extends boolean = true> {
   title?: T;
+  titleLowerCase?: T;
   description?: T;
   acceptanceTests?:
     | T

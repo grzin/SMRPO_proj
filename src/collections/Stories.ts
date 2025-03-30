@@ -9,6 +9,11 @@ export const Stories: CollectionConfig = {
       required: true,
     },
     {
+      name: 'titleLowerCase',
+      type: 'text',
+      required: true,
+    },
+    {
       name: 'description',
       type: 'textarea',
       required: true,

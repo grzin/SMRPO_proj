@@ -5,6 +5,7 @@ import { z } from 'zod'
 import config from '@/payload.config'
 import { getUser } from '@/actions/login-action'
 import { Story, User } from '@/payload-types'
+import { duplicate } from 'node_modules/payload/dist/collections/operations/local/duplicate'
 
 const updateProfileSchema = z.object({
   username: z.string().min(3),
@@ -75,13 +76,30 @@ export async function updateProfileAction(formData: FormData) {
     return { error: 'Username already exists' }
   }
 
+  // Check for duplicate email
+  const duplicateEmail = await payload.find({
+    collection: 'users',
+    where: {
+      email: {
+        equals: validatedFields.data.email?.toLowerCase(),
+      },
+      id: {
+        not_equals: user.id, // Exclude the current user from the check
+      },
+    },
+  })
+
+  if (duplicateEmail.totalDocs > 0) {
+    return { error: 'Email already exists' }
+  }
+
   try {
     await payload.update({
       collection: 'users',
       id: user.id,
       data: {
         username: validatedFields.data.username,
-        email: validatedFields.data.email,
+        email: validatedFields.data.email?.toLowerCase(),
         name: validatedFields.data.name,
         surname: validatedFields.data.surname
       },

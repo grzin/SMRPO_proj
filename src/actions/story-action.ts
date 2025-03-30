@@ -65,8 +65,8 @@ export async function addStoryAction(formData: FormData, members: any) {
   const existingStory = await payload.find({
     collection: 'stories',
     where: {
-      title: {
-        like: title,
+      titleLowerCase: {
+        equals: title.toLowerCase(),
       },
     },
   })
@@ -90,6 +90,7 @@ export async function addStoryAction(formData: FormData, members: any) {
       collection: 'stories',
       data: {
         title: title,
+        titleLowerCase: title.toLowerCase(),
         description: description,
         acceptanceTests: acceptanceTests,
         priority: priority,
@@ -146,8 +147,8 @@ export async function editStoryAction(formData: FormData, members: any) {
   const existingStory = await payload.find({
     collection: 'stories',
     where: {
-      title: {
-        like: title,
+      titleLowerCase: {
+        equals: title?.toLowerCase(),
       },
       id: {
         not_equals: storyId, // Exclude the current user from the check
@@ -178,6 +179,7 @@ export async function editStoryAction(formData: FormData, members: any) {
       id: storyId,
       data: {
         title: title,
+        titleLowerCase: title?.toLowerCase(),
         description: description,
         acceptanceTests: acceptanceTests,
         priority: priority,
