@@ -13,10 +13,11 @@ import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
 import { FormError } from '../ui/form'
 
-export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTimeEstimate: boolean }> = ({
+export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTimeEstimate: boolean, canNotSeeTimeEstimate: boolean }> = ({
   project,
   canAddStory,
   canUpdateTimeEstimate,
+  canNotSeeTimeEstimate,
 }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
@@ -100,6 +101,54 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                                 defaultValue={story.id}
                                 hidden/>
                           <Label htmlFor="timeEstimate">Time estimate</Label>
+                          {canNotSeeTimeEstimate ? (<div>Hidden</div>) : (
+                            <>
+                              <Input
+                                name="timeEstimate"
+                                id="timeEstimate"
+                                type="number"
+                                placeholder="Enter time estimate value"
+                                defaultValue={story.timeEstimate || undefined}
+                                disabled={!canUpdateTimeEstimate}
+                                min={0}
+                              />
+                              <Button type="submit" className="mt-1" disabled={!canUpdateTimeEstimate || pending}>Update</Button>
+                            </>)
+                          }
+                          {state.message && <FormError>{state.message}</FormError>}
+                        </form>
+                      </div>
+                    </div>
+                  </li>
+                ) : (
+                  <li key={story.id}
+                      className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
+                  >
+                    <div className='col-span-2'>
+                      <h3 className="text-lg font-semibold">{story.title}</h3>
+                      <p>Description: {story.description}</p>
+                      <p className="text-sm text-gray-500">Priority: {story.priority}</p>
+                      <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      <ul>
+                        {story.acceptanceTests.map((testObj, index) => (
+                          <li key={index}>#{testObj.test}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="col-span-1">
+                      <div className="grid gap-3">
+                        <form action={formAction}>
+                          <Input name='projectId'
+                                id="projectId"
+                                type='number'
+                                defaultValue={project.id}
+                                hidden/>
+                          <Input name='storyId'
+                                id="storyId"
+                                type='number'
+                                defaultValue={story.id}
+                                hidden/>
+                          <Label htmlFor="timeEstimate">Time estimate</Label>
                           <Input
                             name="timeEstimate"
                             id="timeEstimate"
@@ -114,18 +163,6 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                         </form>
                       </div>
                     </div>
-                  </li>
-                ) : (
-                  <li key={story.id} className="border rounded p-4">
-                    <h3 className="text-lg font-semibold">{story.title}</h3>
-                    <p>Description: {story.description}</p>
-                    <p className="text-sm text-gray-500">Priority: {story.priority}</p>
-                    <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
-                    <ul>
-                      {story.acceptanceTests.map((testObj, index) => (
-                        <li key={index}>#{testObj.test}</li>
-                      ))}
-                    </ul>
                   </li>
                 ),
               )}

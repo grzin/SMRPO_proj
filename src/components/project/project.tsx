@@ -52,9 +52,10 @@ export const ProjectDashboard: FC<{
   sprints: Sprint[]
   canAddStory: boolean
   canUpdateTimeEstimate: boolean
+  canNotSeeTimeEstimate: boolean
   canAddSprint: boolean
   users: User[]
-}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canAddSprint, users }) => {
+}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users }) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
@@ -177,7 +178,7 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
-      <Stories project={project} canAddStory={canAddStory} canUpdateTimeEstimate={canUpdateTimeEstimate} />
+      <Stories project={project} canAddStory={canAddStory} canUpdateTimeEstimate={canUpdateTimeEstimate} canNotSeeTimeEstimate={canNotSeeTimeEstimate} />
       <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
         <Card className="col-span-2">
           <CardHeader>

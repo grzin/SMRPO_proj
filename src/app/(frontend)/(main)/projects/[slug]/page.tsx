@@ -13,7 +13,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
 import { redirect } from 'next/navigation'
 import { ProjectDashboard } from '@/components/project/project'
-import { isAdminOrMethodologyManager, isMethodologyManager } from '@/actions/user-actions'
+import { isAdminOrMethodologyManager, isMethodologyManager, isProductOwner } from '@/actions/user-actions'
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: projectId } = await params
@@ -58,6 +58,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const canAddStory = await isAdminOrMethodologyManager(user, project.members ?? [])
   const canUpdateTimeEstimate = await isMethodologyManager(user, project.members ?? [])
+  const canNotSeeTimeEstimate = await isProductOwner(user, project.members ?? [])
   const canAddSprint = await isMethodologyManager(user, project.members ?? [])
 
   return (
@@ -85,6 +86,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           sprints={sprints?.docs || []}
           canAddStory={canAddStory}
           canUpdateTimeEstimate={canUpdateTimeEstimate}
+          canNotSeeTimeEstimate={canNotSeeTimeEstimate}
           canAddSprint={canAddSprint}
           users={users.docs}
         />

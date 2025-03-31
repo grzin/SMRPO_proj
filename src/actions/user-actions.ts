@@ -37,6 +37,11 @@ export async function isMethodologyManager(user: User, members: any[]) {
   return (await isMember(user, members)) && ourUser?.role === 'methodology_manager'
 }
 
+export async function isProductOwner(user: User, members: any[]) {
+  const ourUser = members.find((member) => member.user.id === user.id)
+  return (await isMember(user, members)) && ourUser?.role === 'product_manager'
+}
+
 export async function canDeleteStory(user: User, story: any, members: any[]) {
   return (await isAdminOrMethodologyManager(user, members)) && (!story.sprint || !story.realized)
 }
@@ -48,7 +53,7 @@ export async function updateProfileAction(formData: FormData) {
     username: formData.get('username'),
     email: formData.get('email')?.toString(),
     name: formData.get('name'),
-    surname: formData.get('surname')
+    surname: formData.get('surname'),
   })
 
   if (!validatedFields.success) {
@@ -101,7 +106,7 @@ export async function updateProfileAction(formData: FormData) {
         username: validatedFields.data.username,
         email: validatedFields.data.email?.toLowerCase(),
         name: validatedFields.data.name,
-        surname: validatedFields.data.surname
+        surname: validatedFields.data.surname,
       },
     })
     return { success: true }
