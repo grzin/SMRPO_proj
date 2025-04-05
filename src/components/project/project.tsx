@@ -1,7 +1,7 @@
 'use client'
 
 import { Project, Sprint, User } from '@/payload-types'
-import { FC, useActionState, useState } from 'react'
+import { FC, useActionState, useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { useUser } from '@/contexts/user-context'
@@ -20,6 +20,10 @@ import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Edit } from 'lucide-react'
 import { addUserAction } from '@/actions/project-action'
+import SimpleMDE from 'react-simplemde-editor'
+import ReactMarkdown from 'react-markdown'
+import 'easymde/dist/easymde.min.css'
+
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -55,17 +59,31 @@ export const ProjectDashboard: FC<{
   canNotSeeTimeEstimate: boolean
   canAddSprint: boolean
   users: User[]
-}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users }) => {
+  documentationS: string
+}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users, documentationS }) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
   const [editDetails, setEditDetails] = useState(false)
   const [members, setMembers] = useState(project.members)
+  const [documentation, setDocumentation] = useState(documentationS || '')
+  const [isEditing, setIsEditing] = useState(false)
+  const editorRef = useRef<string | null>(null);
 
   const initialState = {
     message: '',
   }
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
+
+  const exportToMarkdown = () => {
+    const blob = new Blob(['documentation'], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${project.name}-documentation.md`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -221,6 +239,48 @@ export const ProjectDashboard: FC<{
               </TableFooter>
               ) : (<></>)}
             </Table>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
+        <Card className="col-span-2">
+          <CardHeader>
+            <CardTitle>Documentation</CardTitle>
+            <CardDescription>Project documentation</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+          {isEditing ? (
+              <SimpleMDE
+                value={documentation}
+                onChange={(value) => editorRef.current = value}
+                options={{
+                  spellChecker: false,
+                  placeholder: 'Write your project documentation here...',
+                }}
+              />
+            ) : (
+              <div className="prose">
+                <ReactMarkdown>{documentation}</ReactMarkdown>
+              </div>
+            )}
+            <div className="mt-4 flex justify-end gap-2">
+              <Button 
+                variant="default" 
+                onClick={() => {
+                  if (isEditing) {
+                    setDocumentation(editorRef.current || documentation)
+                  }
+                  setIsEditing(!isEditing)
+                }}
+              >
+                {isEditing ? 'Save' : 'Edit'}
+              </Button>
+              {!isEditing && (
+                <Button variant="default" onClick={exportToMarkdown}>
+                  Export to Markdown
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
