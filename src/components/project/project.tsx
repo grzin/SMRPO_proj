@@ -20,10 +20,11 @@ import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Edit } from 'lucide-react'
 import { addUserAction } from '@/actions/project-action'
-import SimpleMDE from 'react-simplemde-editor'
+// import SimpleMDE from 'react-simplemde-editor'
 import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import 'easymde/dist/easymde.min.css'
+import dynamic from 'next/dynamic';
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 
 
 const roleNames = {
@@ -244,7 +245,21 @@ export const ProjectDashboard: FC<{
         </Card>
       </div>
       <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-        <Card className="col-span-2">
+        <Card 
+          className="col-span-2"
+          onDragOver={(e) => e.preventDefault()} // Prevent default behavior to allow drop
+          onDrop={(e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const content = event.target?.result as string;
+                setDocumentation(content);
+              };
+              reader.readAsText(file);
+            }
+          }}>
           <CardHeader>
             <CardTitle>Documentation</CardTitle>
             <CardDescription>Project documentation</CardDescription>
@@ -261,7 +276,7 @@ export const ProjectDashboard: FC<{
               />
             ) : (
               <div className="prose">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{documentation}</ReactMarkdown>
+                <ReactMarkdown>{documentation}</ReactMarkdown>
               </div>
             )}
             <div className="mt-4 flex justify-end gap-2">
@@ -276,10 +291,35 @@ export const ProjectDashboard: FC<{
               >
                 {isEditing ? 'Save' : 'Edit'}
               </Button>
+              <input
+                type="file"
+                accept=".md"
+                id="import-documentation"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      const content = event.target?.result as string;
+                      setDocumentation(content);
+                    };
+                    reader.readAsText(file);
+                  }
+                }}
+              />
+              <Button
+                variant="default"
+                onClick={() => document.getElementById('import-documentation')?.click()}
+              >
+                Import Documentation
+              </Button>
               {!isEditing && (
-                <Button variant="default" onClick={exportToMarkdown}>
-                  Export to Markdown
-                </Button>
+                <>
+                  <Button variant="default" onClick={exportToMarkdown}>
+                    Export Documentation
+                  </Button>
+                </>
               )}
             </div>
           </CardContent>
