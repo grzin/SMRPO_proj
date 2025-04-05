@@ -1,4 +1,4 @@
-import { Sprint, User } from '@/payload-types'
+import { Sprint, User, TaskTime } from '@/payload-types'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
 import { getPayload, Payload } from 'payload'
@@ -11,6 +11,7 @@ export async function GET() {
   await createTestUsers(payload)
   await createProjects(payload)
   await createSprints(payload)
+  await createTaskTimes(payload)
 
   return NextResponse.json({ success: true })
 }
@@ -154,6 +155,58 @@ async function createSprints(payload: Payload) {
       .create({
         collection: 'sprints',
         data: sprints[i],
+      })
+      .catch((error) => {
+        // Gracefully fail, if the sprint already exists
+        console.error(error)
+      })
+  }
+}
+
+async function createTaskTimes(payload: Payload) {
+  const taskTimes: Omit<TaskTime, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>[] = [
+    {
+      user: 1,
+      task: 1,
+      start: '2025-04-05T08:02:00.000Z',
+      end: '2025-04-05T12:59:00.000Z',
+    },
+    {
+      user: 1,
+      task: 2,
+      start: '2025-04-21T00:00:00.000Z',
+      end: '2025-04-13T12:00:00.000Z',
+    },
+    {
+      user: 1,
+      task: 1,
+      start: '2025-04-03T09:00:00.000Z',
+      end: '2025-04-03T10:02:00.000Z',
+    },
+    {
+      user: 1,
+      task: 1,
+      start: '2025-04-03T11:00:00.000Z',
+      customHMS: '2h 32m 40s',
+    },
+    {
+      user: 1,
+      task: 1,
+      start: '2025-04-03T11:00:03.000Z',
+      customHMS: '- 1h 2m 0s',
+    },
+    {
+      user: 1,
+      task: 1,
+      start: '2025-04-05T14:10:00.000Z',
+    },
+  ]
+
+  for (let i = 0; i < taskTimes.length; i++) {
+    await payload
+      .create({
+        collection: 'taskTimes',
+        data: taskTimes[i],
       })
       .catch((error) => {
         // Gracefully fail, if the sprint already exists

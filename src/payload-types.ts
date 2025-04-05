@@ -70,6 +70,7 @@ export interface Config {
     projects: Project;
     sprints: Sprint;
     stories: Story;
+    taskTimes: TaskTime;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -80,6 +81,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     sprints: SprintsSelect<false> | SprintsSelect<true>;
     stories: StoriesSelect<false> | StoriesSelect<true>;
+    taskTimes: TaskTimesSelect<false> | TaskTimesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -192,6 +194,20 @@ export interface Sprint {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "taskTimes".
+ */
+export interface TaskTime {
+  id: number;
+  user: number | User;
+  task: number;
+  start: string;
+  end?: string | null;
+  customHMS?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -212,6 +228,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'stories';
         value: number | Story;
+      } | null)
+    | ({
+        relationTo: 'taskTimes';
+        value: number | TaskTime;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -325,6 +345,19 @@ export interface StoriesSelect<T extends boolean = true> {
   timeEstimate?: T;
   project?: T;
   sprint?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "taskTimes_select".
+ */
+export interface TaskTimesSelect<T extends boolean = true> {
+  user?: T;
+  task?: T;
+  start?: T;
+  end?: T;
+  customHMS?: T;
   updatedAt?: T;
   createdAt?: T;
 }
