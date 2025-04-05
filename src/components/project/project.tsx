@@ -1,7 +1,7 @@
 'use client'
 
 import { Project, Sprint, User } from '@/payload-types'
-import { FC, useActionState, useState } from 'react'
+import { FC, useActionState, useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { useUser } from '@/contexts/user-context'
@@ -18,8 +18,9 @@ import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Edit } from 'lucide-react'
 import { addUserAction } from '@/actions/project-action'
+import 'easymde/dist/easymde.min.css'
+import { Documentation } from '../documentation/documentation'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -61,11 +62,23 @@ export const ProjectDashboard: FC<{
   const [addMember, setAddMembers] = useState(false)
   const [editDetails, setEditDetails] = useState(false)
   const [members, setMembers] = useState(project.members)
+  const [isEditing, setIsEditing] = useState(false)
+  const editorRef = useRef<string | null>(null);
 
   const initialState = {
     message: '',
   }
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
+
+  const exportToMarkdown = () => {
+    const blob = new Blob([project.documentation || ''], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${project.name}-documentation.md`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -224,6 +237,7 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
+      <Documentation project={project}/>
     </div>
   )
 }

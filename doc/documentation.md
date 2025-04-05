@@ -99,3 +99,17 @@ Skrbnik metodologije lahko uporabniški zgodbi določi in spremeni oceno časovn
 
 Aplikacija pred shranjevanjem podatkov preveri ustrezne uporabniške pravice in pravilen vnos časovne ocene.
 V primeru napačnega vnosa je shranjevanje onemogočeno.
+
+## #21 - Vzdrževanje uporabniške dokumentacije
+
+Vsi uporabniki, ki lahko vidijo projekt lahko vidijo napisano dokumentacijo projekta.
+
+![img/21_pogled.png](img/21_pogled.png)
+
+Prav tako lahko dokumentacijo:
+- urejajo v enostavnem markdown urejevalniku,
+- uvozijo iz markdown datoteke z končnico .md
+- izvozijo in prenesejo na lokalni računalnik.
+
+![img/21_urejanje.png](img/21_urejanje.png)
+

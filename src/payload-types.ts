@@ -154,6 +154,7 @@ export interface Project {
       }[]
     | null;
   stories?: (number | Story)[] | null;
+  documentation?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -310,6 +311,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   stories?: T;
+  documentation?: T;
   updatedAt?: T;
   createdAt?: T;
 }

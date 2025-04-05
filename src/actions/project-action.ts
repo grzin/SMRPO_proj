@@ -158,3 +158,20 @@ export async function addUserAction({}, formData: FormData) {
 
   redirect(`/projects/${validatedFields.data.project}`)
 }
+
+export async function updateDocumentationAction(projectId: number, docs: string) {
+  const payload = await getPayload({ config })
+
+  try {
+    await payload.update({
+      collection: 'projects',
+      id: projectId,
+      data: {
+        documentation: docs,
+      },
+    })
+    return { success: true }
+  } catch (_errors) {
+    return { error: 'Failed to update profile' }
+  }
+}
