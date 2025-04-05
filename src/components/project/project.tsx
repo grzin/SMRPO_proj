@@ -22,6 +22,7 @@ import { Edit } from 'lucide-react'
 import { addUserAction } from '@/actions/project-action'
 import SimpleMDE from 'react-simplemde-editor'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import 'easymde/dist/easymde.min.css'
 
 
@@ -76,7 +77,7 @@ export const ProjectDashboard: FC<{
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
 
   const exportToMarkdown = () => {
-    const blob = new Blob(['documentation'], { type: 'text/markdown' })
+    const blob = new Blob([documentation], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -260,7 +261,7 @@ export const ProjectDashboard: FC<{
               />
             ) : (
               <div className="prose">
-                <ReactMarkdown>{documentation}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{documentation}</ReactMarkdown>
               </div>
             )}
             <div className="mt-4 flex justify-end gap-2">
