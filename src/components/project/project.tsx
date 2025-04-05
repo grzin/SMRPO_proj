@@ -18,14 +18,9 @@ import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { Edit } from 'lucide-react'
-import { addUserAction, updateDocumentationAction } from '@/actions/project-action'
-// import SimpleMDE from 'react-simplemde-editor'
-import ReactMarkdown from 'react-markdown'
+import { addUserAction } from '@/actions/project-action'
 import 'easymde/dist/easymde.min.css'
-import dynamic from 'next/dynamic';
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false });
-
+import { Documentation } from '../documentation/documentation'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -242,91 +237,7 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
-      <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
-        <Card 
-          className="col-span-2"
-          onDragOver={(e) => e.preventDefault()} // Prevent default behavior to allow drop
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (event) => {
-                const content = event.target?.result as string;
-                editorRef.current = content;
-                setIsEditing(true);
-              };
-              reader.readAsText(file);
-            }
-          }}>
-          <CardHeader>
-            <CardTitle>Documentation</CardTitle>
-            <CardDescription>Project documentation</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-grow">
-          {isEditing ? (
-              <SimpleMDE
-                value={editorRef.current || ''}
-                onChange={(value) => editorRef.current = value}
-                options={{
-                  spellChecker: false,
-                  placeholder: 'Write your project documentation here...',
-                }}
-              />
-            ) : (
-              <div className="prose">
-                <ReactMarkdown>{project.documentation || ''}</ReactMarkdown>
-              </div>
-            )}
-            <div className="mt-4 flex justify-end gap-2">
-              <Button 
-                variant="default" 
-                onClick={() => {
-                  if (isEditing) {
-                    project.documentation = editorRef.current || ''; // Save the content from the editor
-                    updateDocumentationAction(project.id, project.documentation)
-                  }
-                  setIsEditing(!isEditing)
-                }}
-              >
-                {isEditing ? 'Save' : 'Edit'}
-              </Button>
-              {isEditing ? <Button variant="destructive" onClick={() => setIsEditing(false)}>Cancel</Button> : <></>}
-              <input
-                type="file"
-                accept=".md"
-                id="import-documentation"
-                style={{ display: 'none' }}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                      const content = event.target?.result as string;
-                      editorRef.current = content;
-                      setIsEditing(true);
-                    };
-                    reader.readAsText(file);
-                  }
-                }}
-              />
-              <Button
-                variant="default"
-                onClick={() => document.getElementById('import-documentation')?.click()}
-              >
-                Import Documentation
-              </Button>
-              {!isEditing && (
-                <>
-                  <Button variant="default" onClick={exportToMarkdown}>
-                    Export Documentation
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <Documentation project={project}/>
     </div>
   )
 }
