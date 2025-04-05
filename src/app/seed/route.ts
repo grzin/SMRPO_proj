@@ -2,6 +2,7 @@ import { Sprint, User } from '@/payload-types'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
 import { getPayload, Payload } from 'payload'
+import { defaultDocumentation } from './default_documentation'
 
 // Seed the databse with test data
 export async function GET() {
@@ -109,6 +110,7 @@ async function createProjects(payload: Payload) {
               role: 'developer',
             },
           ],
+          documentation: defaultDocumentation,
         },
       })
       .catch((error) => {

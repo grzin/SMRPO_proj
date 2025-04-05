@@ -75,6 +75,8 @@ export const Documentation: FC<{
                 if (isEditing) {
                   project.documentation = editorRef.current || '';
                   updateDocumentationAction(project.id, project.documentation)
+                } else {
+                  editorRef.current = project.documentation || '';
                 }
                 setIsEditing(!isEditing)
               }}
