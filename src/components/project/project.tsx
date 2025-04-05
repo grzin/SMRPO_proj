@@ -19,7 +19,7 @@ import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Edit } from 'lucide-react'
-import { addUserAction } from '@/actions/project-action'
+import { addUserAction, updateDocumentationAction } from '@/actions/project-action'
 // import SimpleMDE from 'react-simplemde-editor'
 import ReactMarkdown from 'react-markdown'
 import 'easymde/dist/easymde.min.css'
@@ -61,14 +61,12 @@ export const ProjectDashboard: FC<{
   canNotSeeTimeEstimate: boolean
   canAddSprint: boolean
   users: User[]
-  documentationS: string
-}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users, documentationS }) => {
+}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users }) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
   const [editDetails, setEditDetails] = useState(false)
   const [members, setMembers] = useState(project.members)
-  const [documentation, setDocumentation] = useState(documentationS || '')
   const [isEditing, setIsEditing] = useState(false)
   const editorRef = useRef<string | null>(null);
 
@@ -78,7 +76,7 @@ export const ProjectDashboard: FC<{
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
 
   const exportToMarkdown = () => {
-    const blob = new Blob([documentation], { type: 'text/markdown' })
+    const blob = new Blob([project.documentation || ''], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -255,7 +253,8 @@ export const ProjectDashboard: FC<{
               const reader = new FileReader();
               reader.onload = (event) => {
                 const content = event.target?.result as string;
-                setDocumentation(content);
+                editorRef.current = content;
+                setIsEditing(true);
               };
               reader.readAsText(file);
             }
@@ -267,7 +266,7 @@ export const ProjectDashboard: FC<{
           <CardContent className="flex-grow">
           {isEditing ? (
               <SimpleMDE
-                value={documentation}
+                value={editorRef.current || ''}
                 onChange={(value) => editorRef.current = value}
                 options={{
                   spellChecker: false,
@@ -276,7 +275,7 @@ export const ProjectDashboard: FC<{
               />
             ) : (
               <div className="prose">
-                <ReactMarkdown>{documentation}</ReactMarkdown>
+                <ReactMarkdown>{project.documentation || ''}</ReactMarkdown>
               </div>
             )}
             <div className="mt-4 flex justify-end gap-2">
@@ -284,13 +283,15 @@ export const ProjectDashboard: FC<{
                 variant="default" 
                 onClick={() => {
                   if (isEditing) {
-                    setDocumentation(editorRef.current || documentation)
+                    project.documentation = editorRef.current || ''; // Save the content from the editor
+                    updateDocumentationAction(project.id, project.documentation)
                   }
                   setIsEditing(!isEditing)
                 }}
               >
                 {isEditing ? 'Save' : 'Edit'}
               </Button>
+              {isEditing ? <Button variant="destructive" onClick={() => setIsEditing(false)}>Cancel</Button> : <></>}
               <input
                 type="file"
                 accept=".md"
@@ -302,7 +303,8 @@ export const ProjectDashboard: FC<{
                     const reader = new FileReader();
                     reader.onload = (event) => {
                       const content = event.target?.result as string;
-                      setDocumentation(content);
+                      editorRef.current = content;
+                      setIsEditing(true);
                     };
                     reader.readAsText(file);
                   }

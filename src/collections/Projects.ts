@@ -53,5 +53,12 @@ export const Projects: CollectionConfig = {
       relationTo: 'stories',
       hasMany: true,
     },
+    {
+      name: 'documentation',
+      type: 'text',
+      required: false,
+      unique: false,
+      index: false,
+    }
   ],
 }
