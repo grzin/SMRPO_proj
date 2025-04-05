@@ -83,7 +83,7 @@ export const Documentation: FC<{
             >
             {isEditing ? 'Save' : 'Edit'}
             </Button>
-            {isEditing ? <Button variant="destructive" onClick={() => setIsEditing(false)}>Cancel</Button> : <></>}
+            {isEditing ? <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => setIsEditing(false)}>Cancel</Button> : <></>}
             <input
               type="file"
               accept=".md"
