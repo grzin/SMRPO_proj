@@ -117,6 +117,34 @@ async function createProjects(payload: Payload) {
       .catch((error) => {
         console.error(error)
       })
+
+    await payload
+      .create({
+        collection: 'wall-messages',
+        data: {
+          project: i,
+          message: 'This is a test message',
+          username: 'Name',
+          createdAt: new Date().toISOString(),
+        },
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+
+      await payload
+      .create({
+        collection: 'wall-messages',
+        data: {
+          project: i,
+          message: 'This is a test message also',
+          username: 'another',
+          createdAt: new Date().toISOString(),
+        },
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 }
 

@@ -71,6 +71,7 @@ export interface Config {
     sprints: Sprint;
     stories: Story;
     taskTimes: TaskTime;
+    'wall-messages': WallMessage;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -82,6 +83,7 @@ export interface Config {
     sprints: SprintsSelect<false> | SprintsSelect<true>;
     stories: StoriesSelect<false> | StoriesSelect<true>;
     taskTimes: TaskTimesSelect<false> | TaskTimesSelect<true>;
+    'wall-messages': WallMessagesSelect<false> | WallMessagesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -209,6 +211,18 @@ export interface TaskTime {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wall-messages".
+ */
+export interface WallMessage {
+  id: number;
+  message: string;
+  username: string;
+  createdAt: string;
+  project: number | Project;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -233,6 +247,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'taskTimes';
         value: number | TaskTime;
+      } | null)
+    | ({
+        relationTo: 'wall-messages';
+        value: number | WallMessage;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -362,6 +380,17 @@ export interface TaskTimesSelect<T extends boolean = true> {
   customHMS?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wall-messages_select".
+ */
+export interface WallMessagesSelect<T extends boolean = true> {
+  message?: T;
+  username?: T;
+  createdAt?: T;
+  project?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

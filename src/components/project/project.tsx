@@ -1,6 +1,6 @@
 'use client'
 
-import { Project, Sprint, User } from '@/payload-types'
+import { Project, Sprint, User, WallMessage } from '@/payload-types'
 import { FC, useActionState, useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { addUserAction } from '@/actions/project-action'
 import 'easymde/dist/easymde.min.css'
 import { Documentation } from '../documentation/documentation'
+import { Wall } from '../wall/wall'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -56,7 +57,8 @@ export const ProjectDashboard: FC<{
   canNotSeeTimeEstimate: boolean
   canAddSprint: boolean
   users: User[]
-}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users }) => {
+  wallMessages: WallMessage[]
+}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users, wallMessages }) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
@@ -69,16 +71,6 @@ export const ProjectDashboard: FC<{
     message: '',
   }
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
-
-  const exportToMarkdown = () => {
-    const blob = new Blob([project.documentation || ''], { type: 'text/markdown' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${project.name}-documentation.md`
-    link.click()
-    URL.revokeObjectURL(url)
-  }
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -237,6 +229,7 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
+      <Wall wallMessages={wallMessages} projectId={project.id}/>
       <Documentation project={project}/>
     </div>
   )

@@ -11,6 +11,7 @@ import { Projects } from './collections/Projects'
 import { Sprints } from './collections/Sprints'
 import { Stories } from './collections/Stories'
 import { TaskTimes } from './collections/TaskTimes'
+import { WallMessages } from './collections/WallMessages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,7 +23,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Projects, Sprints, Stories, TaskTimes],
+  collections: [Users, Projects, Sprints, Stories, TaskTimes, WallMessages],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

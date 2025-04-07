@@ -45,6 +45,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     })
     .catch(() => ({ docs: [] }))
 
+  const wallMessages = await payload
+    .find({
+      collection: 'wall-messages',
+      where: {
+        project: { equals: projectId },
+      },
+      sort: 'createdAt',
+    })
+    .catch(() => null)
+
   if (project === null) {
     redirect('/projects')
   }
@@ -89,6 +99,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           canNotSeeTimeEstimate={canNotSeeTimeEstimate}
           canAddSprint={canAddSprint}
           users={users.docs}
+          wallMessages={wallMessages?.docs || []}
         />
       </div>
     </>

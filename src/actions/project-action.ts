@@ -6,7 +6,7 @@ import config from '@/payload.config'
 import { z } from 'zod'
 import { idValidator, projectName } from './validators'
 import { redirect } from 'next/navigation'
-import { Project, User } from '@/payload-types'
+import { Project, User, WallMessage } from '@/payload-types'
 import { projectRoleValidator } from './project-validators'
 
 const createProjectSchema = z.object({
@@ -173,5 +173,32 @@ export async function updateDocumentationAction(projectId: number, docs: string)
     return { success: true }
   } catch (_errors) {
     return { error: 'Failed to update profile' }
+  }
+}
+
+export async function postWallMessageAction(projectId: number, message: string, username: string) {
+  const payload = await getPayload({ config })
+  const response = {
+    message: '',
+  }
+
+  let isError = false
+  await payload
+    .create({
+      collection: 'wall-messages',
+      data: {
+        message: message,
+        username: username,
+        createdAt: new Date().toLocaleString(),
+        project: projectId,
+      },
+    })
+    .catch(() => {
+      isError = true
+    })
+
+  if (isError) {
+    response.message = 'Failed to post wall message'
+    return response
   }
 }
