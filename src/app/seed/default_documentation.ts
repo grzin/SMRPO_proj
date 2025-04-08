@@ -22,7 +22,7 @@ materno mentis ore, nemorumque **huius** cruorem vidi. Nec erat murmure ut nexu
 quod quorum ne illinc teloque, sed huc *cursus et legit* debuit ferro longis;
 **in**.
 
-[Rockwell B-1 Lancer](https://upload.wikimedia.org/wikipedia/commons/7/7c/North_American_XB-70_in_Flight_EC68-2131.jpg)
+![Rockwell B-1 Lancer](https://upload.wikimedia.org/wikipedia/commons/7/7c/North_American_XB-70_in_Flight_EC68-2131.jpg)
 
 ## Natura fertur votis adopertaque
 

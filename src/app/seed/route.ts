@@ -125,7 +125,7 @@ async function createProjects(payload: Payload) {
           project: i,
           message: 'This is a test message',
           username: 'Name',
-          createdAt: new Date().toISOString(),
+          createdAt: new Date().toLocaleString(),
         },
       })
       .catch((error) => {
@@ -139,7 +139,7 @@ async function createProjects(payload: Payload) {
           project: i,
           message: 'This is a test message also',
           username: 'another',
-          createdAt: new Date().toISOString(),
+          createdAt: new Date().toLocaleString(),
         },
       })
       .catch((error) => {

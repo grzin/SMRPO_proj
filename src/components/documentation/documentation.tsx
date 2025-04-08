@@ -49,11 +49,11 @@ export const Documentation: FC<{
           }
         }}
       >
-      <CardHeader>
-        <CardTitle>Documentation</CardTitle>
-        <CardDescription>Project documentation</CardDescription>
+        <CardHeader>
+          <CardTitle>Documentation</CardTitle>
+          <CardDescription>Project documentation</CardDescription>
         </CardHeader>
-          <CardContent className="flex-grow">
+        <CardContent className="flex-grow">
           {isEditing ? (
             <SimpleMDE
               value={editorRef.current || ''}
@@ -64,7 +64,7 @@ export const Documentation: FC<{
               }}
             />
           ) : (
-            <div className="prose">
+            <div className="prose max-w-none">
               <ReactMarkdown>{project.documentation || ''}</ReactMarkdown>
             </div>
           )}
