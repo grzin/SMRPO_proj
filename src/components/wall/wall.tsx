@@ -14,6 +14,7 @@ export const Wall: FC<{
  }> = ({ wallMessages, projectId }) => {
   const { user } = useUser()
   const [newMessage, setNewMessage] = useState('')
+  const scrollableRef = useRef<HTMLDivElement>(null) // Ref for the scrollable container
 
   const handlePostMessage = () => {
     console.log('Posting message:', newMessage)
@@ -32,7 +33,14 @@ export const Wall: FC<{
       updatedAt: new Date().toLocaleString(),
     }
 
-    postWallMessageAction(projectId, newMessage, user?.name || '')
+    postWallMessageAction(projectId, newMessage, user?.name || '').then((response) => {
+      if (scrollableRef.current) {
+        scrollableRef.current.scrollTo({
+          top: scrollableRef.current.scrollHeight,
+          behavior: 'smooth',
+        })
+      }
+    });
     if(!wallMessages) {
       wallMessages = []
     }
@@ -48,7 +56,10 @@ export const Wall: FC<{
           <CardDescription>Wall where users can post comments</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-          <div className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto">
+          <div
+            ref={scrollableRef}
+            className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto"
+          >
             <div className="flex flex-col gap-2">
               {wallMessages?.map((message) => (
                 <div key={message.id} className="p-2 border-b">
