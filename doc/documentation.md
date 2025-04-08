@@ -102,7 +102,7 @@ V primeru napačnega vnosa je shranjevanje onemogočeno.
 
 ## #21 - Vzdrževanje uporabniške dokumentacije
 
-Vsi uporabniki, ki lahko vidijo projekt lahko vidijo napisano dokumentacijo projekta.
+Vsi uporabniki, ki lahko vidijo projekt, lahko vidijo napisano dokumentacijo projekta.
 
 ![img/21_pogled.png](img/21_pogled.png)
 
@@ -112,4 +112,12 @@ Prav tako lahko dokumentacijo:
 - izvozijo in prenesejo na lokalni računalnik.
 
 ![img/21_urejanje.png](img/21_urejanje.png)
+
+## #22 - Objavljanje na projektnem zidu
+
+Vsi uporabniki na projektu lahko vidijo projektni zid in nanj pripenjajo nove objave.
+
+![img/22.png](img/22.png)
+
+
 
