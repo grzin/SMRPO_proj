@@ -18,10 +18,12 @@ import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { addUserAction, deleteMember } from '@/actions/project-action'
+import { addUserAction, deleteMember, editProjectDetails } from '@/actions/project-action'
 import 'easymde/dist/easymde.min.css'
 import { Documentation } from '../documentation/documentation'
 import { Wall } from '../wall/wall'
+import { Input } from '../ui/input'
+import { useRouter } from 'next/navigation'
 
 const roleNames = {
   methodology_manager: 'Methodology Manager',
@@ -68,13 +70,17 @@ export const ProjectDashboard: FC<{
   users,
   wallMessages,
 }) => {
+  const router = useRouter()
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
   const [editDetails, setEditDetails] = useState(false)
   const [members, setMembers] = useState(project.members)
-  const [isEditing, setIsEditing] = useState<string | null>(null)
   const editorRef = useRef<string | null>(null)
+
+  const [isEditing, setIsEditing] = useState<string | null>(null)
+  const [editName, setEditName] = useState<string>(project.name)
+  const [editError, setEditError] = useState<string>('')
 
   const initialState = {
     message: '',
@@ -93,21 +99,65 @@ export const ProjectDashboard: FC<{
             <CardTitle>Project details</CardTitle>
             <CardDescription>Project details</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow">
-            <Table>
-              <TableBody>
-                <TableRow key="name">
-                  <TableCell className="text-lg font-semibold">Name:</TableCell>
-                  <TableCell>
-                    <h3 className="text-lg font-semibold">{project.name}</h3>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+          <CardContent className="">
+            <div className="flex flex-row gap-4 items-center justify-between">
+              <div className="flex flex-row gap-4">
+                <p className="text-xl font-semibold">Name:</p>
+                {!editDetails && <h3 className="text-xl">{project.name}</h3>}
+                {editDetails && (
+                  <Input
+                    className="w-[300px]"
+                    value={editName}
+                    onChange={(e) => {
+                      setEditName(e.target.value)
+                    }}
+                  />
+                )}
+              </div>
+              {!editDetails && (
+                <Button
+                  onClick={() => {
+                    setEditDetails(true)
+                    setEditError('')
+                    setEditName(project.name)
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
+              {editDetails && (
+                <div className="flex flex-row gap-4">
+                  <Button
+                    onClick={async () => {
+                      const result = await editProjectDetails(project.id, editName)
+                      console.log(result)
+                      if (result.isError) {
+                        setEditError(result.error)
+                        setEditDetails(true)
+                      } else {
+                        setEditError('')
+                        setEditDetails(false)
+                        router.refresh()
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditDetails(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
+            <p style={{ color: 'red' }} className="text-lg">
+              {editError}
+            </p>
           </CardContent>
-          <CardFooter>
-            <Button>Edit details</Button>
-          </CardFooter>
         </Card>
         <Card className="col-span-2">
           <CardHeader>

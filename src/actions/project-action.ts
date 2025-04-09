@@ -127,6 +127,8 @@ export async function addUserAction({}, formData: FormData) {
     return response
   }
 
+  console.log('validated')
+
   const project = await payload
     .findByID({ collection: 'projects', id: validatedFields.data.project })
     .catch(() => null)
@@ -240,4 +242,54 @@ export async function postWallMessageAction(projectId: number, message: string, 
     response.message = 'Failed to post wall message'
     return response
   }
+}
+
+export async function editProjectDetails(projectId: number, name: string): Promise<Result> {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const validatedFields = createProjectSchema.safeParse({
+    name: name ?? '',
+  })
+
+  if (!validatedFields.success) {
+    return {
+      isError: true,
+      error: validatedFields.error.errors[0].message,
+    }
+  }
+
+  let isError = false
+  await payload
+    .update({
+      collection: 'projects',
+      data: {
+        name: name,
+      },
+
+      where: {
+        id: { equals: projectId },
+      },
+      overrideAccess: false,
+      user: user,
+    })
+    .catch(() => {
+      isError = true
+    })
+
+  if (isError) {
+    return {
+      isError: true,
+      error: 'Error renaming project',
+    }
+  }
+  return {
+    isError: false,
+    error: '',
+  }
+}
+
+type Result = {
+  isError: boolean
+  error: string
 }

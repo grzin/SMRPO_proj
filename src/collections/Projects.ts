@@ -59,6 +59,6 @@ export const Projects: CollectionConfig = {
       required: false,
       unique: false,
       index: false,
-    }
+    },
   ],
 }

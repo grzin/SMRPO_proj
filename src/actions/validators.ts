@@ -51,7 +51,18 @@ export const emailValidator = z
 
 export const roleValidator = z.enum(['admin', 'user']).default('user')
 
-export const idValidator = z.preprocess((val) => Number(val), z.number())
+export const idValidator = z
+  .string()
+  .refine((val) => val !== null && val !== '', {
+    message: 'Value cannot be null or empty',
+  })
+  .transform((val) => {
+    const parsed = Number(val)
+    return parsed
+  })
+  .refine((val) => !isNaN(val), {
+    message: 'Value must be a valid number',
+  })
 
 export const sprintNameValidator = z
   .string({

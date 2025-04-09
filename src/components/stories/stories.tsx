@@ -13,12 +13,12 @@ import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
 import { FormError } from '../ui/form'
 
-export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTimeEstimate: boolean, canNotSeeTimeEstimate: boolean }> = ({
-  project,
-  canAddStory,
-  canUpdateTimeEstimate,
-  canNotSeeTimeEstimate,
-}) => {
+export const Stories: FC<{
+  project: Project
+  canAddStory: boolean
+  canUpdateTimeEstimate: boolean
+  canNotSeeTimeEstimate: boolean
+}> = ({ project, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
   const user = useUser().user
@@ -54,7 +54,7 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
   //console.log(user)
   //console.log(project.stories)
 
-  console.log(project.members)
+  //console.log(project.members)
 
   return (
     <div className="rounded-xl md:min-h-min">
@@ -75,7 +75,10 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                     key={story.id}
                     className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
                   >
-                    <Link href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`} className='cursor-pointer col-span-2'>
+                    <Link
+                      href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`}
+                      className="cursor-pointer col-span-2"
+                    >
                       <h3 className="text-lg font-semibold">{story.title}</h3>
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
@@ -90,18 +93,24 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                     <div className="col-span-1">
                       <div className="grid gap-3">
                         <form action={formAction}>
-                          <Input name='projectId'
-                                id="projectId"
-                                type='number'
-                                defaultValue={project.id}
-                                hidden/>
-                          <Input name='storyId'
-                                id="storyId"
-                                type='number'
-                                defaultValue={story.id}
-                                hidden/>
+                          <Input
+                            name="projectId"
+                            id="projectId"
+                            type="number"
+                            defaultValue={project.id}
+                            hidden
+                          />
+                          <Input
+                            name="storyId"
+                            id="storyId"
+                            type="number"
+                            defaultValue={story.id}
+                            hidden
+                          />
                           <Label htmlFor="timeEstimate">Time estimate</Label>
-                          {canNotSeeTimeEstimate ? (<div>Hidden</div>) : (
+                          {canNotSeeTimeEstimate ? (
+                            <div>Hidden</div>
+                          ) : (
                             <>
                               <Input
                                 name="timeEstimate"
@@ -112,19 +121,26 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                                 disabled={!canUpdateTimeEstimate}
                                 min={0}
                               />
-                              <Button type="submit" className="mt-1" disabled={!canUpdateTimeEstimate || pending}>Update</Button>
-                            </>)
-                          }
+                              <Button
+                                type="submit"
+                                className="mt-1"
+                                disabled={!canUpdateTimeEstimate || pending}
+                              >
+                                Update
+                              </Button>
+                            </>
+                          )}
                           {state.message && <FormError>{state.message}</FormError>}
                         </form>
                       </div>
                     </div>
                   </li>
                 ) : (
-                  <li key={story.id}
-                      className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
+                  <li
+                    key={story.id}
+                    className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
                   >
-                    <div className='col-span-2'>
+                    <div className="col-span-2">
                       <h3 className="text-lg font-semibold">{story.title}</h3>
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
@@ -138,16 +154,20 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                     <div className="col-span-1">
                       <div className="grid gap-3">
                         <form action={formAction}>
-                          <Input name='projectId'
-                                id="projectId"
-                                type='number'
-                                defaultValue={project.id}
-                                hidden/>
-                          <Input name='storyId'
-                                id="storyId"
-                                type='number'
-                                defaultValue={story.id}
-                                hidden/>
+                          <Input
+                            name="projectId"
+                            id="projectId"
+                            type="number"
+                            defaultValue={project.id}
+                            hidden
+                          />
+                          <Input
+                            name="storyId"
+                            id="storyId"
+                            type="number"
+                            defaultValue={story.id}
+                            hidden
+                          />
                           <Label htmlFor="timeEstimate">Time estimate</Label>
                           <Input
                             name="timeEstimate"
@@ -158,7 +178,13 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                             disabled={!canUpdateTimeEstimate}
                             min={0}
                           />
-                          <Button type="submit" className="mt-1" disabled={!canUpdateTimeEstimate || pending}>Update</Button>
+                          <Button
+                            type="submit"
+                            className="mt-1"
+                            disabled={!canUpdateTimeEstimate || pending}
+                          >
+                            Update
+                          </Button>
                           {state.message && <FormError>{state.message}</FormError>}
                         </form>
                       </div>
