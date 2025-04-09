@@ -12,6 +12,8 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
 import { FormError } from '../ui/form'
+import AddTaskDialog from '../tasks/tasks-add-dialog'
+import { Switch } from "@/components/ui/switch"
 
 export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTimeEstimate: boolean }> = ({
   project,
@@ -112,6 +114,25 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                           <Button type="submit" className="mt-1" disabled={!canUpdateTimeEstimate || pending}>Update</Button>
                           {state.message && <FormError>{state.message}</FormError>}
                         </form>
+                      </div>
+                    </div>
+                    <div className="col-span-3">
+                      <h1><b>Tasks</b></h1>
+                      <div>
+                        <AddTaskDialog project={project} story={story} />
+                      </div>
+                      <div>
+                      {story.tasks?.map((task) =>
+                        <Card key={task.id}>
+                          <CardContent>
+                            <div className="grid grid-cols-5 gap-4">
+                              <div>{task.description}</div>
+                              <div>{task.estimate}</div>
+                              <Switch checked={task.realized} />
+                            </div>
+                          </CardContent>
+                        </Card>
+                        )}
                       </div>
                     </div>
                   </li>

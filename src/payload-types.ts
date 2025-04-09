@@ -173,6 +173,15 @@ export interface Story {
   timeEstimate?: number | null;
   project: number | Project;
   sprint: number | Sprint;
+  tasks?:
+    | {
+        description: string;
+        estimate: number;
+        status: 'accepted' | 'pending' | 'unassigned';
+        realized: boolean;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -325,6 +334,15 @@ export interface StoriesSelect<T extends boolean = true> {
   timeEstimate?: T;
   project?: T;
   sprint?: T;
+  tasks?:
+    | T
+    | {
+        description?: T;
+        estimate?: T;
+        status?: T;
+        realized?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
