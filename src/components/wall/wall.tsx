@@ -17,7 +17,6 @@ export const Wall: FC<{
   const scrollableRef = useRef<HTMLDivElement>(null) // Ref for the scrollable container
 
   const handlePostMessage = () => {
-    console.log('Posting message:', newMessage)
     if (!newMessage.trim()) return
 
     const newId = wallMessages && wallMessages.length > 0
@@ -56,6 +55,7 @@ export const Wall: FC<{
           <CardDescription>Wall where users can post comments</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
+          {wallMessages && wallMessages.length > 0 && (
           <div
             ref={scrollableRef}
             className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto"
@@ -71,7 +71,8 @@ export const Wall: FC<{
                 </div>
               ))}
             </div>
-          </div>            
+          </div>
+          )}         
           <div className="flex gap-2 mt-4">
             <Input
               value={newMessage}
