@@ -2,7 +2,7 @@
 
 import { Project, Sprint, User, WallMessage } from '@/payload-types'
 import { FC, useActionState, useState, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { useUser } from '@/contexts/user-context'
 import {
@@ -18,7 +18,7 @@ import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { addUserAction } from '@/actions/project-action'
+import { addUserAction, deleteMember } from '@/actions/project-action'
 import 'easymde/dist/easymde.min.css'
 import { Documentation } from '../documentation/documentation'
 import { Wall } from '../wall/wall'
@@ -58,19 +58,32 @@ export const ProjectDashboard: FC<{
   canAddSprint: boolean
   users: User[]
   wallMessages: WallMessage[]
-}> = ({ project, sprints, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, canAddSprint, users, wallMessages }) => {
+}> = ({
+  project,
+  sprints,
+  canAddStory,
+  canUpdateTimeEstimate,
+  canNotSeeTimeEstimate,
+  canAddSprint,
+  users,
+  wallMessages,
+}) => {
   const { user } = useUser()
   const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
   const [editDetails, setEditDetails] = useState(false)
   const [members, setMembers] = useState(project.members)
-  const [isEditing, setIsEditing] = useState(false)
-  const editorRef = useRef<string | null>(null);
+  const [isEditing, setIsEditing] = useState<string | null>(null)
+  const editorRef = useRef<string | null>(null)
 
   const initialState = {
     message: '',
   }
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
+
+  const usersToSelect = users.filter(
+    (user) => !members?.some((x) => (x.user as User).id === user.id),
+  )
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -92,13 +105,16 @@ export const ProjectDashboard: FC<{
               </TableBody>
             </Table>
           </CardContent>
+          <CardFooter>
+            <Button>Edit details</Button>
+          </CardFooter>
         </Card>
         <Card className="col-span-2">
           <CardHeader>
             <CardTitle>Members</CardTitle>
             <CardDescription>Project members and roles</CardDescription>
           </CardHeader>
-          <CardContent className="flex-grow">
+          <CardContent className="flex-grow max-h-[500px] overflow-auto">
             <form action={formAction}>
               <input type="hidden" name="project" value={project.id} />
               <Table>
@@ -106,7 +122,7 @@ export const ProjectDashboard: FC<{
                   <TableRow>
                     <TableHead className="w-[200px]">User</TableHead>
                     <TableHead className="text-right">Role</TableHead>
-                    {editMembers && <TableHead className="text-right">Action</TableHead>}
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -118,6 +134,22 @@ export const ProjectDashboard: FC<{
                             <UserAvatar user={member.user as User} />
                           </TableCell>
                           <TableCell className="text-right">{roleNames[member.role]}</TableCell>
+                          <TableCell className="flex justify-end">
+                            {!addMember && (
+                              <div className="flex gap-2">
+                                <Button>Edit</Button>
+                                <Button
+                                  onClick={async () => {
+                                    const response = await deleteMember(project.id, member.id ?? '')
+                                    console.log(response)
+                                  }}
+                                  variant="destructive"
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            )}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </>
@@ -152,9 +184,9 @@ export const ProjectDashboard: FC<{
                     {addMember && (
                       <>
                         <TableCell>
-                          <UserSelect users={users} />
+                          <UserSelect users={usersToSelect} />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="flex justify-end">
                           <Select defaultValue="developer" name="role">
                             <SelectTrigger className="w-[180px]">
                               <SelectValue placeholder="Project" />
@@ -168,13 +200,22 @@ export const ProjectDashboard: FC<{
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="flex flex-row gap-2">
-                          <Button variant="default" type="submit">
-                            Add
-                          </Button>
-                          <Button variant="destructive">Cancel</Button>
+                        <TableCell>
+                          <div className="flex flex-row gap-2 justify-end">
+                            <Button variant="default" type="submit">
+                              Add
+                            </Button>
+                            <Button variant="destructive" onClick={() => setAddMembers(false)}>
+                              Cancel
+                            </Button>
+                          </div>
                         </TableCell>
                       </>
+                    )}
+                    {!addMember && (
+                      <TableCell colSpan={3}>
+                        <Button onClick={() => setAddMembers(true)}>Add member</Button>
+                      </TableCell>
                     )}
                   </TableRow>
                 </TableFooter>
@@ -183,7 +224,12 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
-      <Stories project={project} canAddStory={canAddStory} canUpdateTimeEstimate={canUpdateTimeEstimate} canNotSeeTimeEstimate={canNotSeeTimeEstimate} />
+      <Stories
+        project={project}
+        canAddStory={canAddStory}
+        canUpdateTimeEstimate={canUpdateTimeEstimate}
+        canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+      />
       <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
         <Card className="col-span-2">
           <CardHeader>
@@ -204,7 +250,11 @@ export const ProjectDashboard: FC<{
                 {sprints.map((sprint) => (
                   <TableRow key={sprint.id}>
                     <TableCell className="font-medium">
-                      {canAddSprint ? (<Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>) : (<>{sprint.name}</>)}
+                      {canAddSprint ? (
+                        <Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>
+                      ) : (
+                        <>{sprint.name}</>
+                      )}
                     </TableCell>
                     <TableCell>{new Date(sprint.startDate).toLocaleString()}</TableCell>
                     <TableCell>{new Date(sprint.endDate).toLocaleString()}</TableCell>
@@ -213,24 +263,24 @@ export const ProjectDashboard: FC<{
                 ))}
               </TableBody>
               {canAddSprint ? (
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={4}>
-                    <Link href={`/sprints/-1?projectId=${project.id}`}>
-                      <Button variant="default">
-                      Add sprint
-                      </Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-              ) : (<></>)}
+                <TableFooter>
+                  <TableRow>
+                    <TableCell colSpan={4}>
+                      <Link href={`/sprints/-1?projectId=${project.id}`}>
+                        <Button variant="default">Add sprint</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              ) : (
+                <></>
+              )}
             </Table>
           </CardContent>
         </Card>
       </div>
-      <Wall wallMessages={wallMessages} projectId={project.id}/>
-      <Documentation project={project}/>
+      <Wall wallMessages={wallMessages} projectId={project.id} />
+      <Documentation project={project} />
     </div>
   )
 }

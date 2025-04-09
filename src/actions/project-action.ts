@@ -112,14 +112,18 @@ export async function addUserAction({}, formData: FormData) {
     message: '',
   }
 
+  console.log(formData.get('projectId'))
+  console.log(formData.get('user'))
+  console.log(formData.get('role')?.toString())
+
   const validatedFields = addMemberScehma.safeParse({
-    projectId: formData.get('projectId') ?? '',
+    project: formData.get('project') ?? '',
     user: formData.get('user') ?? '',
     role: formData.get('role')?.toString() ?? '',
   })
 
   if (!validatedFields.success) {
-    response.message = 'Failed to add team member'
+    response.message = JSON.stringify(validatedFields.error.errors)
     return response
   }
 
@@ -157,6 +161,41 @@ export async function addUserAction({}, formData: FormData) {
   }
 
   redirect(`/projects/${validatedFields.data.project}`)
+}
+
+export async function deleteMember(projectId: number, memberId: string) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const project = await payload
+    .findByID({ collection: 'projects', id: projectId })
+    .catch(() => null)
+
+  const newMembers = (project?.members ?? []).filter((x) => x.id !== memberId)
+
+  let isError = false
+  await payload
+    .update({
+      collection: 'projects',
+      data: {
+        members: newMembers,
+      },
+
+      where: {
+        id: { equals: projectId },
+      },
+      overrideAccess: false,
+      user: user,
+    })
+    .catch(() => {
+      isError = true
+    })
+
+  if (isError) {
+    return 'Error removing member'
+  }
+
+  redirect(`/projects/${projectId}`)
 }
 
 export async function updateDocumentationAction(projectId: number, docs: string) {

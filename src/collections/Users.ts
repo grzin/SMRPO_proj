@@ -24,7 +24,6 @@ const userRoles = [
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    read: userAccess,
     update: userAccess,
     create: isAdmin,
     delete: isAdmin,
