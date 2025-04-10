@@ -1,8 +1,8 @@
 'use client'
 
 import { Project, Sprint, User, WallMessage } from '@/payload-types'
-import { FC, useActionState, useState, useRef } from 'react'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { FC, useActionState, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { useUser } from '@/contexts/user-context'
 import {
@@ -122,7 +122,9 @@ export const ProjectDashboard: FC<{
   // Members
   const [editingMember, setEditingMember] = useState<null | string>(null)
   const [selectedUser, setSelectedUser] = useState<null | string>(null)
-  const [selectedRole, setSelectedRole] = useState<string>('developer')
+  const [selectedRole, setSelectedRole] = useState<
+    'methodology_manager' | 'product_manager' | 'developer'
+  >('developer')
 
   // Details
   const [editDetails, setEditDetails] = useState(false)
@@ -251,7 +253,15 @@ export const ProjectDashboard: FC<{
                             {editingMember == member.id && (
                               <RoleSelect
                                 value={selectedRole}
-                                onValueChange={(newVal) => setSelectedRole(newVal)}
+                                onValueChange={(newVal) => {
+                                  if (
+                                    newVal == 'methodology_manager' ||
+                                    newVal == 'product_manager' ||
+                                    newVal == 'developer'
+                                  ) {
+                                    setSelectedRole(newVal)
+                                  }
+                                }}
                               />
                             )}
                           </div>
@@ -275,10 +285,7 @@ export const ProjectDashboard: FC<{
                                   </Button>
                                   <Button
                                     onClick={async (e) => {
-                                      const response = await deleteMember(
-                                        project.id,
-                                        member.id ?? '',
-                                      )
+                                      await deleteMember(project.id, member.id ?? '')
                                       e.preventDefault()
                                       return false
                                     }}
@@ -339,7 +346,7 @@ export const ProjectDashboard: FC<{
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-row gap-2 justify-end">
-                            <Button variant="default" type="submit">
+                            <Button variant="default" type="submit" disabled={pending}>
                               Add
                             </Button>
                             <Button variant="destructive" onClick={() => setAddMembers(false)}>

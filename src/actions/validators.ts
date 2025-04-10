@@ -113,4 +113,7 @@ export const sprintVelocityValidator = z.number().min(1, 'Enter valid (positive)
 
 export const sprintProjectValidator = z.number().min(0, 'Invalid project id')
 
-export const projectName = z.string().min(1, { message: 'Project name is required' })
+export const projectName = z
+  .string()
+  .min(1, { message: 'Project name is required' })
+  .transform((x) => x.trim())

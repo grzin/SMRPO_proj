@@ -33,27 +33,27 @@ export async function isAdminOrMethodologyManager(user: User, project: Project) 
   }
 }
 
-export async function createProjectAction({}, formData: FormData) {
+export async function createProjectAction(name: string) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
   const response = {
-    name: formData.get('name')?.toString() ?? '',
-    message: '',
+    name: name,
+    message: 'test',
   }
 
   const validatedFields = createProjectSchema.safeParse({
-    name: formData.get('name')?.toString() ?? '',
+    name: name,
   })
 
   if (!validatedFields.success) {
-    response.message = 'Failed to create project'
+    response.message = validatedFields.error.errors[0].message
     return response
   }
 
   const duplicateProject = await payload.find({
     collection: 'projects',
-    where: { name: { equals: validatedFields.data.name } },
+    where: { key: { equals: validatedFields.data.name } },
   })
 
   if (duplicateProject.totalDocs > 0) {
@@ -309,7 +309,7 @@ export async function editUserAction(
   projectId: number,
   memberId: string,
   userId: number,
-  role: string,
+  role: 'methodology_manager' | 'product_manager' | 'developer',
 ) {
   const payload = await getPayload({ config })
   const user = await getUser()
