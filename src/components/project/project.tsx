@@ -100,7 +100,7 @@ export const ProjectDashboard: FC<{
             <CardDescription>Project details</CardDescription>
           </CardHeader>
           <CardContent className="">
-            <div className="flex flex-row gap-4 items-center justify-between">
+            <div className="flex flex-row gap-4 items-center justify-between flex-wrap">
               <div className="flex flex-row gap-4">
                 <p className="text-xl font-semibold">Name:</p>
                 {!editDetails && <h3 className="text-xl">{project.name}</h3>}
@@ -129,8 +129,14 @@ export const ProjectDashboard: FC<{
                 <div className="flex flex-row gap-4">
                   <Button
                     onClick={async () => {
+                      if (editName === project.name) {
+                        setEditError('')
+                        setEditDetails(false)
+                        return
+                      }
+
                       const result = await editProjectDetails(project.id, editName)
-                      console.log(result)
+
                       if (result.isError) {
                         setEditError(result.error)
                         setEditDetails(true)

@@ -259,6 +259,19 @@ export async function editProjectDetails(projectId: number, name: string): Promi
     }
   }
 
+  const exisitngProject = await payload
+    .find({ collection: 'projects', where: { key: { equals: name.toLowerCase() } } })
+    .catch(() => null)
+
+  console.log(JSON.stringify(exisitngProject))
+
+  if ((exisitngProject?.totalDocs ?? 0) > 0) {
+    return {
+      isError: true,
+      error: 'Project with the same name already exists',
+    }
+  }
+
   let isError = false
   await payload
     .update({

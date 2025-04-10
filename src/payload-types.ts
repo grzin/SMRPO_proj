@@ -148,6 +148,7 @@ export interface User {
 export interface Project {
   id: number;
   name: string;
+  key?: string | null;
   members?:
     | {
         user: number | User;
@@ -321,6 +322,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
+  key?: T;
   members?:
     | T
     | {

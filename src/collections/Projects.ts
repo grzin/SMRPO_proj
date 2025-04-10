@@ -30,6 +30,22 @@ export const Projects: CollectionConfig = {
       index: false,
     },
     {
+      name: 'key',
+      type: 'text',
+      hooks: {
+        afterRead: [
+          ({ data }) => {
+            return data?.name?.toLowerCase() ?? ''
+          },
+        ],
+        beforeChange: [
+          ({ data }) => {
+            return data?.name?.toLowerCase() ?? ''
+          },
+        ],
+      },
+    },
+    {
       name: 'members',
       type: 'array',
       fields: [
