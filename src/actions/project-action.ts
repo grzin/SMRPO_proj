@@ -263,8 +263,6 @@ export async function editProjectDetails(projectId: number, name: string): Promi
     .find({ collection: 'projects', where: { key: { equals: name.toLowerCase() } } })
     .catch(() => null)
 
-  console.log(JSON.stringify(exisitngProject))
-
   if ((exisitngProject?.totalDocs ?? 0) > 0) {
     return {
       isError: true,
@@ -305,4 +303,59 @@ export async function editProjectDetails(projectId: number, name: string): Promi
 type Result = {
   isError: boolean
   error: string
+}
+
+export async function editUserAction(
+  projectId: number,
+  memberId: string,
+  userId: number,
+  role: string,
+) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const response = {
+    message: '',
+  }
+
+  const project = await payload
+    .findByID({ collection: 'projects', id: projectId })
+    .catch(() => null)
+
+  const newMembers = (project?.members ?? []).map((x) => {
+    if (x.id == memberId) {
+      return {
+        user: userId,
+        role: role,
+      }
+    }
+    return x
+  })
+
+  console.log(JSON.stringify(newMembers))
+
+  let isError = false
+  await payload
+    .update({
+      collection: 'projects',
+      data: {
+        members: newMembers,
+      },
+
+      where: {
+        id: { equals: projectId },
+      },
+      overrideAccess: false,
+      user: user,
+    })
+    .catch(() => {
+      isError = true
+    })
+
+  if (isError) {
+    response.message = 'Failed to add new member'
+    return response
+  }
+
+  return 'OK'
 }

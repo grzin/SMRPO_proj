@@ -18,7 +18,12 @@ import { UserAvatar } from '../ui/avatar'
 import { Stories } from '../stories/stories'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { addUserAction, deleteMember, editProjectDetails } from '@/actions/project-action'
+import {
+  addUserAction,
+  deleteMember,
+  editProjectDetails,
+  editUserAction,
+} from '@/actions/project-action'
 import 'easymde/dist/easymde.min.css'
 import { Documentation } from '../documentation/documentation'
 import { Wall } from '../wall/wall'
@@ -31,21 +36,47 @@ const roleNames = {
   developer: 'Developer',
 }
 
-export const UserSelect: FC<{ users: User[]; defaultValue?: string }> = ({
-  users,
-  defaultValue,
-}) => {
+export const UserSelect: FC<{
+  users: User[]
+  currentUser?: User
+  defaultValue?: string
+  value?: string
+  onValueChange?: (value: string) => void
+}> = ({ users, defaultValue, currentUser, value, onValueChange }) => {
+  let selections = users
+  if (currentUser != undefined && !users.some((x) => x.id == currentUser.id)) {
+    selections = [currentUser, ...users]
+  }
   return (
-    <Select defaultValue={defaultValue} name="user">
+    <Select defaultValue={defaultValue} value={value} onValueChange={onValueChange} name="user">
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Select user" />
       </SelectTrigger>
       <SelectContent>
-        {users.map((user) => (
+        {selections.map((user) => (
           <SelectItem key={user.id} value={user.id.toString()}>
             <UserAvatar user={user} />
           </SelectItem>
         ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+export const RoleSelect: FC<{
+  defaultValue?: string
+  value?: string
+  onValueChange?: (value: string) => void
+}> = ({ defaultValue = 'developer', value, onValueChange }) => {
+  return (
+    <Select defaultValue={defaultValue} value={value} onValueChange={onValueChange} name="role">
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Project" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="methodology_manager">Methodology Manager</SelectItem>
+        <SelectItem value="product_manager">Product Manager</SelectItem>
+        <SelectItem value="developer">Developer</SelectItem>
       </SelectContent>
     </Select>
   )
@@ -71,14 +102,16 @@ export const ProjectDashboard: FC<{
   wallMessages,
 }) => {
   const router = useRouter()
-  const { user } = useUser()
-  const [editMembers, setEditMembers] = useState<null | number>(null)
   const [addMember, setAddMembers] = useState(false)
-  const [editDetails, setEditDetails] = useState(false)
-  const [members, setMembers] = useState(project.members)
-  const editorRef = useRef<string | null>(null)
+  const { user } = useUser()
 
-  const [isEditing, setIsEditing] = useState<string | null>(null)
+  // Members
+  const [editingMember, setEditingMember] = useState<null | string>(null)
+  const [selectedUser, setSelectedUser] = useState<null | string>(null)
+  const [selectedRole, setSelectedRole] = useState<string>('developer')
+
+  // Details
+  const [editDetails, setEditDetails] = useState(false)
   const [editName, setEditName] = useState<string>(project.name)
   const [editError, setEditError] = useState<string>('')
 
@@ -88,7 +121,7 @@ export const ProjectDashboard: FC<{
   const [state, formAction, pending] = useActionState(addUserAction, initialState)
 
   const usersToSelect = users.filter(
-    (user) => !members?.some((x) => (x.user as User).id === user.id),
+    (user) => !project.members?.some((x) => (x.user as User).id === user.id),
   )
 
   return (
@@ -182,58 +215,96 @@ export const ProjectDashboard: FC<{
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {!editMembers && (
-                    <>
-                      {project?.members?.map((member) => (
-                        <TableRow key={member.id}>
-                          <TableCell className="font-medium">
-                            <UserAvatar user={member.user as User} />
-                          </TableCell>
-                          <TableCell className="text-right">{roleNames[member.role]}</TableCell>
-                          <TableCell className="flex justify-end">
-                            {!addMember && (
-                              <div className="flex gap-2">
-                                <Button>Edit</Button>
+                  {project?.members?.map((member) => {
+                    return (
+                      <TableRow key={member.id}>
+                        <TableCell className="font-medium">
+                          {editingMember != member.id && <UserAvatar user={member.user as User} />}
+                          {editingMember == member.id && (
+                            <UserSelect
+                              users={usersToSelect}
+                              currentUser={member.user as User}
+                              value={selectedUser?.toString()}
+                              onValueChange={(newVal) => setSelectedUser(newVal)}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-end">
+                            {editingMember != member.id && <p>{roleNames[member.role]}</p>}
+                            {editingMember == member.id && (
+                              <RoleSelect
+                                value={selectedRole}
+                                onValueChange={(newVal) => setSelectedRole(newVal)}
+                              />
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="flex justify-end">
+                          <div className="flex gap-2">
+                            {editingMember != member.id && user?.id != (member.user as User).id && (
+                              <>
                                 <Button
-                                  onClick={async () => {
+                                  onClick={(e) => {
+                                    setEditingMember(member.id ?? null)
+                                    setSelectedUser((member?.user as User).id.toString())
+                                    setSelectedRole(member.role)
+                                    e.preventDefault()
+                                    return false
+                                  }}
+                                >
+                                  Edit
+                                </Button>
+                                <Button
+                                  onClick={async (e) => {
                                     const response = await deleteMember(project.id, member.id ?? '')
-                                    console.log(response)
+                                    e.preventDefault()
+                                    return false
                                   }}
                                   variant="destructive"
                                 >
                                   Delete
                                 </Button>
-                              </div>
+                              </>
                             )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </>
-                  )}
-                  {editMembers && (
-                    <>
-                      {members?.map((member) => (
-                        <TableRow key={member.id}>
-                          <TableCell className="font-medium">
-                            <UserAvatar user={member.user as User} />
-                          </TableCell>
-                          <Select defaultValue={member.role} name="project_id">
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Project" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="methodology_manager">
-                                Methodology Manager
-                              </SelectItem>
-                              <SelectItem value="product_manager">Product Manager</SelectItem>
-                              <SelectItem value="developer">Developer</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <TableCell className="text-right">{roleNames[member.role]}</TableCell>
-                        </TableRow>
-                      ))}
-                    </>
-                  )}
+                            {editingMember == member.id && (
+                              <>
+                                <Button
+                                  onClick={async (e) => {
+                                    const response = await editUserAction(
+                                      project.id,
+                                      member.id ?? '',
+                                      parseInt(selectedUser ?? ''),
+                                      selectedRole,
+                                    )
+                                    if (response == 'OK') {
+                                      router.refresh()
+                                    }
+                                    e.preventDefault()
+                                    return false
+                                  }}
+                                  type="button"
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  onClick={async (e) => {
+                                    setEditingMember(null)
+                                    e.preventDefault()
+                                    return false
+                                  }}
+                                  variant="secondary"
+                                  type="button"
+                                >
+                                  Cancel
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
                 <TableFooter>
                   <TableRow>
@@ -243,18 +314,7 @@ export const ProjectDashboard: FC<{
                           <UserSelect users={usersToSelect} />
                         </TableCell>
                         <TableCell className="flex justify-end">
-                          <Select defaultValue="developer" name="role">
-                            <SelectTrigger className="w-[180px]">
-                              <SelectValue placeholder="Project" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="methodology_manager">
-                                Methodology Manager
-                              </SelectItem>
-                              <SelectItem value="product_manager">Product Manager</SelectItem>
-                              <SelectItem value="developer">Developer</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <RoleSelect />
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-row gap-2 justify-end">

@@ -151,15 +151,15 @@ async function createProjects(payload: Payload) {
           name: names[i].name,
           members: [
             {
-              user: 1,
+              user: i + 1,
               role: 'methodology_manager',
             },
             {
-              user: 2,
+              user: i + 2,
               role: 'product_manager',
             },
             {
-              user: 3,
+              user: i + 3,
               role: 'developer',
             },
           ],
