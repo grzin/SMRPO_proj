@@ -31,8 +31,8 @@ import { Input } from '../ui/input'
 import { useRouter } from 'next/navigation'
 
 const roleNames = {
-  methodology_manager: 'Methodology Manager',
-  product_manager: 'Product Manager',
+  methodology_manager: 'Scrum master',
+  product_manager: 'Product owner',
   developer: 'Developer',
 }
 

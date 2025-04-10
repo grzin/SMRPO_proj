@@ -16,11 +16,17 @@ Uporabnik z administratorskimi pravicami ima dostop do zavihka `Users`, kjer se 
 
 Vsak uporabnik ima dostop do zavihka `Projects`, kjer se prikaže tabela projektov. Uporabnik z administratorskimi pravicami ima dostop do vseh projektov, ostali uporabniki pa do projektov, kjer so navedeni kot člani.
 
-S klikom na `Create project` lahko uporabnik ustvari nov projekt, na katerem ima vlogo `Methodology manager`.
+S klikom na `Create project` lahko uporabnik ustvari nov projekt, na katerem ima vlogo `Scrum master`.
 
 ![img/4-1.png](img/4-1.png)
 
 ## #5 - Vzdrževanje projekta
+
+Na strani projekta ima pravico urejanja podatkov administrator in uporabnik z vlogo na projektu `Scrum master`.
+
+V oknu `Product details` je izpisano ime projekta. S klikom an `Edit` lahko uporabnik spremeni naziv projekta. Nov naziv ne sme biti prazen ali že uporabljen.
+
+S klikom na `Add member` se pojavi obrazec za dodajanje novega člana projekta, s klikom na `Edit` pa se ureja obstoječega. Možno je izbrati uporabnika in vlogo.
 
 ![img/5.png](img/5.png)
 
