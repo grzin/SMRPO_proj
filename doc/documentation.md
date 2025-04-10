@@ -12,6 +12,18 @@ Uporabnik z administratorskimi pravicami ima dostop do zavihka `Users`, kjer se 
 
 ![img/2.png](img/2.png)
 
+## #4 - Dodajanje projekta
+
+Vsak uporabnik ima dostop do zavihka `Projects`, kjer se prikaže tabela projektov. Uporabnik z administratorskimi pravicami ima dostop do vseh projektov, ostali uporabniki pa do projektov, kjer so navedeni kot člani.
+
+S klikom na `Create project` lahko uporabnik ustvari nov projekt, na katerem ima vlogo `Methodology manager`.
+
+![img/4-1.png](img/4-1.png)
+
+## #5 - Vzdrževanje projekta
+
+![img/5.png](img/5.png)
+
 ## #30 - Prijava v sistem
 
 Uporabnik si lahko ustvari nov uporabniški račun s klikom na `Register`. Izbrati si mora unikatno uporabniško ime, izpolniti podatke o imenu, priimku, e-pošti in dvakrat vpisati izbrano geslo. Geslo mora biti dolgo vsaj 12 znakov.
@@ -107,6 +119,7 @@ Vsi uporabniki, ki lahko vidijo projekt, lahko vidijo napisano dokumentacijo pro
 ![img/21_pogled.png](img/21_pogled.png)
 
 Prav tako lahko dokumentacijo:
+
 - urejajo v enostavnem markdown urejevalniku,
 - uvozijo iz markdown datoteke z končnico .md
 - izvozijo in prenesejo na lokalni računalnik.
@@ -118,6 +131,3 @@ Prav tako lahko dokumentacijo:
 Vsi uporabniki na projektu lahko vidijo projektni zid in nanj pripenjajo nove objave.
 
 ![img/22.png](img/22.png)
-
-
-
