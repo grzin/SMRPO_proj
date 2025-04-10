@@ -36,6 +36,20 @@ const roleNames = {
   developer: 'Developer',
 }
 
+function isAdminOrMethodologyManager(user: User | null, project: Project) {
+  if (user?.role === 'admin') {
+    return true
+  }
+
+  if (
+    project?.members?.find(
+      (member) => (member.user as User).id === user?.id && member.role === 'methodology_manager',
+    )
+  ) {
+    return true
+  }
+}
+
 export const UserSelect: FC<{
   users: User[]
   currentUser?: User
@@ -124,6 +138,8 @@ export const ProjectDashboard: FC<{
     (user) => !project.members?.some((x) => (x.user as User).id === user.id),
   )
 
+  const isMethodologyManager = isAdminOrMethodologyManager(user, project)
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
@@ -147,7 +163,7 @@ export const ProjectDashboard: FC<{
                   />
                 )}
               </div>
-              {!editDetails && (
+              {isMethodologyManager && !editDetails && (
                 <Button
                   onClick={() => {
                     setEditDetails(true)
@@ -242,32 +258,37 @@ export const ProjectDashboard: FC<{
                         </TableCell>
                         <TableCell className="flex justify-end">
                           <div className="flex gap-2">
-                            {editingMember != member.id && user?.id != (member.user as User).id && (
-                              <>
-                                <Button
-                                  onClick={(e) => {
-                                    setEditingMember(member.id ?? null)
-                                    setSelectedUser((member?.user as User).id.toString())
-                                    setSelectedRole(member.role)
-                                    e.preventDefault()
-                                    return false
-                                  }}
-                                >
-                                  Edit
-                                </Button>
-                                <Button
-                                  onClick={async (e) => {
-                                    const response = await deleteMember(project.id, member.id ?? '')
-                                    e.preventDefault()
-                                    return false
-                                  }}
-                                  variant="destructive"
-                                >
-                                  Delete
-                                </Button>
-                              </>
-                            )}
-                            {editingMember == member.id && (
+                            {isMethodologyManager &&
+                              editingMember != member.id &&
+                              user?.id != (member.user as User).id && (
+                                <>
+                                  <Button
+                                    onClick={(e) => {
+                                      setEditingMember(member.id ?? null)
+                                      setSelectedUser((member?.user as User).id.toString())
+                                      setSelectedRole(member.role)
+                                      e.preventDefault()
+                                      return false
+                                    }}
+                                  >
+                                    Edit
+                                  </Button>
+                                  <Button
+                                    onClick={async (e) => {
+                                      const response = await deleteMember(
+                                        project.id,
+                                        member.id ?? '',
+                                      )
+                                      e.preventDefault()
+                                      return false
+                                    }}
+                                    variant="destructive"
+                                  >
+                                    Delete
+                                  </Button>
+                                </>
+                              )}
+                            {isMethodologyManager && editingMember == member.id && (
                               <>
                                 <Button
                                   onClick={async (e) => {
@@ -328,7 +349,7 @@ export const ProjectDashboard: FC<{
                         </TableCell>
                       </>
                     )}
-                    {!addMember && (
+                    {isMethodologyManager && !addMember && (
                       <TableCell colSpan={3}>
                         <Button onClick={() => setAddMembers(true)}>Add member</Button>
                       </TableCell>
