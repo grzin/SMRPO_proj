@@ -17,14 +17,66 @@ export async function GET() {
   return NextResponse.json({ success: true })
 }
 
+// Funkcije za pridobivanje slovenskih imen in priimkov
+function getIme(index: number) {
+  const imenaM = ['Luka', 'Marko', 'Janez', 'Matej', 'Andrej']
+  const imenaZ = ['Maja', 'Nina', 'Ana', 'Mojca', 'Barbara']
+
+  return index % 2 === 0
+    ? imenaM[Math.floor(index / 2) % imenaM.length]
+    : imenaZ[Math.floor(index / 2) % imenaZ.length]
+}
+
+function getPriimek(index: number) {
+  const priimki = [
+    'Novak',
+    'Kovačič',
+    'Horvat',
+    'Kranjc',
+    'Zupančič',
+    'Košir',
+    'Potočnik',
+    'Vidmar',
+    'Krajnc',
+    'Golob',
+  ]
+
+  return priimki[index % priimki.length]
+}
+
+function getUsername(index: number) {
+  // Kreiraj uporabniško ime iz imena in priimka
+  const ime = getIme(index).toLowerCase()
+  const priimek = getPriimek(index).toLowerCase()
+
+  // Različne variante uporabniških imen
+  const variants = [
+    `${ime}.${priimek}`,
+    `${ime}${priimek[0]}`,
+    `${ime[0]}${priimek}`,
+    `${priimek}${ime[0]}`,
+    `${ime}123`,
+  ]
+
+  return variants[index % variants.length]
+}
+
+function generateEmail(index: number) {
+  const ime = getIme(index).toLowerCase()
+  const priimek = getPriimek(index).toLowerCase()
+  const domains = ['gmail.com', 'siol.net', 'outlook.com', 'arnes.si', 'yahoo.com']
+
+  return `${ime}.${priimek}@${domains[index % domains.length]}`
+}
+
 async function createTestUsers(payload: Payload) {
   for (let i = 0; i < 10; i++) {
     const user: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
-      username: `user${i}`,
-      surname: `Surname${i}`,
-      name: `Name${i}`,
+      username: getUsername(i),
+      surname: getPriimek(i),
+      name: getIme(i),
       password: `test`,
-      email: `user${i}@example.com`,
+      email: generateEmail(i),
       role: 'user',
     }
 
@@ -78,16 +130,16 @@ async function createAdmin(payload: Payload) {
 async function createProjects(payload: Payload) {
   const names = [
     {
-      name: 'Testni projekt',
+      name: 'Prenova spletne trgovine',
     },
     {
-      name: 'Resni projekt',
+      name: 'Digitalizacija arhiva',
     },
     {
-      name: 'Projekt na katerem ni noben',
+      name: 'Razvoj mobilne aplikacije Zdravko',
     },
     {
-      name: 'Project Rockwell B-1 Lancer',
+      name: 'Implementacija CRM sistema',
     },
   ]
 
@@ -123,7 +175,8 @@ async function createProjects(payload: Payload) {
         collection: 'wall-messages',
         data: {
           project: i,
-          message: 'This is a test message',
+          message:
+            'Dragi sodelavci, včeraj sem zaključil integracijo novega CRM sistema z našo obstoječo bazo strank. Vse deluje kot načrtovano, a prosim, da vsi preverite dostope do svojih računov in mi sporočite morebitne težave. Za naslednji teden načrtujem še izobraževanje za celotno prodajno ekipo. Pripravil bom kratek priročnik z najpogostejšimi vprašanji. Lep pozdrav, Marko',
           username: 'Name',
           createdAt: new Date().toLocaleString(),
         },
@@ -132,12 +185,13 @@ async function createProjects(payload: Payload) {
         console.error(error)
       })
 
-      await payload
+    await payload
       .create({
         collection: 'wall-messages',
         data: {
           project: i,
-          message: 'This is a test message also',
+          message:
+            'Pozdravljeni! Ravnokar sem dodala najnovejše oblikovne predloge za mobilno aplikacijo Zdravko v skupno mapo na Drivu. Upoštevala sem vse prejšnje komentarje glede barvne sheme in postavitve navigacijskih gumbov. Prosim za povratne informacije do petka, da lahko do konca meseca zaključimo z oblikovanjem in začnemo z implementacijo. Hvala vsem za sodelovanje! Nina',
           username: 'another',
           createdAt: new Date().toLocaleString(),
         },
