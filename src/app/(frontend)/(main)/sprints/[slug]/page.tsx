@@ -1,7 +1,14 @@
 import SprintEdit from '@/components/sprints/sprint-edit'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
@@ -9,16 +16,12 @@ import { getUser } from '@/actions/login-action'
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: sprintId } = await params
   const payload = await getPayload({ config })
-  const user = await getUser(true)
+  const user = await getUser(false)
   const editSprint = await payload
     .findByID({ collection: 'sprints', id: sprintId, overrideAccess: false, user: user })
     .catch(() => null)
-  const editSprintProjects = await payload
-    .find({collection: 'projects'})
-    .catch(() => null)
-  const sprints = await payload
-    .find({ collection: 'sprints' })
-    .catch(() => null)
+  const editSprintProjects = await payload.find({ collection: 'projects' }).catch(() => null)
+  const sprints = await payload.find({ collection: 'sprints' }).catch(() => null)
 
   return (
     <>
@@ -40,7 +43,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <SprintEdit sprintEdit={editSprint} sprintEditProjects={editSprintProjects?.docs || []} sprints={sprints?.docs || []} />
+        <SprintEdit
+          sprintEdit={editSprint}
+          sprintEditProjects={editSprintProjects?.docs || []}
+          sprints={sprints?.docs || []}
+        />
       </div>
     </>
   )

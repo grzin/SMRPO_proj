@@ -88,8 +88,8 @@ export const RoleSelect: FC<{
         <SelectValue placeholder="Project" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="methodology_manager">Methodology Manager</SelectItem>
-        <SelectItem value="product_manager">Product Manager</SelectItem>
+        <SelectItem value="methodology_manager">Scrum master</SelectItem>
+        <SelectItem value="product_manager">Product owner</SelectItem>
         <SelectItem value="developer">Developer</SelectItem>
       </SelectContent>
     </Select>

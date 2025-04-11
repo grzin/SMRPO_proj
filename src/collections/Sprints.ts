@@ -1,13 +1,13 @@
 import type { CollectionConfig } from 'payload'
-import { userAccess } from './access/user-access'
+import { isSprintProjectMember } from './access/sprint-access'
 
 export const Sprints: CollectionConfig = {
   slug: 'sprints',
   access: {
-    read: userAccess,
-    create: userAccess,
-    update: userAccess,
-    delete: userAccess,
+    read: isSprintProjectMember,
+    create: isSprintProjectMember,
+    update: isSprintProjectMember,
+    delete: isSprintProjectMember,
   },
   fields: [
     {

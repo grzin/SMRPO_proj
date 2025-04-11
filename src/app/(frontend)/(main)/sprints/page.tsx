@@ -35,16 +35,16 @@ function sumTimes(taskTimes: TaskTime[]) {
 
   taskTimes.forEach((taskTime) => {
     if (taskTime.customHMS) {
-      let negative = taskTime.customHMS.charAt(0) === '-'
+      const negative = taskTime.customHMS.charAt(0) === '-'
       if (negative) {
-        let arr = taskTime.customHMS.substring(2).split(' ')
+        const arr = taskTime.customHMS.substring(2).split(' ')
         sum = sum.subtract({
           hours: Number(arr[0].split('h')[0]),
           minutes: Number(arr[1].split('m')[0]),
           seconds: Number(arr[2].split('s')[0]),
         })
       } else {
-        let arr = taskTime.customHMS.split(' ')
+        const arr = taskTime.customHMS.split(' ')
         sum = sum.add({
           hours: Number(arr[0].split('h')[0]),
           minutes: Number(arr[1].split('m')[0]),
@@ -52,7 +52,7 @@ function sumTimes(taskTimes: TaskTime[]) {
         })
       }
     } else if (taskTime.end) {
-      let diff = datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
+      const diff = datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
       sum = sum.add({
         hours: diff.hours,
         minutes: diff.minutes,
@@ -66,7 +66,7 @@ function sumTimes(taskTimes: TaskTime[]) {
 
 export default async function Page() {
   const payload = await getPayload({ config })
-  const user = await getUser(true)
+  const user = await getUser(false)
   const sprints = await payload.find({
     collection: 'sprints',
     overrideAccess: false,
@@ -74,7 +74,7 @@ export default async function Page() {
     limit: 10000,
   })
 
-  let taskId = 1
+  const taskId = 1
   const taskTimes = await payload.find({
     collection: 'taskTimes',
     overrideAccess: false,
