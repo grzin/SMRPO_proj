@@ -145,7 +145,7 @@ export const ProjectDashboard: FC<{
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <Card className="col-span-1">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Project details</CardTitle>
             <CardDescription>Project details</CardDescription>
@@ -216,7 +216,7 @@ export const ProjectDashboard: FC<{
             </p>
           </CardContent>
         </Card>
-        <Card className="col-span-2">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Members</CardTitle>
             <CardDescription>Project members and roles</CardDescription>
@@ -365,6 +365,77 @@ export const ProjectDashboard: FC<{
                 </TableFooter>
               </Table>
             </form>
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Sprit backlog</CardTitle>
+            <CardDescription>Project details</CardDescription>
+          </CardHeader>
+          <CardContent className="">
+            <div className="flex flex-row gap-4 items-center justify-between flex-wrap">
+              <div className="flex flex-row gap-4">
+                <p className="text-xl font-semibold">Name:</p>
+                {!editDetails && <h3 className="text-xl">{project.name}</h3>}
+                {editDetails && (
+                  <Input
+                    className="w-[300px]"
+                    value={editName}
+                    onChange={(e) => {
+                      setEditName(e.target.value)
+                    }}
+                  />
+                )}
+              </div>
+              {isMethodologyManager && !editDetails && (
+                <Button
+                  onClick={() => {
+                    setEditDetails(true)
+                    setEditError('')
+                    setEditName(project.name)
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
+              {editDetails && (
+                <div className="flex flex-row gap-4">
+                  <Button
+                    onClick={async () => {
+                      if (editName === project.name) {
+                        setEditError('')
+                        setEditDetails(false)
+                        return
+                      }
+
+                      const result = await editProjectDetails(project.id, editName)
+
+                      if (result.isError) {
+                        setEditError(result.error)
+                        setEditDetails(true)
+                      } else {
+                        setEditError('')
+                        setEditDetails(false)
+                        router.refresh()
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setEditDetails(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
+            <p style={{ color: 'red' }} className="text-lg">
+              {editError}
+            </p>
           </CardContent>
         </Card>
       </div>
