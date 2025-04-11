@@ -466,7 +466,9 @@ export const ProjectDashboard: FC<{
                   <TableRow key={sprint.id}>
                     <TableCell className="font-medium">
                       {canAddSprint ? (
-                        <Link href={`/sprints/${sprint.id}`}>{sprint.name}</Link>
+                        <Link href={`/sprints/${sprint.id}?projectId=${project.id}`}>
+                          {sprint.name}
+                        </Link>
                       ) : (
                         <>{sprint.name}</>
                       )}

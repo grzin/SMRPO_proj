@@ -43,7 +43,7 @@ export default async function Page({
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>{project?.name}</BreadcrumbPage>
+                <BreadcrumbLink href={'/projects/' + project.id}>{project?.name}</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
