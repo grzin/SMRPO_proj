@@ -473,8 +473,8 @@ export const ProjectDashboard: FC<{
                         <>{sprint.name}</>
                       )}
                     </TableCell>
-                    <TableCell>{new Date(sprint.startDate).toLocaleString()}</TableCell>
-                    <TableCell>{new Date(sprint.endDate).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(sprint.startDate).toLocaleString('sl-SI')}</TableCell>
+                    <TableCell>{new Date(sprint.endDate).toLocaleString('sl-SI')}</TableCell>
                     <TableCell>{sprint.velocity}</TableCell>
                   </TableRow>
                 ))}

@@ -230,7 +230,7 @@ export async function postWallMessageAction(projectId: number, message: string, 
       data: {
         message: message,
         username: username,
-        createdAt: new Date().toLocaleString(),
+        createdAt: new Date().toLocaleString("sl-SI"),
         project: projectId,
       },
     })

@@ -50,7 +50,9 @@ export const sprintColumns: ColumnDef<Sprint>[] = [
     cell: ({ row }) => (
       <div>
         {' '}
-        <Link href={`/sprints/${row.getValue('id')}`}>{new Date(row.getValue('startDate')).toLocaleString()}</Link>
+        <Link href={`/sprints/${row.getValue('id')}`}>
+          {new Date(row.getValue('startDate')).toLocaleString('sl-SI')}
+        </Link>
       </div>
     ),
   },
@@ -70,7 +72,9 @@ export const sprintColumns: ColumnDef<Sprint>[] = [
     cell: ({ row }) => (
       <div>
         {' '}
-        <Link href={`/sprints/${row.getValue('id')}`}>{new Date(row.getValue('endDate')).toLocaleString()}</Link>
+        <Link href={`/sprints/${row.getValue('id')}`}>
+          {new Date(row.getValue('endDate')).toLocaleString('sl-SI')}
+        </Link>
       </div>
     ),
   },

@@ -8,10 +8,10 @@ import { Input } from '../ui/input'
 import { useUser } from '@/contexts/user-context'
 import { postWallMessageAction } from '@/actions/project-action'
 
-export const Wall: FC<{ 
-    wallMessages: WallMessage[] | null
-    projectId: number
- }> = ({ wallMessages, projectId }) => {
+export const Wall: FC<{
+  wallMessages: WallMessage[] | null
+  projectId: number
+}> = ({ wallMessages, projectId }) => {
   const { user } = useUser()
   const [newMessage, setNewMessage] = useState('')
   const scrollableRef = useRef<HTMLDivElement>(null) // Ref for the scrollable container
@@ -19,17 +19,18 @@ export const Wall: FC<{
   const handlePostMessage = () => {
     if (!newMessage.trim()) return
 
-    const newId = wallMessages && wallMessages.length > 0
-    ? Math.max(...wallMessages.map((msg) => msg.id)) + 1
-    : 0
+    const newId =
+      wallMessages && wallMessages.length > 0
+        ? Math.max(...wallMessages.map((msg) => msg.id)) + 1
+        : 0
 
     const message: WallMessage = {
       id: newId,
       username: user?.name || 'Anonymous',
       message: newMessage,
-      createdAt: new Date().toLocaleString(),
+      createdAt: new Date().toLocaleString('sl-SI'),
       project: projectId,
-      updatedAt: new Date().toLocaleString(),
+      updatedAt: new Date().toLocaleString('sl-SI'),
     }
 
     postWallMessageAction(projectId, newMessage, user?.name || '').then((response) => {
@@ -39,8 +40,8 @@ export const Wall: FC<{
           behavior: 'smooth',
         })
       }
-    });
-    if(!wallMessages) {
+    })
+    if (!wallMessages) {
       wallMessages = []
     }
     wallMessages.push(message)
@@ -56,23 +57,23 @@ export const Wall: FC<{
         </CardHeader>
         <CardContent className="flex-grow">
           {wallMessages && wallMessages.length > 0 && (
-          <div
-            ref={scrollableRef}
-            className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto"
-          >
-            <div className="flex flex-col gap-2">
-              {wallMessages?.map((message) => (
-                <div key={message.id} className="p-2 border-b">
-                  <p className="text-sm font-semibold">{message.username}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(message.createdAt).toLocaleString()}
-                  </p>
-                  <p>{message.message}</p>
-                </div>
-              ))}
+            <div
+              ref={scrollableRef}
+              className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto"
+            >
+              <div className="flex flex-col gap-2">
+                {wallMessages?.map((message) => (
+                  <div key={message.id} className="p-2 border-b">
+                    <p className="text-sm font-semibold">{message.username}</p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(message.createdAt).toLocaleString('sl-SI')}
+                    </p>
+                    <p>{message.message}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          )}         
+          )}
           <div className="flex gap-2 mt-4">
             <Input
               value={newMessage}
@@ -91,6 +92,5 @@ export const Wall: FC<{
         </CardContent>
       </Card>
     </div>
-
   )
 }
