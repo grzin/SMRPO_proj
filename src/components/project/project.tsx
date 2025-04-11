@@ -145,7 +145,7 @@ export const ProjectDashboard: FC<{
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <Card className="col-span-1">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Project details</CardTitle>
             <CardDescription>Project details</CardDescription>
@@ -216,7 +216,7 @@ export const ProjectDashboard: FC<{
             </p>
           </CardContent>
         </Card>
-        <Card className="col-span-2">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Members</CardTitle>
             <CardDescription>Project members and roles</CardDescription>
