@@ -11,6 +11,7 @@ import { Project, Story, User } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
+import { toggleRealizationAction } from '@/actions/task-action'
 import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
 import { Switch } from "@/components/ui/switch"
@@ -26,6 +27,15 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
 
   const handleGoToAdd = () => {
     router.push(`/stories/add?projectId=${project.id}`)
+  }
+
+  const handleToggle = async (storyId: number, taskId: any, newValue: boolean) => {
+    const result = await toggleRealizationAction(storyId, taskId, newValue)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
   }
 
   const initialState = {
@@ -122,13 +132,34 @@ export const Stories: FC<{ project: Project, canAddStory: boolean, canUpdateTime
                         <AddTaskDialog project={project} story={story} />
                       </div>
                       <div>
+                      <div className="grid grid-cols-6 gap-4">
+                        <div>Description</div>
+                        <div>Time Estimate</div>
+                        <div>Realized</div>
+                        <div>Tasked User</div>
+                        <div>Status</div>
+                      </div>
                       {story.tasks?.map((task) =>
                         <Card key={task.id}>
                           <CardContent>
-                            <div className="grid grid-cols-5 gap-4">
+                            <div className="grid grid-cols-6 gap-4">
                               <div>{task.description}</div>
                               <div>{task.estimate}</div>
-                              <Switch checked={task.realized} />
+                              <div>
+                                <Switch
+                                  checked={task.realized}
+                                  onCheckedChange={(val) => handleToggle(story.id, task.id, val)}
+                                  disabled={!task.taskedUser || !(user?.id === (task.taskedUser as User).id)}
+                                />
+                              </div>
+                              <div>
+                                {task.taskedUser ? (
+                                  (task.taskedUser as User).username
+                                ) : (
+                                  <span style={{ color: 'gray', fontStyle: 'italic' }}>Unassigned</span>
+                                )}
+                              </div>
+                              <div>{task.status}</div>
                             </div>
                           </CardContent>
                         </Card>

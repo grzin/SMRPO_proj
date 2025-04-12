@@ -19,7 +19,8 @@ const updatePasswordSchema = z.object({
   newPassword: z.string(),
 })
 
-export async function isMember(user: User, members: { user: User; role: string }[]) {
+// DANGER!!!!
+export async function isMember(user: User, members: any[]) {
   return members.some((member) => member.user.id === user.id)
 }
 

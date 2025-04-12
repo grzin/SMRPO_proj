@@ -28,6 +28,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
   const members = props.project.members ?? []
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, project: Project, story: Story) => {
     event.preventDefault()
@@ -35,7 +36,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
   
     const result = await addTaskAction(formData, project, story)
     if ('error' in result) {
-      // setError(result.error)
+      setError(result.error)
       return
     }
 
@@ -62,6 +63,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
               <Input
                 name="description"
                 className="col-span-3"
+                required
               />
             </div>
             <div className="grid grid-cols-4 gap-4">
@@ -72,8 +74,10 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
                 name="estimate"
                 type="number"
                 step="0.1"
+                min="0.0"
                 defaultValue='0.0'
                 className="col-span-3"
+                required
               />
             </div>
             <div>
@@ -83,7 +87,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
                 </SelectTrigger>
                 <SelectContent defaultValue={undefined}>
                   {members.map((member) => (
-                    <SelectItem key={member.id} value={member.id?.toString() ?? ''}>
+                    <SelectItem key={(member.user as User).id} value={(member.user as User).id.toString() ?? ''}>
                       {(member.user as User).username}
                     </SelectItem>
                   ))}
@@ -93,6 +97,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
             <Button type="submit">
               Add Task
             </Button>
+            {error && <div className="text-red-500">{error}</div>}
           </div>
         </form>
       </DialogContent>

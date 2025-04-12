@@ -178,6 +178,7 @@ export interface Story {
         description: string;
         estimate: number;
         status: 'accepted' | 'pending' | 'unassigned';
+        taskedUser?: (number | null) | User;
         realized: boolean;
         id?: string | null;
       }[]
@@ -340,6 +341,7 @@ export interface StoriesSelect<T extends boolean = true> {
         description?: T;
         estimate?: T;
         status?: T;
+        taskedUser?: T;
         realized?: T;
         id?: T;
       };

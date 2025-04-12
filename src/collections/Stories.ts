@@ -78,6 +78,12 @@ export const Stories: CollectionConfig = {
           required: true,
         },
         {
+          name: 'taskedUser',
+          type: 'relationship',
+          relationTo: 'users',
+          required: false,
+        },
+        {
           name: 'realized',
           type: 'checkbox',
           required: true,
