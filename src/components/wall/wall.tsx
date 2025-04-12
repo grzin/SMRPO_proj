@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useState, useRef, useEffect } from 'react'
-import { Project, WallMessage } from '@/payload-types'
+import { Project, WallMessage, User } from '@/payload-types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -10,14 +10,29 @@ import { postWallMessageAction } from '@/actions/project-action'
 
 export const Wall: FC<{
   wallMessages: WallMessage[] | null
-  projectId: number
-}> = ({ wallMessages, projectId }) => {
+  project: Project
+}> = ({ wallMessages, project }) => {
   const { user } = useUser()
   const [newMessage, setNewMessage] = useState('')
-  const scrollableRef = useRef<HTMLDivElement>(null) // Ref for the scrollable container
+  const scrollableRef = useRef<HTMLDivElement>(null)
+  
+  useEffect(() => {
+    if (scrollableRef.current) {
+      scrollableRef.current.scrollTo({
+        top: scrollableRef.current.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  }, [wallMessages])
 
   const handlePostMessage = () => {
     if (!newMessage.trim()) return
+
+    const userRoleOnProject = project?.members?.find(
+      (member) => (member.user as User).id === user?.id
+    )?.role?.replace(/_/g, ' ')
+
+    const messageName = `${user?.name || 'Anonymous'} (${user?.role == 'admin' ? 'Admin' : userRoleOnProject})`
 
     const newId =
       wallMessages && wallMessages.length > 0
@@ -26,14 +41,14 @@ export const Wall: FC<{
 
     const message: WallMessage = {
       id: newId,
-      username: user?.name || 'Anonymous',
+      username:  messageName,
       message: newMessage,
       createdAt: new Date().toLocaleString('sl-SI'),
-      project: projectId,
+      project: project.id,
       updatedAt: new Date().toLocaleString('sl-SI'),
     }
 
-    postWallMessageAction(projectId, newMessage, user?.name || '').then((response) => {
+    postWallMessageAction(project.id, newMessage, messageName).then((response) => {
       if (scrollableRef.current) {
         scrollableRef.current.scrollTo({
           top: scrollableRef.current.scrollHeight,

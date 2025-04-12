@@ -177,7 +177,7 @@ async function createProjects(payload: Payload) {
           project: i,
           message:
             'Dragi sodelavci, včeraj sem zaključil integracijo novega CRM sistema z našo obstoječo bazo strank. Vse deluje kot načrtovano, a prosim, da vsi preverite dostope do svojih računov in mi sporočite morebitne težave. Za naslednji teden načrtujem še izobraževanje za celotno prodajno ekipo. Pripravil bom kratek priročnik z najpogostejšimi vprašanji. Lep pozdrav, Marko',
-          username: 'Name',
+          username: 'Name (methodology manager)',
           createdAt: new Date().toLocaleString("sl-SI"),
         },
       })
@@ -192,7 +192,7 @@ async function createProjects(payload: Payload) {
           project: i,
           message:
             'Pozdravljeni! Ravnokar sem dodala najnovejše oblikovne predloge za mobilno aplikacijo Zdravko v skupno mapo na Drivu. Upoštevala sem vse prejšnje komentarje glede barvne sheme in postavitve navigacijskih gumbov. Prosim za povratne informacije do petka, da lahko do konca meseca zaključimo z oblikovanjem in začnemo z implementacijo. Hvala vsem za sodelovanje! Nina',
-          username: 'another',
+          username: 'another (developer)',
           createdAt: new Date().toLocaleString("sl-SI"),
         },
       })

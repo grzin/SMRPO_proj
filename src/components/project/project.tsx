@@ -496,7 +496,7 @@ export const ProjectDashboard: FC<{
           </CardContent>
         </Card>
       </div>
-      <Wall wallMessages={wallMessages} projectId={project.id} />
+      <Wall wallMessages={wallMessages} project={project} />
       <Documentation project={project} />
     </div>
   )
