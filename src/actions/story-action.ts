@@ -13,6 +13,7 @@ export async function getStoryById(storyId: string) {
     .findByID({
       collection: 'stories',
       id: storyId,
+      depth: 1000,
     })
     .catch(() => {
       return { error: 'Failed fetching story' }

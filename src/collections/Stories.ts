@@ -57,5 +57,39 @@ export const Stories: CollectionConfig = {
       relationTo: 'sprints',
       required: true,
     },
+    {
+      name: 'tasks',
+      type: 'array',
+      fields: [
+        {
+          name: 'description',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'estimate',
+          type: 'number',
+          required: true,
+        },
+        {
+          name: 'status',
+          type: 'select',
+          options: ['accepted', 'pending', 'unassigned'],
+          required: true,
+        },
+        {
+          name: 'taskedUser',
+          type: 'relationship',
+          relationTo: 'users',
+          required: false,
+        },
+        {
+          name: 'realized',
+          type: 'checkbox',
+          required: true,
+        },
+      ],
+      required: false,
+    }
   ],
 }
