@@ -105,6 +105,8 @@ export const ProjectDashboard: FC<{
   canAddSprint: boolean
   users: User[]
   wallMessages: WallMessage[]
+  isMemberBool: boolean
+  isMethodologyManagerBool: boolean
 }> = ({
   project,
   sprints,
@@ -114,6 +116,8 @@ export const ProjectDashboard: FC<{
   canAddSprint,
   users,
   wallMessages,
+  isMemberBool,
+  isMethodologyManagerBool
 }) => {
   const router = useRouter()
   const [addMember, setAddMembers] = useState(false)
@@ -444,6 +448,8 @@ export const ProjectDashboard: FC<{
         canAddStory={canAddStory}
         canUpdateTimeEstimate={canUpdateTimeEstimate}
         canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+        isMemberBool={isMemberBool}
+        isMethodologyManagerBool={isMethodologyManagerBool}
       />
       <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
         <Card className="col-span-2">

@@ -13,7 +13,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
 import { redirect } from 'next/navigation'
 import { ProjectDashboard } from '@/components/project/project'
-import { isAdminOrMethodologyManager, isMethodologyManager, isProductOwner } from '@/actions/user-actions'
+import { isAdminOrMethodologyManager, isMethodologyManager, isProductOwner, isMember } from '@/actions/user-actions'
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: projectId } = await params
@@ -67,7 +67,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   project.stories = stories.docs
 
   const canAddStory = await isAdminOrMethodologyManager(user, project.members ?? [])
+  const isMemberBool = await isMember(user, project.members ?? [])
   const canUpdateTimeEstimate = await isMethodologyManager(user, project.members ?? [])
+  const isMethodologyManagerBool = canUpdateTimeEstimate
   const canNotSeeTimeEstimate = await isProductOwner(user, project.members ?? [])
   const canAddSprint = await isMethodologyManager(user, project.members ?? [])
 
@@ -100,6 +102,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           canAddSprint={canAddSprint}
           users={users.docs}
           wallMessages={wallMessages?.docs || []}
+          isMemberBool={isMemberBool}
+          isMethodologyManagerBool={isMethodologyManagerBool}
         />
       </div>
     </>
