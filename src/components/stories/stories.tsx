@@ -11,9 +11,10 @@ import { Project, Story, TaskTime, User } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
-import { toggleRealizationAction } from '@/actions/task-action'
+import { toggleRealizationAction, deleteTaskAction } from '@/actions/task-action'
 import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
+import EditTaskDialog from '../tasks/tasks-edit-dialog'
 import { Switch } from '@/components/ui/switch'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -89,6 +90,15 @@ export const Stories: FC<{
     }
     router.refresh()
   }
+
+  const handleDeteleTask = async (storyId: number, taskId: any, project: Project) => {
+    const result = await deleteTaskAction(storyId, taskId, project)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
+  } 
 
   const initialState = {
     storyId: 0,
@@ -212,7 +222,7 @@ export const Stories: FC<{
                       </div>
                     )}
                     <div>
-                      <div className="grid grid-cols-6 gap-4">
+                      <div className="grid grid-cols-7 gap-4">
                         <div>Description</div>
                         <div>Time Estimate</div>
                         <div>Realized</div>
@@ -223,13 +233,13 @@ export const Stories: FC<{
                       {story.tasks?.map((task) => (
                         <Card key={task.id}>
                           <CardContent>
-                            <div className="grid grid-cols-6 gap-4">
+                            <div className="grid grid-cols-7 gap-4">
                               <div>{task.description}</div>
                               <div>{task.estimate}</div>
                               <div>
                                 <Switch
                                   checked={task.realized}
-                                  onCheckedChange={(val) => handleToggle(story.id, task.id, val)}
+                                  onCheckedChange={async (val) => await handleToggle(story.id, task.id, val)}
                                   disabled={
                                     !task.taskedUser || !(user?.id === (task.taskedUser as User).id)
                                   }
@@ -261,6 +271,25 @@ export const Stories: FC<{
                                 ) : (
                                   <></>
                                 )}
+                              </div>
+                              <div>
+                                { (isMemberBool || isMethodologyManagerBool) &&
+                                  <>
+                                    { task.status === 'unassigned' &&
+                                      <Button
+                                        type="button"
+                                        onClick={async () => await handleDeteleTask(story.id, task.id, project)}
+                                        className="bg-red-500 hover:bg-red-600 text-white"
+                                      >
+                                        Delete
+                                      </Button>
+                                    }
+                                    <EditTaskDialog
+                                      project={project}
+                                      story={story}
+                                      task={{ id: (task.id as string), description: task.description, taskedUser: (task.taskedUser as User) ?? null , estimate: task.estimate }}/>
+                                  </>
+                                }
                               </div>
                             </div>
                           </CardContent>
