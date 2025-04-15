@@ -126,40 +126,44 @@ export const Stories: FC<{
                   )}
                   <div className="col-span-1">
                     <div className="grid gap-3">
-                      <form action={formAction}>
-                        <Input
-                          name="projectId"
-                          id="projectId"
-                          type="number"
-                          defaultValue={project.id}
-                          hidden
-                        />
-                        <Input
-                          name="storyId"
-                          id="storyId"
-                          type="number"
-                          defaultValue={story.id}
-                          hidden
-                        />
-                        <Label htmlFor="timeEstimate">Time estimate</Label>
-                        <Input
-                          name="timeEstimate"
-                          id="timeEstimate"
-                          type="number"
-                          placeholder="Enter time estimate value"
-                          defaultValue={story.timeEstimate || undefined}
-                          disabled={!canUpdateTimeEstimate}
-                          min={0}
-                        />
-                        <Button
-                          type="submit"
-                          className="mt-1"
-                          disabled={!canUpdateTimeEstimate || pending}
-                        >
-                          Update
-                        </Button>
-                        {state.message && <FormError>{state.message}</FormError>}
-                      </form>
+                      {canNotSeeTimeEstimate ? (
+                        <></>
+                      ) : (
+                        <form action={formAction}>
+                          <Input
+                            name="projectId"
+                            id="projectId"
+                            type="number"
+                            defaultValue={project.id}
+                            hidden
+                          />
+                          <Input
+                            name="storyId"
+                            id="storyId"
+                            type="number"
+                            defaultValue={story.id}
+                            hidden
+                          />
+                          <Label htmlFor="timeEstimate">Time estimate (in story points)</Label>
+                          <Input
+                            name="timeEstimate"
+                            id="timeEstimate"
+                            type="number"
+                            placeholder="Enter time estimate value"
+                            defaultValue={story.timeEstimate || undefined}
+                            disabled={!canUpdateTimeEstimate}
+                            min={0}
+                          />
+                          {canUpdateTimeEstimate ? (
+                            <Button type="submit" className="mt-1">
+                              Update
+                            </Button>
+                          ) : (
+                            <></>
+                          )}
+                          {state.message && <FormError>{state.message}</FormError>}
+                        </form>
+                      )}
                     </div>
                   </div>
                   <div className="col-span-3">
