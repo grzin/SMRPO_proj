@@ -52,6 +52,11 @@ export async function isProductOwner(user: User, members: any[]) {
   return (await isMember(user, members)) && ourUser?.role === 'product_owner'
 }
 
+export async function isDeveloper(user: User, members: any[]) {
+  const ourUser = members.find((member) => member.user.id === user.id)
+  return (await isMember(user, members)) && ourUser?.role === 'developer'
+}
+
 export async function canDeleteStory(user: User, story: any, members: any[]) {
   return (await isAdminOrMethodologyManager(user, members)) && (!story.sprint || !story.realized)
 }

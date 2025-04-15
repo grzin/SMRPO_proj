@@ -214,7 +214,7 @@ export interface Sprint {
 export interface TaskTime {
   id: number;
   user: number | User;
-  task: number;
+  task: string;
   start: string;
   end?: string | null;
   customHMS?: string | null;

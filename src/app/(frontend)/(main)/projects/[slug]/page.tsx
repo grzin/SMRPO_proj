@@ -17,6 +17,7 @@ import {
   isAdminOrMethodologyManager,
   isMethodologyManager,
   isProductOwner,
+  isDeveloper,
   isMember,
 } from '@/actions/user-actions'
 
@@ -41,6 +42,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       },
     })
     .catch(() => null)
+  const taskTimes = await payload.find({ collection: 'taskTimes' })
 
   // dirty patch
   const stories = await payload
@@ -75,6 +77,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const isMemberBool = await isMember(user, project.members ?? [])
   const canUpdateTimeEstimate = await isMethodologyManager(user, project.members ?? [])
   const isMethodologyManagerBool = canUpdateTimeEstimate
+  const isDeveloperBool = await isDeveloper(user, project.members ?? [])
   const canNotSeeTimeEstimate = await isProductOwner(user, project.members ?? [])
   const canAddSprint = await isMethodologyManager(user, project.members ?? [])
 
@@ -100,6 +103,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <ProjectDashboard
           project={project}
+          taskTimes={taskTimes.docs}
           sprints={sprints?.docs || []}
           canAddStory={canAddStory}
           canUpdateTimeEstimate={canUpdateTimeEstimate}
@@ -107,6 +111,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           canAddSprint={canAddSprint}
           users={users.docs}
           wallMessages={wallMessages?.docs || []}
+          isDeveloperBool={isDeveloperBool}
           isMemberBool={isMemberBool}
           isMethodologyManagerBool={isMethodologyManagerBool}
         />
