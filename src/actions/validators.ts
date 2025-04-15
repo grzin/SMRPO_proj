@@ -113,6 +113,12 @@ export const sprintVelocityValidator = z.number().min(1, 'Enter valid (positive)
 
 export const sprintProjectValidator = z.number().min(0, 'Invalid project id')
 
+export const hoursValidator = z.number().min(0, 'Invalid hours').max(24, 'Invalid hours')
+
+export const minutesValidator = z.number().min(0, 'Invalid minutes').max(59, 'Invalid minutes')
+
+export const secondsValidator = z.number().min(0, 'Invalid seconds').max(59, 'Invalid seconds')
+
 export const projectName = z
   .string()
   .min(1, { message: 'Project name is required' })

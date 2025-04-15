@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
 import { redirect } from 'next/navigation'
+import TaskTimes from '@/components/times/times'
 
 export default async function Page({
   params,
@@ -34,9 +35,21 @@ export default async function Page({
     redirect('/projects')
   }
 
+  const story = (
+    await payload.find({
+      collection: 'stories',
+      where: {
+        project: { equals: project.id },
+      },
+    })
+  ).docs[0]
+
+  const task = story.tasks?.find((t) => t.id === taskId)
+
   const times = await payload.find({
     collection: 'taskTimes',
     where: {
+      user: { equals: user.id },
       task: { equals: taskId },
     },
   })
@@ -64,9 +77,13 @@ export default async function Page({
           </Breadcrumb>
         </div>
       </header>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        Hello {taskId} {times.totalDocs}
-      </div>
+      <TaskTimes
+        project={project}
+        story={story}
+        taskId={task?.id || ''}
+        taskDescription={task?.description || ''}
+        times={times.docs}
+      />
     </>
   )
 }
