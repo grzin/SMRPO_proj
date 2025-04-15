@@ -20,7 +20,7 @@ import { Project, Story, TaskTime } from '@/payload-types'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import datetimeDifference from 'datetime-difference'
-import { createTimeAction } from '@/actions/time-management-actions'
+import { createTimeAction, trackTimeAction } from '@/actions/time-management-actions'
 import { Badge } from '../ui/badge'
 
 function sumTimes(taskTimes: TaskTime[]) {
@@ -64,6 +64,7 @@ export default function TaskTimes({
   story,
   taskId,
   taskDescription,
+  activeTaskDescription,
   times,
   ...props
 }: React.ComponentProps<'div'> & {
@@ -71,6 +72,7 @@ export default function TaskTimes({
   story: Story
   taskId: string
   taskDescription: string
+  activeTaskDescription: string | null
   times: TaskTime[]
 }) {
   let initialState = {
@@ -78,7 +80,9 @@ export default function TaskTimes({
     minutes: 0,
     seconds: 0,
   }
+  let ttInitialState = {}
   const [state, formAction, pending] = useActionState(createTimeAction, initialState)
+  const [ttState, ttFormAction, ttPending] = useActionState(trackTimeAction, ttInitialState)
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -86,17 +90,31 @@ export default function TaskTimes({
         <h1 className="text-xl font-bold">
           {story.title} - {taskDescription}
         </h1>
-        <form>
-          {times.find((taskTime) => taskTime.end === null && taskTime.customHMS === undefined) ? (
-            <Button type="submit" className="text-white bg-red-500">
-              Stop tracking
-            </Button>
-          ) : (
-            <Button type="submit" className="text-white bg-emerald-400">
-              Start tracking
-            </Button>
-          )}
-        </form>
+        {activeTaskDescription ? (
+          <p>
+            Time tracking is active for task:{' '}
+            <span className="font-bold">{activeTaskDescription}</span>
+          </p>
+        ) : (
+          <form action={ttFormAction}>
+            <Input name="projectId" value={project.id} hidden readOnly />
+            <Input name="taskId" value={taskId} hidden readOnly />
+            {times.find((taskTime) => taskTime.end === null && taskTime.customHMS === null) ? (
+              <Button type="submit" name="action" value="stop" className="text-white bg-red-500">
+                Stop tracking
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                name="action"
+                value="start"
+                className="text-white bg-emerald-400"
+              >
+                Start tracking
+              </Button>
+            )}
+          </form>
+        )}
         <Table>
           <TableHeader>
             <TableRow>

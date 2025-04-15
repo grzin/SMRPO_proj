@@ -54,6 +54,25 @@ export default async function Page({
     },
   })
 
+  const activeTasks = await payload.find({
+    collection: 'taskTimes',
+    where: {
+      user: { equals: user.id },
+      and: [{ end: { exists: false } }, { customHMS: { exists: false } }],
+    },
+  })
+
+  let activeTaskDescription = null
+  if (activeTasks.totalDocs > 0) {
+    let stories = await payload.find({ collection: 'stories' })
+    stories.docs.forEach((s) => {
+      s.tasks?.forEach((t) => {
+        if (t.id === activeTasks.docs[0].task && t.id !== taskId)
+          activeTaskDescription = t.description
+      })
+    })
+  }
+
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -82,6 +101,7 @@ export default async function Page({
         story={story}
         taskId={task?.id || ''}
         taskDescription={task?.description || ''}
+        activeTaskDescription={activeTaskDescription}
         times={times.docs}
       />
     </>

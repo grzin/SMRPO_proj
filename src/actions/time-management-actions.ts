@@ -69,3 +69,51 @@ export async function createTimeAction({}, formData: FormData) {
   }
   return response
 }
+
+export async function trackTimeAction({}, formData: FormData) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const response = {
+    projectId: formData.get('projectId'),
+    taskId: formData.get('taskId'),
+    action: formData.get('action'),
+  }
+
+  let isError = false
+
+  if (response.action === 'start') {
+    await payload
+      .create({
+        collection: 'taskTimes',
+        data: {
+          user: user,
+          task: response.taskId?.toString() || '',
+          start: new Date().toISOString(),
+        },
+        overrideAccess: false,
+        user: user,
+      })
+      .catch((_error) => {
+        isError = true
+      })
+  } else if (response.action === 'stop') {
+    await payload
+      .update({
+        collection: 'taskTimes',
+        data: {
+          end: new Date().toISOString(),
+        },
+        where: {
+          user: { equals: user.id },
+          end: { exists: false },
+          customHMS: { exists: false },
+        },
+      })
+      .catch((_error) => {
+        isError = true
+      })
+  }
+
+  redirect(`/projects/${response.projectId}/tasks/time/${response.taskId}`)
+}
