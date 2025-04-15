@@ -29,7 +29,7 @@ export async function isAdminOrMethodologyManager(user: User, members: any[]) {
   return (
     user.role === 'admin' ||
     ((await isMember(user, members)) &&
-      (ourUser?.role === 'methodology_manager' || ourUser?.role === 'product_manager'))
+      (ourUser?.role === 'scrum_master' || ourUser?.role === 'product_owner'))
   )
 }
 
@@ -38,12 +38,12 @@ export async function isMethodologyManager(user: User, members: any[]) {
     return true
   }
   const ourUser = members.find((member) => member.user.id === user.id)
-  return (await isMember(user, members)) && ourUser?.role === 'methodology_manager'
+  return (await isMember(user, members)) && ourUser?.role === 'scrum_master'
 }
 
 export async function isProductOwner(user: User, members: any[]) {
   const ourUser = members.find((member) => member.user.id === user.id)
-  return (await isMember(user, members)) && ourUser?.role === 'product_manager'
+  return (await isMember(user, members)) && ourUser?.role === 'product_owner'
 }
 
 export async function canDeleteStory(user: User, story: any, members: any[]) {

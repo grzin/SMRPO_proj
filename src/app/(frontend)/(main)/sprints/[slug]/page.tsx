@@ -6,23 +6,22 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
-import { useSearchParams } from 'next/navigation'
 import { Project } from '@/payload-types'
 
 export default async function Page({
   params,
-  searchParams = {},
+  searchParams,
 }: {
   params: Promise<{ slug: string }>
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const { slug: sprintId } = await params
+  const queryParams = (await searchParams) ?? {}
   const payload = await getPayload({ config })
   const user = await getUser(false)
   const editSprint = await payload
@@ -31,7 +30,7 @@ export default async function Page({
   const editSprintProjects = await payload.find({ collection: 'projects' }).catch(() => null)
   const sprints = await payload.find({ collection: 'sprints' }).catch(() => null)
 
-  const projectId = Number(searchParams['projectId'] ?? '')
+  const projectId = Number(queryParams['projectId'])
 
   let project: Project | null = null
   if (projectId && !isNaN(projectId) && isFinite(projectId)) {

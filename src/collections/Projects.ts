@@ -1,17 +1,18 @@
 import type { CollectionConfig } from 'payload'
 import { isProjectMember } from './access/is-project-member'
+import { isAdmin } from './access/is-admin'
 
 const projectRoles = [
   {
-    label: 'Skrbnik metodologije',
-    value: 'methodology_manager',
+    label: 'Scrum master',
+    value: 'scrum_master',
   },
   {
-    label: 'Produktni vodja',
-    value: 'product_manager',
+    label: 'Product owner',
+    value: 'product_owner',
   },
   {
-    label: 'Član razvojne skupine',
+    label: 'Developer',
     value: 'developer',
   },
 ]
@@ -20,6 +21,7 @@ export const Projects: CollectionConfig = {
   slug: 'projects',
   access: {
     read: isProjectMember,
+    create: isAdmin,
   },
   fields: [
     {

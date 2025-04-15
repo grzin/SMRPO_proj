@@ -152,11 +152,11 @@ async function createProjects(payload: Payload) {
           members: [
             {
               user: i + 1,
-              role: 'methodology_manager',
+              role: 'scrum_master',
             },
             {
               user: i + 2,
-              role: 'product_manager',
+              role: 'product_owner',
             },
             {
               user: i + 3,

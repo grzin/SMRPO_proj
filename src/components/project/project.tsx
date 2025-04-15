@@ -31,8 +31,8 @@ import { Input } from '../ui/input'
 import { useRouter } from 'next/navigation'
 
 const roleNames = {
-  methodology_manager: 'Scrum master',
-  product_manager: 'Product owner',
+  scrum_master: 'Scrum master',
+  product_owner: 'Product owner',
   developer: 'Developer',
 }
 
@@ -43,7 +43,7 @@ function isAdminOrMethodologyManager(user: User | null, project: Project) {
 
   if (
     project?.members?.find(
-      (member) => (member.user as User).id === user?.id && member.role === 'methodology_manager',
+      (member) => (member.user as User).id === user?.id && member.role === 'scrum_master',
     )
   ) {
     return true
@@ -88,8 +88,8 @@ export const RoleSelect: FC<{
         <SelectValue placeholder="Project" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="methodology_manager">Scrum master</SelectItem>
-        <SelectItem value="product_manager">Product owner</SelectItem>
+        <SelectItem value="scrum_master">Scrum master</SelectItem>
+        <SelectItem value="product_owner">Product owner</SelectItem>
         <SelectItem value="developer">Developer</SelectItem>
       </SelectContent>
     </Select>
@@ -126,9 +126,9 @@ export const ProjectDashboard: FC<{
   // Members
   const [editingMember, setEditingMember] = useState<null | string>(null)
   const [selectedUser, setSelectedUser] = useState<null | string>(null)
-  const [selectedRole, setSelectedRole] = useState<
-    'methodology_manager' | 'product_manager' | 'developer'
-  >('developer')
+  const [selectedRole, setSelectedRole] = useState<'scrum_master' | 'product_owner' | 'developer'>(
+    'developer',
+  )
 
   // Details
   const [editDetails, setEditDetails] = useState(false)
@@ -259,8 +259,8 @@ export const ProjectDashboard: FC<{
                                 value={selectedRole}
                                 onValueChange={(newVal) => {
                                   if (
-                                    newVal == 'methodology_manager' ||
-                                    newVal == 'product_manager' ||
+                                    newVal == 'scrum_master' ||
+                                    newVal == 'product_owner' ||
                                     newVal == 'developer'
                                   ) {
                                     setSelectedRole(newVal)

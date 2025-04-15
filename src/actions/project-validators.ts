@@ -1,3 +1,3 @@
 import { z } from 'zod'
 
-export const projectRoleValidator = z.enum(['methodology_manager', 'product_manager', 'developer'])
+export const projectRoleValidator = z.enum(['scrum_master', 'product_owner', 'developer'])

@@ -26,7 +26,7 @@ export async function isAdminOrMethodologyManager(user: User, project: Project) 
 
   if (
     project?.members?.find(
-      (member) => (member.user as User).id === user.id && member.role === 'methodology_manager',
+      (member) => (member.user as User).id === user.id && member.role === 'scrum_master',
     )
   ) {
     return true
@@ -53,7 +53,7 @@ export async function createProjectAction(name: string) {
 
   const duplicateProject = await payload.find({
     collection: 'projects',
-    where: { key: { equals: validatedFields.data.name } },
+    where: { key: { equals: validatedFields.data.name.toLowerCase() } },
   })
 
   if (duplicateProject.totalDocs > 0) {
@@ -70,7 +70,7 @@ export async function createProjectAction(name: string) {
         members: [
           {
             user: user.id,
-            role: 'methodology_manager',
+            role: 'scrum_master',
           },
         ],
       },
@@ -309,7 +309,7 @@ export async function editUserAction(
   projectId: number,
   memberId: string,
   userId: number,
-  role: 'methodology_manager' | 'product_manager' | 'developer',
+  role: 'scrum_master' | 'product_owner' | 'developer',
 ) {
   const payload = await getPayload({ config })
   const user = await getUser()

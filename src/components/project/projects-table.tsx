@@ -1,12 +1,11 @@
 'use client'
 
-import React, { useActionState, useState } from 'react'
+import React, { useState } from 'react'
 
 import { projectColumns } from './columns'
 import { DataTable } from '../data-table'
 import { Project } from '@/payload-types'
 import { Button } from '../ui/button'
-import Link from 'next/link'
 import {
   Dialog,
   DialogContent,
@@ -19,8 +18,10 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { FormMessage } from '../ui/form'
 import { createProjectAction } from '@/actions/project-action'
+import { useUser } from '@/contexts/user-context'
 
 export default function ProjectsTable({ projects }: { projects: Project[] }) {
+  const { isAdmin } = useUser()
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <DataTable
@@ -29,7 +30,7 @@ export default function ProjectsTable({ projects }: { projects: Project[] }) {
         filterColumnName={'name'}
         filterPlaceholder={'Filter project names...'}
       >
-        <Actions />
+        {isAdmin && <Actions />}
       </DataTable>
     </div>
   )
