@@ -247,7 +247,8 @@ export const Stories: FC<{
                               <div>{task.status}</div>
                               <div className="flex justify-between">
                                 {sumTimes(taskTimes.filter((t) => t.task === task.id))}
-                                {user?.id === (task.taskedUser as User).id && isDeveloperBool ? (
+                                {user?.id === (task.taskedUser && (task.taskedUser as User).id) &&
+                                isDeveloperBool ? (
                                   <a
                                     href={
                                       '/projects/' + project.id + '/tasks/time/' + (task.id || '')
