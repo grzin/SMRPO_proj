@@ -7,57 +7,65 @@ import { getUser } from '@/actions/login-action'
 import { Project, Story, User } from '@/payload-types'
 import { redirect } from 'next/navigation'
 
-export async function addTaskAction(formData: FormData, project: Project, story: Story) : Promise<{ data: string } | { error : string }> {
-    const payload = await getPayload({ config })
-    const user = await getUser()
-  
-    const description = formData.get('description')?.toString() ?? ''
-    const estimate = parseFloat(formData.get('estimate')?.toString() ?? '')
-    const taskedUserId = formData.get('member')?.toString()
-    
-    const status = taskedUserId ? 'pending' : 'unassigned'
+export async function addTaskAction(
+  formData: FormData,
+  project: Project,
+  story: Story,
+): Promise<{ data: string } | { error: string }> {
+  const payload = await getPayload({ config })
+  const user = await getUser()
 
-    if (estimate < 0) {
-      return { error : 'Estimate must be non-negative.' }
+  const description = formData.get('description')?.toString() ?? ''
+  const estimate = parseFloat(formData.get('estimate')?.toString() ?? '')
+  const taskedUserId = formData.get('member')?.toString()
+
+  const status = taskedUserId ? 'pending' : 'unassigned'
+
+  if (estimate < 0) {
+    return { error: 'Estimate must be non-negative.' }
+  }
+
+  if (description.length === 0) {
+    return { error: 'Description cannot be empty.' }
+  }
+
+  if (
+    !(
+      (await isMethodologyManager(user, project.members ?? [])) ||
+      (await isMember(user, project.members ?? []))
+    )
+  ) {
+    return { error: 'You lack permission to add tasks.' }
+  }
+
+  try {
+    // Create the task
+    const createdTask = {
+      description,
+      estimate,
+      taskedUser: taskedUserId ? parseInt(taskedUserId) : null,
+      status: status as 'pending' | 'unassigned' | 'accepted',
+      realized: false,
     }
 
-    if (description.length === 0) {
-      return { error : 'Description cannot be empty.' }
-    }
+    const newTasks = [...(story.tasks ?? []), createdTask]
 
-    if (!((await isMethodologyManager(user, (project.members ?? []))) || (await isMember(user, (project.members ?? []))))) {
-      return { error : 'You lack permission to add tasks.' }
-    }
-  
-    try {
-      // Create the task
-      const createdTask = {
-        description,
-        estimate,
-        taskedUser: (taskedUserId ? parseInt(taskedUserId) : null),
-        status: (status as 'pending' | 'unassigned' | 'accepted'),
-        realized: false,
-      }
-    
-      const newTasks = [...(story.tasks ?? []), createdTask]
+    await payload.update({
+      collection: 'stories',
+      data: {
+        tasks: newTasks,
+      },
 
-      await payload
-        .update({
-          collection: 'stories',
-          data: {
-            tasks: newTasks,
-          },
-        
-          where: {
-            id: { equals: story.id },
-          },
-        })
-      
-      return { data: "Success" }
-    } catch (err) {
-      console.error('Failed to add task:', err)
-      return { error: 'Failed to add task' }
-    }
+      where: {
+        id: { equals: story.id },
+      },
+    })
+
+    return { data: 'Success' }
+  } catch (err) {
+    console.error('Failed to add task:', err)
+    return { error: 'Failed to add task' }
+  }
 }
 
 export async function toggleRealizationAction(storyId: number, taskId: any, newValue: boolean) {
@@ -69,7 +77,7 @@ export async function toggleRealizationAction(storyId: number, taskId: any, newV
     id: storyId,
   })
 
-  const taskIndex = (story.tasks ?? []).findIndex(task => task.id === taskId)
+  const taskIndex = (story.tasks ?? []).findIndex((task) => task.id === taskId)
 
   if (taskIndex === -1) {
     return { error: 'Task not found in story' }
@@ -78,7 +86,7 @@ export async function toggleRealizationAction(storyId: number, taskId: any, newV
   const task = story.tasks![taskIndex]
 
   // Only the tasked user can toggle their task
-  const taskedUserId = (typeof task.taskedUser === 'object') ? task.taskedUser?.id : task.taskedUser
+  const taskedUserId = typeof task.taskedUser === 'object' ? task.taskedUser?.id : task.taskedUser
 
   if (!taskedUserId || taskedUserId !== user.id) {
     return { error: 'You are not authorized to change this task.' }

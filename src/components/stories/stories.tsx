@@ -14,7 +14,7 @@ import { editStoryTimeEstimateAction } from '@/actions/story-action'
 import { toggleRealizationAction } from '@/actions/task-action'
 import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
-import { Switch } from "@/components/ui/switch"
+import { Switch } from '@/components/ui/switch'
 
 export const Stories: FC<{
   project: Project
@@ -23,7 +23,14 @@ export const Stories: FC<{
   canNotSeeTimeEstimate: boolean
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
-}> = ({ project, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, isMemberBool, isMethodologyManagerBool }) => {
+}> = ({
+  project,
+  canAddStory,
+  canUpdateTimeEstimate,
+  canNotSeeTimeEstimate,
+  isMemberBool,
+  isMethodologyManagerBool,
+}) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
   const user = useUser().user
@@ -83,7 +90,7 @@ export const Stories: FC<{
         <CardContent className="flex-grow">
           {project.stories && project.stories.length > 0 ? (
             <ul className="space-y-4">
-              {(project.stories as Story[]).map((story) =>
+              {(project.stories as Story[]).map((story) => (
                 <li
                   key={story.id}
                   className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
@@ -156,51 +163,55 @@ export const Stories: FC<{
                     </div>
                   </div>
                   <div className="col-span-3">
-                    <h1><b>Tasks</b></h1>
-                    {
-                      (isMemberBool || isMethodologyManagerBool) &&
+                    <h1>
+                      <b>Tasks</b>
+                    </h1>
+                    {(isMemberBool || isMethodologyManagerBool) && (
                       <div>
                         <AddTaskDialog project={project} story={story} />
                       </div>
-                    }
+                    )}
                     <div>
-                    <div className="grid grid-cols-6 gap-4">
-                      <div>Description</div>
-                      <div>Time Estimate</div>
-                      <div>Realized</div>
-                      <div>Tasked User</div>
-                      <div>Status</div>
-                    </div>
-                    {story.tasks?.map((task) =>
-                      <Card key={task.id}>
-                        <CardContent>
-                          <div className="grid grid-cols-6 gap-4">
-                            <div>{task.description}</div>
-                            <div>{task.estimate}</div>
-                            <div>
-                              <Switch
-                                checked={task.realized}
-                                onCheckedChange={(val) => handleToggle(story.id, task.id, val)}
-                                disabled={!task.taskedUser || !(user?.id === (task.taskedUser as User).id)}
-                              />
+                      <div className="grid grid-cols-6 gap-4">
+                        <div>Description</div>
+                        <div>Time Estimate</div>
+                        <div>Realized</div>
+                        <div>Tasked User</div>
+                        <div>Status</div>
+                      </div>
+                      {story.tasks?.map((task) => (
+                        <Card key={task.id}>
+                          <CardContent>
+                            <div className="grid grid-cols-6 gap-4">
+                              <div>{task.description}</div>
+                              <div>{task.estimate}</div>
+                              <div>
+                                <Switch
+                                  checked={task.realized}
+                                  onCheckedChange={(val) => handleToggle(story.id, task.id, val)}
+                                  disabled={
+                                    !task.taskedUser || !(user?.id === (task.taskedUser as User).id)
+                                  }
+                                />
+                              </div>
+                              <div>
+                                {task.taskedUser ? (
+                                  (task.taskedUser as User).username
+                                ) : (
+                                  <span style={{ color: 'gray', fontStyle: 'italic' }}>
+                                    Unassigned
+                                  </span>
+                                )}
+                              </div>
+                              <div>{task.status}</div>
                             </div>
-                            <div>
-                              {task.taskedUser ? (
-                                (task.taskedUser as User).username
-                              ) : (
-                                <span style={{ color: 'gray', fontStyle: 'italic' }}>Unassigned</span>
-                              )}
-                            </div>
-                            <div>{task.status}</div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      )}
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </div>
                 </li>
-                ,
-              )}
+              ))}
             </ul>
           ) : (
             <p>No stories found for this project.</p>

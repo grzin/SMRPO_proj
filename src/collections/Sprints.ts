@@ -15,7 +15,7 @@ export const Sprints: CollectionConfig = {
       type: 'text',
       required: true,
     },
-    { 
+    {
       name: 'startDate',
       type: 'date',
       required: true,

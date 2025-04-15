@@ -15,7 +15,7 @@ export const Wall: FC<{
   const { user } = useUser()
   const [newMessage, setNewMessage] = useState('')
   const scrollableRef = useRef<HTMLDivElement>(null)
-  
+
   useEffect(() => {
     if (scrollableRef.current) {
       scrollableRef.current.scrollTo({
@@ -28,9 +28,9 @@ export const Wall: FC<{
   const handlePostMessage = () => {
     if (!newMessage.trim()) return
 
-    const userRoleOnProject = project?.members?.find(
-      (member) => (member.user as User).id === user?.id
-    )?.role?.replace(/_/g, ' ')
+    const userRoleOnProject = project?.members
+      ?.find((member) => (member.user as User).id === user?.id)
+      ?.role?.replace(/_/g, ' ')
 
     const messageName = `${user?.name || 'Anonymous'} (${user?.role == 'admin' ? 'Admin' : userRoleOnProject})`
 
@@ -41,7 +41,7 @@ export const Wall: FC<{
 
     const message: WallMessage = {
       id: newId,
-      username:  messageName,
+      username: messageName,
       message: newMessage,
       createdAt: new Date().toLocaleString('sl-SI'),
       project: project.id,

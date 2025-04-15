@@ -66,4 +66,4 @@ vertice ac dextra durasse limbo capientibus magis hi talia materque, abnuit,
 aut. Parte urbe iecit sacrorum opes, nisi, iniectam viri omnes veni pondere
 velit, fugamque ubi e prohibetis! Egi tamen, sorte, non caesique nostro prius
 putares nec comites ramos, tum. Ira non mora pectusque mors capillis cervos
-clausit tutela obsequitur titulum.`;
+clausit tutela obsequitur titulum.`

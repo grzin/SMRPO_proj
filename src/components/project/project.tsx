@@ -117,7 +117,7 @@ export const ProjectDashboard: FC<{
   users,
   wallMessages,
   isMemberBool,
-  isMethodologyManagerBool
+  isMethodologyManagerBool,
 }) => {
   const router = useRouter()
   const [addMember, setAddMembers] = useState(false)

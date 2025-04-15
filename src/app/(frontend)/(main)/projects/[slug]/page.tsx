@@ -13,7 +13,12 @@ import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
 import { redirect } from 'next/navigation'
 import { ProjectDashboard } from '@/components/project/project'
-import { isAdminOrMethodologyManager, isMethodologyManager, isProductOwner, isMember } from '@/actions/user-actions'
+import {
+  isAdminOrMethodologyManager,
+  isMethodologyManager,
+  isProductOwner,
+  isMember,
+} from '@/actions/user-actions'
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug: projectId } = await params

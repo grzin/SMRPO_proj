@@ -34,8 +34,8 @@ export async function isAdminOrMethodologyManager(user: User, members: any[]) {
 }
 
 export async function isMethodologyManager(user: User, members: any[]) {
-  if (user.role === "admin") {
-    return true;
+  if (user.role === 'admin') {
+    return true
   }
   const ourUser = members.find((member) => member.user.id === user.id)
   return (await isMember(user, members)) && ourUser?.role === 'methodology_manager'

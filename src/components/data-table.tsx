@@ -74,7 +74,9 @@ export function DataTable({
         <Input
           placeholder={filterPlaceholder}
           value={(table.getColumn(filterColumnName)?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn(filterColumnName)?.setFilterValue(event.target.value)}
+          onChange={(event) =>
+            table.getColumn(filterColumnName)?.setFilterValue(event.target.value)
+          }
           className="max-w-sm"
         />
         <div className="ml-auto">{children}</div>

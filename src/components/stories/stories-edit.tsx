@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { editStoryAction, deleteStoryAction } from '@/actions/story-action'
 import { useUser } from '@/contexts/user-context'
@@ -16,7 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 
 interface StoryEditProps {
   project: Project
@@ -132,7 +132,11 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
                     </Button>
                   )}
                   {index === acceptanceTests.length - 1 && acceptanceTests.length > 1 && (
-                    <Button type="button" onClick={() => handleRemoveAcceptanceTest(index)} className="bg-red-500 hover:bg-red-600 text-white">
+                    <Button
+                      type="button"
+                      onClick={() => handleRemoveAcceptanceTest(index)}
+                      className="bg-red-500 hover:bg-red-600 text-white"
+                    >
                       Delete
                     </Button>
                   )}
@@ -146,27 +150,39 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem key="1" value="must have">Must Have</SelectItem>
-                  <SelectItem key="2" value="should have">Should Have</SelectItem>
-                  <SelectItem key="3" value="could have">Could Have</SelectItem>
-                  <SelectItem key="4" value="won't have this time">Won&apos;t Have This Time</SelectItem>
+                  <SelectItem key="1" value="must have">
+                    Must Have
+                  </SelectItem>
+                  <SelectItem key="2" value="should have">
+                    Should Have
+                  </SelectItem>
+                  <SelectItem key="3" value="could have">
+                    Could Have
+                  </SelectItem>
+                  <SelectItem key="4" value="won't have this time">
+                    Won&apos;t Have This Time
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-3">
               <label htmlFor="businessValue">Business Value</label>
-                <Select defaultValue={businessValue} onValueChange={setBusinessValue} name="businessValue">
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue>{businessValue || "Select a value"}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[...Array(10)].map((_, index) => (
-                      <SelectItem key={index + 1} value={(index + 1).toString()}>
-                        {index + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <Select
+                defaultValue={businessValue}
+                onValueChange={setBusinessValue}
+                name="businessValue"
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue>{businessValue || 'Select a value'}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {[...Array(10)].map((_, index) => (
+                    <SelectItem key={index + 1} value={(index + 1).toString()}>
+                      {index + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex space-x-4">
               <Button type="submit">Edit User Story</Button>

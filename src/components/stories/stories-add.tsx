@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addStoryAction } from '@/actions/story-action'
 import { Project, User } from '@/payload-types'
@@ -14,7 +14,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 
 interface StoryAddProps {
   project: Project
@@ -112,10 +112,18 @@ export default function StoryAdd({ project, user }: StoryAddProps) {
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem key="1" value="must have">Must Have</SelectItem>
-                  <SelectItem key="2" value="should have">Should Have</SelectItem>
-                  <SelectItem key="3" value="could have">Could Have</SelectItem>
-                  <SelectItem key="4" value="won't have this time">Won&apos;t Have This Time</SelectItem>
+                  <SelectItem key="1" value="must have">
+                    Must Have
+                  </SelectItem>
+                  <SelectItem key="2" value="should have">
+                    Should Have
+                  </SelectItem>
+                  <SelectItem key="3" value="could have">
+                    Could Have
+                  </SelectItem>
+                  <SelectItem key="4" value="won't have this time">
+                    Won&apos;t Have This Time
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

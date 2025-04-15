@@ -19,7 +19,12 @@ export default function Sprints({ sprints }: { sprints: Sprint[] }) {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <DataTable columns={sprintColumns} data={sprints} filterColumnName={"name"} filterPlaceholder={"Filter sprint names..."} >
+      <DataTable
+        columns={sprintColumns}
+        data={sprints}
+        filterColumnName={'name'}
+        filterPlaceholder={'Filter sprint names...'}
+      >
         <Actions />
       </DataTable>
     </div>

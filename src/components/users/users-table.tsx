@@ -19,7 +19,12 @@ export default function Users({ users }: { users: User[] }) {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <DataTable columns={userColumns} data={users} filterColumnName={"username"} filterPlaceholder={"Filter usernames..."} >
+      <DataTable
+        columns={userColumns}
+        data={users}
+        filterColumnName={'username'}
+        filterPlaceholder={'Filter usernames...'}
+      >
         <Actions />
       </DataTable>
     </div>

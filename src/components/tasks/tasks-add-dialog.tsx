@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import React, { useActionState, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -17,23 +17,27 @@ import { FormMessage } from '../ui/form'
 import { addTaskAction } from '@/actions/task-action'
 import { Project, Story, User } from '@/payload-types'
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
-export default function AddTaskDialog(props: {project: Project, story: Story}) {
+export default function AddTaskDialog(props: { project: Project; story: Story }) {
   const members = props.project.members ?? []
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>, project: Project, story: Story) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+    project: Project,
+    story: Story,
+  ) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-  
+
     const result = await addTaskAction(formData, project, story)
     if ('error' in result) {
       setError(result.error)
@@ -60,11 +64,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
               <Label htmlFor="description" className="text-right">
                 Description
               </Label>
-              <Input
-                name="description"
-                className="col-span-3"
-                required
-              />
+              <Input name="description" className="col-span-3" required />
             </div>
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="estimate" className="text-right">
@@ -75,7 +75,7 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
                 type="number"
                 step="0.1"
                 min="0.0"
-                defaultValue='0.0'
+                defaultValue="0.0"
                 className="col-span-3"
                 required
               />
@@ -87,16 +87,17 @@ export default function AddTaskDialog(props: {project: Project, story: Story}) {
                 </SelectTrigger>
                 <SelectContent defaultValue={undefined}>
                   {members.map((member) => (
-                    <SelectItem key={(member.user as User).id} value={(member.user as User).id.toString() ?? ''}>
+                    <SelectItem
+                      key={(member.user as User).id}
+                      value={(member.user as User).id.toString() ?? ''}
+                    >
                       {(member.user as User).username}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-            <Button type="submit">
-              Add Task
-            </Button>
+            <Button type="submit">Add Task</Button>
             {error && <div className="text-red-500">{error}</div>}
           </div>
         </form>

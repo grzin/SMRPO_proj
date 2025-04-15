@@ -7,7 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { useActionState } from 'react'
-import { createSprintAction, editSprintAction, deleteSprintAction } from '@/actions/sprint-management-actions'
+import {
+  createSprintAction,
+  editSprintAction,
+  deleteSprintAction,
+} from '@/actions/sprint-management-actions'
 import { FormError } from '../ui/form'
 import { Project, Sprint } from '@/payload-types'
 import { useSearchParams } from 'next/navigation'
@@ -17,7 +21,11 @@ export default function SprintEdit({
   sprintEditProjects,
   sprints,
   ...props
-}: React.ComponentProps<'div'> & { sprintEdit: Sprint | null, sprintEditProjects: Project[], sprints: Sprint[] }) {
+}: React.ComponentProps<'div'> & {
+  sprintEdit: Sprint | null
+  sprintEditProjects: Project[]
+  sprints: Sprint[]
+}) {
   if (sprintEdit == null) {
     return <CreateSprint projects={sprintEditProjects} sprints={sprints} {...props}></CreateSprint>
   } else {
@@ -34,13 +42,13 @@ function CreateSprint({
   projects,
   sprints,
   ...props
-}: React.ComponentProps<'div'> & { projects: Project[], sprints: Sprint[] }) {
+}: React.ComponentProps<'div'> & { projects: Project[]; sprints: Sprint[] }) {
   const searchParams = useSearchParams()
   const projectId = Number(searchParams.get('projectId'))
-  const n_sprints = sprints.filter(s => (s.project as Project).id === projectId).length
+  const n_sprints = sprints.filter((s) => (s.project as Project).id === projectId).length
 
   const initialState = {
-    name: `Sprint #${n_sprints+1}`,
+    name: `Sprint #${n_sprints + 1}`,
     startDate: '',
     endDate: '',
     velocity: 0,
@@ -116,11 +124,13 @@ function CreateSprint({
                 />
                 {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
-              <Input name='project_id'
-                     id="project_id"
-                     type='number'
-                     defaultValue={projectId}
-                     hidden/>
+              <Input
+                name="project_id"
+                id="project_id"
+                type="number"
+                defaultValue={projectId}
+                hidden
+              />
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending}>
                   Create
@@ -140,7 +150,7 @@ function EditSprint({
   editSprint,
   projects,
   ...props
-}: React.ComponentProps<'div'> & { editSprint: Sprint, projects: Project[] }) {
+}: React.ComponentProps<'div'> & { editSprint: Sprint; projects: Project[] }) {
   const formatDate = (date: string) => new Date(date).toISOString().substring(0, 10)
 
   const initialState = {
@@ -170,7 +180,8 @@ function EditSprint({
   )
 
   const currentDate = new Date()
-  const activeSprint = new Date(state.startDate) < currentDate && new Date(state.endDate) > currentDate
+  const activeSprint =
+    new Date(state.startDate) < currentDate && new Date(state.endDate) > currentDate
   const pastSprint = new Date(state.endDate) < currentDate
 
   return (
@@ -235,11 +246,13 @@ function EditSprint({
                 />
                 {state.error.velocity && <FormError>{state.error.velocity}</FormError>}
               </div>
-              <Input name='project_id'
-                     id="project_id"
-                     type='number'
-                     defaultValue={(state.project_id as Project).id}
-                     hidden/>
+              <Input
+                name="project_id"
+                id="project_id"
+                type="number"
+                defaultValue={(state.project_id as Project).id}
+                hidden
+              />
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full" disabled={pending || pastSprint}>
                   Save
@@ -251,7 +264,10 @@ function EditSprint({
           <form action={deleteFormAction}>
             <div className="flex flex-col gap-6 mt-8">
               <input type="hidden" name="id" value={editSprint.id} />
-              <Button variant={'destructive'} disabled={deletePending || activeSprint || pastSprint}>
+              <Button
+                variant={'destructive'}
+                disabled={deletePending || activeSprint || pastSprint}
+              >
                 Delete sprint
               </Button>
               {deleteState.message && <FormError>{deleteState.message}</FormError>}
