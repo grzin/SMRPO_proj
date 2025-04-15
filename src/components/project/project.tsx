@@ -29,10 +29,13 @@ import { Documentation } from '../documentation/documentation'
 import { Wall } from '../wall/wall'
 import { Input } from '../ui/input'
 import { useRouter } from 'next/navigation'
+import { Textarea } from '../ui/textarea'
 
 const roleNames = {
   scrum_master: 'Scrum master',
+  scrum_master_developer: 'Scrum master & Developer',
   product_owner: 'Product owner',
+  product_owner_developer: 'Product owner & Developer',
   developer: 'Developer',
 }
 
@@ -43,7 +46,9 @@ function isAdminOrMethodologyManager(user: User | null, project: Project) {
 
   if (
     project?.members?.find(
-      (member) => (member.user as User).id === user?.id && member.role === 'scrum_master',
+      (member) =>
+        (member.user as User).id === user?.id &&
+        (member.role === 'scrum_master' || member.role == 'scrum_master_developer'),
     )
   ) {
     return true
@@ -89,7 +94,9 @@ export const RoleSelect: FC<{
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="scrum_master">Scrum master</SelectItem>
+        <SelectItem value="scrum_master_developer">Scrum master & Developer</SelectItem>
         <SelectItem value="product_owner">Product owner</SelectItem>
+        <SelectItem value="product_owner_developer">Product owner & Developer</SelectItem>
         <SelectItem value="developer">Developer</SelectItem>
       </SelectContent>
     </Select>
@@ -126,13 +133,18 @@ export const ProjectDashboard: FC<{
   // Members
   const [editingMember, setEditingMember] = useState<null | string>(null)
   const [selectedUser, setSelectedUser] = useState<null | string>(null)
-  const [selectedRole, setSelectedRole] = useState<'scrum_master' | 'product_owner' | 'developer'>(
-    'developer',
-  )
+  const [selectedRole, setSelectedRole] = useState<
+    | 'scrum_master'
+    | 'scrum_master_developer'
+    | 'product_owner'
+    | 'product_owner_developer'
+    | 'developer'
+  >('developer')
 
   // Details
   const [editDetails, setEditDetails] = useState(false)
   const [editName, setEditName] = useState<string>(project.name)
+  const [editDescription, setEditDescription] = useState<string>(project.description ?? '')
   const [editError, setEditError] = useState<string>('')
 
   const initialState = {
@@ -155,16 +167,30 @@ export const ProjectDashboard: FC<{
             <CardDescription>Project details</CardDescription>
           </CardHeader>
           <CardContent className="">
-            <div className="flex flex-row gap-4 items-center justify-between flex-wrap">
+            <div className="flex flex-col gap-4 items-start justify-start">
               <div className="flex flex-row gap-4">
-                <p className="text-xl font-semibold">Name:</p>
+                <p className="text-lg w-[120px]">Name:</p>
                 {!editDetails && <h3 className="text-xl">{project.name}</h3>}
                 {editDetails && (
                   <Input
-                    className="w-[300px]"
+                    className="w-[500px]"
                     value={editName}
                     onChange={(e) => {
                       setEditName(e.target.value)
+                    }}
+                  />
+                )}
+              </div>
+              <div className="flex flex-row gap-4">
+                <p className="text-lg w-[120px]">Description:</p>
+                {!editDetails && <h3 className="text-lg">{project.description}</h3>}
+                {editDetails && (
+                  <Textarea
+                    rows={6}
+                    className="w-[500px]"
+                    value={editDescription}
+                    onChange={(e) => {
+                      setEditDescription(e.target.value)
                     }}
                   />
                 )}
@@ -175,6 +201,7 @@ export const ProjectDashboard: FC<{
                     setEditDetails(true)
                     setEditError('')
                     setEditName(project.name)
+                    setEditDescription(project.description ?? '')
                   }}
                 >
                   Edit
@@ -184,13 +211,13 @@ export const ProjectDashboard: FC<{
                 <div className="flex flex-row gap-4">
                   <Button
                     onClick={async () => {
-                      if (editName === project.name) {
+                      if (editName === project.name && editDescription === project.description) {
                         setEditError('')
                         setEditDetails(false)
                         return
                       }
 
-                      const result = await editProjectDetails(project.id, editName)
+                      const result = await editProjectDetails(project.id, editName, editDescription)
 
                       if (result.isError) {
                         setEditError(result.error)
@@ -261,7 +288,9 @@ export const ProjectDashboard: FC<{
                                   if (
                                     newVal == 'scrum_master' ||
                                     newVal == 'product_owner' ||
-                                    newVal == 'developer'
+                                    newVal == 'developer' ||
+                                    newVal == 'scrum_master_developer' ||
+                                    newVal == 'product_owner_developer'
                                   ) {
                                     setSelectedRole(newVal)
                                   }
@@ -374,73 +403,8 @@ export const ProjectDashboard: FC<{
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Sprit backlog</CardTitle>
-            <CardDescription>Project details</CardDescription>
           </CardHeader>
-          <CardContent className="">
-            <div className="flex flex-row gap-4 items-center justify-between flex-wrap">
-              <div className="flex flex-row gap-4">
-                <p className="text-xl font-semibold">Name:</p>
-                {!editDetails && <h3 className="text-xl">{project.name}</h3>}
-                {editDetails && (
-                  <Input
-                    className="w-[300px]"
-                    value={editName}
-                    onChange={(e) => {
-                      setEditName(e.target.value)
-                    }}
-                  />
-                )}
-              </div>
-              {isMethodologyManager && !editDetails && (
-                <Button
-                  onClick={() => {
-                    setEditDetails(true)
-                    setEditError('')
-                    setEditName(project.name)
-                  }}
-                >
-                  Edit
-                </Button>
-              )}
-              {editDetails && (
-                <div className="flex flex-row gap-4">
-                  <Button
-                    onClick={async () => {
-                      if (editName === project.name) {
-                        setEditError('')
-                        setEditDetails(false)
-                        return
-                      }
-
-                      const result = await editProjectDetails(project.id, editName)
-
-                      if (result.isError) {
-                        setEditError(result.error)
-                        setEditDetails(true)
-                      } else {
-                        setEditError('')
-                        setEditDetails(false)
-                        router.refresh()
-                      }
-                    }}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setEditDetails(false)
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
-            </div>
-            <p style={{ color: 'red' }} className="text-lg">
-              {editError}
-            </p>
-          </CardContent>
+          <CardContent className=""></CardContent>
         </Card>
       </div>
       <Stories

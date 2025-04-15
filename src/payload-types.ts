@@ -148,11 +148,12 @@ export interface User {
 export interface Project {
   id: number;
   name: string;
+  description?: string | null;
   key?: string | null;
   members?:
     | {
         user: number | User;
-        role: 'scrum_master' | 'product_owner' | 'developer';
+        role: 'scrum_master' | 'scrum_master_developer' | 'product_owner' | 'product_owner_developer' | 'developer';
         id?: string | null;
       }[]
     | null;
@@ -332,6 +333,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
+  description?: T;
   key?: T;
   members?:
     | T

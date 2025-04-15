@@ -117,3 +117,5 @@ export const projectName = z
   .string()
   .min(1, { message: 'Project name is required' })
   .transform((x) => x.trim())
+
+export const projectDescription = z.string().optional().default('')

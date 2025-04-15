@@ -29,7 +29,10 @@ export async function isAdminOrMethodologyManager(user: User, members: any[]) {
   return (
     user.role === 'admin' ||
     ((await isMember(user, members)) &&
-      (ourUser?.role === 'scrum_master' || ourUser?.role === 'product_owner'))
+      (ourUser?.role === 'scrum_master' ||
+        ourUser?.role === 'product_owner' ||
+        ourUser?.role === 'scrum_master_developer' ||
+        ourUser?.role === 'product_owner_developer'))
   )
 }
 
@@ -38,7 +41,10 @@ export async function isMethodologyManager(user: User, members: any[]) {
     return true
   }
   const ourUser = members.find((member) => member.user.id === user.id)
-  return (await isMember(user, members)) && ourUser?.role === 'scrum_master'
+  return (
+    (await isMember(user, members)) &&
+    (ourUser?.role === 'scrum_master' || ourUser?.role === 'scrum_master_developer')
+  )
 }
 
 export async function isProductOwner(user: User, members: any[]) {

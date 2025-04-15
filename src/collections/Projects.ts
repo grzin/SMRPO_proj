@@ -8,8 +8,16 @@ const projectRoles = [
     value: 'scrum_master',
   },
   {
+    label: 'Scrum master & Developer',
+    value: 'scrum_master_developer',
+  },
+  {
     label: 'Product owner',
     value: 'product_owner',
+  },
+  {
+    label: 'Product owner & Developer',
+    value: 'product_owner_developer',
   },
   {
     label: 'Developer',
@@ -29,6 +37,13 @@ export const Projects: CollectionConfig = {
       type: 'text',
       required: true,
       unique: true,
+      index: false,
+    },
+    {
+      name: 'description',
+      type: 'text',
+      required: false,
+      unique: false,
       index: false,
     },
     {

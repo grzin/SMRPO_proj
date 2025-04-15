@@ -44,7 +44,12 @@ export const projectColumns: ColumnDef<User>[] = [
       const members = row.getValue('members') as
         | {
             user: User
-            role: 'scrum_master' | 'product_owner' | 'developer'
+            role:
+              | 'scrum_master'
+              | 'product_owner'
+              | 'developer'
+              | 'scrum_master_developer'
+              | 'product_owner_developer'
             id?: string | null
           }[]
         | null

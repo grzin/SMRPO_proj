@@ -19,6 +19,7 @@ import { Input } from '../ui/input'
 import { FormMessage } from '../ui/form'
 import { createProjectAction } from '@/actions/project-action'
 import { useUser } from '@/contexts/user-context'
+import { Textarea } from '../ui/textarea'
 
 export default function ProjectsTable({ projects }: { projects: Project[] }) {
   const { isAdmin } = useUser()
@@ -39,6 +40,7 @@ export default function ProjectsTable({ projects }: { projects: Project[] }) {
 const Actions = () => {
   const [error, setError] = useState('')
   const [projectName, setProjectName] = useState('')
+  const [description, setDescription] = useState('')
 
   return (
     <Dialog>
@@ -63,12 +65,23 @@ const Actions = () => {
               }}
               className="col-span-3"
             />
+            <Label htmlFor="name" className="text-right">
+              Project description
+            </Label>
+            <Textarea
+              name="description"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value)
+              }}
+              className="col-span-3"
+            />
             <FormMessage className="col-span-4">{error}</FormMessage>
           </div>
           <Button
             type="submit"
             onClick={async (e) => {
-              const res = await createProjectAction(projectName)
+              const res = await createProjectAction(projectName, description)
               setError(res.message)
               e.preventDefault()
               return false

@@ -4,13 +4,14 @@ import { getPayload } from 'payload'
 import { getUser } from './login-action'
 import config from '@/payload.config'
 import { z } from 'zod'
-import { idValidator, projectName } from './validators'
+import { idValidator, projectDescription, projectName } from './validators'
 import { redirect } from 'next/navigation'
 import { Project, User, WallMessage } from '@/payload-types'
 import { projectRoleValidator } from './project-validators'
 
 const createProjectSchema = z.object({
   name: projectName,
+  description: projectDescription,
 })
 
 const addMemberScehma = z.object({
@@ -26,14 +27,16 @@ export async function isAdminOrMethodologyManager(user: User, project: Project) 
 
   if (
     project?.members?.find(
-      (member) => (member.user as User).id === user.id && member.role === 'scrum_master',
+      (member) =>
+        (member.user as User).id === user.id &&
+        (member.role === 'scrum_master' || member.role == 'scrum_master_developer'),
     )
   ) {
     return true
   }
 }
 
-export async function createProjectAction(name: string) {
+export async function createProjectAction(name: string, description: string) {
   const payload = await getPayload({ config })
   const user = await getUser()
 
@@ -44,6 +47,7 @@ export async function createProjectAction(name: string) {
 
   const validatedFields = createProjectSchema.safeParse({
     name: name,
+    description: description,
   })
 
   if (!validatedFields.success) {
@@ -67,6 +71,7 @@ export async function createProjectAction(name: string) {
       collection: 'projects',
       data: {
         name: validatedFields.data.name,
+        description: validatedFields.data.description,
         members: [
           {
             user: user.id,
@@ -244,12 +249,17 @@ export async function postWallMessageAction(projectId: number, message: string, 
   }
 }
 
-export async function editProjectDetails(projectId: number, name: string): Promise<Result> {
+export async function editProjectDetails(
+  projectId: number,
+  name: string,
+  description: string,
+): Promise<Result> {
   const payload = await getPayload({ config })
   const user = await getUser()
 
   const validatedFields = createProjectSchema.safeParse({
     name: name ?? '',
+    description: description ?? '',
   })
 
   if (!validatedFields.success) {
@@ -260,7 +270,10 @@ export async function editProjectDetails(projectId: number, name: string): Promi
   }
 
   const exisitngProject = await payload
-    .find({ collection: 'projects', where: { key: { equals: name.toLowerCase() } } })
+    .find({
+      collection: 'projects',
+      where: { and: [{ key: { equals: name.toLowerCase() } }, { id: { not_equals: projectId } }] },
+    })
     .catch(() => null)
 
   if ((exisitngProject?.totalDocs ?? 0) > 0) {
@@ -275,7 +288,8 @@ export async function editProjectDetails(projectId: number, name: string): Promi
     .update({
       collection: 'projects',
       data: {
-        name: name,
+        name: validatedFields.data.name,
+        description: validatedFields.data.description,
       },
 
       where: {
@@ -309,7 +323,12 @@ export async function editUserAction(
   projectId: number,
   memberId: string,
   userId: number,
-  role: 'scrum_master' | 'product_owner' | 'developer',
+  role:
+    | 'scrum_master'
+    | 'scrum_master_developer'
+    | 'product_owner'
+    | 'product_owner_developer'
+    | 'developer',
 ) {
   const payload = await getPayload({ config })
   const user = await getUser()
