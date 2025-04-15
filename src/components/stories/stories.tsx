@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { canDeleteStory } from '@/actions/user-actions'
 import { useUser } from '@/contexts/user-context'
 import { useEffect, useState } from 'react'
-import { Project, Story, User } from '@/payload-types'
+import { Project, Story, TaskTime, User } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
@@ -15,19 +15,61 @@ import { toggleRealizationAction } from '@/actions/task-action'
 import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
 import { Switch } from '@/components/ui/switch'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import datetimeDifference from 'datetime-difference'
+
+function sumTimes(taskTimes: TaskTime[]) {
+  dayjs.extend(duration)
+  let sum = dayjs.duration(0)
+
+  taskTimes.forEach((taskTime) => {
+    if (taskTime.customHMS) {
+      const negative = taskTime.customHMS.charAt(0) === '-'
+      if (negative) {
+        const arr = taskTime.customHMS.substring(2).split(' ')
+        sum = sum.subtract({
+          hours: Number(arr[0].split('h')[0]),
+          minutes: Number(arr[1].split('m')[0]),
+          seconds: Number(arr[2].split('s')[0]),
+        })
+      } else {
+        const arr = taskTime.customHMS.split(' ')
+        sum = sum.add({
+          hours: Number(arr[0].split('h')[0]),
+          minutes: Number(arr[1].split('m')[0]),
+          seconds: Number(arr[2].split('s')[0]),
+        })
+      }
+    } else if (taskTime.end) {
+      const diff = datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
+      sum = sum.add({
+        hours: diff.hours,
+        minutes: diff.minutes,
+        seconds: diff.seconds,
+      })
+    }
+  })
+
+  return `${sum.hours()}h ${sum.minutes()}m ${sum.seconds()}s`
+}
 
 export const Stories: FC<{
   project: Project
+  taskTimes: TaskTime[]
   canAddStory: boolean
   canUpdateTimeEstimate: boolean
   canNotSeeTimeEstimate: boolean
+  isDeveloperBool: boolean
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
 }> = ({
   project,
+  taskTimes,
   canAddStory,
   canUpdateTimeEstimate,
   canNotSeeTimeEstimate,
+  isDeveloperBool,
   isMemberBool,
   isMethodologyManagerBool,
 }) => {
@@ -70,12 +112,6 @@ export const Stories: FC<{
 
     checkDeletableStories()
   }, [project.stories, user, project.members])
-
-  //console.log(deletableStories)
-  //console.log(user)
-  //console.log(project.stories)
-
-  //console.log(project.members)
 
   return (
     <div className="rounded-xl md:min-h-min">
@@ -182,6 +218,7 @@ export const Stories: FC<{
                         <div>Realized</div>
                         <div>Tasked User</div>
                         <div>Status</div>
+                        <div>Time tracking</div>
                       </div>
                       {story.tasks?.map((task) => (
                         <Card key={task.id}>
@@ -208,6 +245,22 @@ export const Stories: FC<{
                                 )}
                               </div>
                               <div>{task.status}</div>
+                              <div className="flex justify-between">
+                                {sumTimes(taskTimes.filter((t) => t.task === task.id))}
+                                {user?.id === (task.taskedUser as User).id && isDeveloperBool ? (
+                                  <a
+                                    href={
+                                      '/projects/' + project.id + '/tasks/time/' + (task.id || '')
+                                    }
+                                    className="text-primary"
+                                  >
+                                    {' '}
+                                    Manage
+                                  </a>
+                                ) : (
+                                  <></>
+                                )}
+                              </div>
                             </div>
                           </CardContent>
                         </Card>

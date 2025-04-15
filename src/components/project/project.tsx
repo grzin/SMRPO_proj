@@ -1,6 +1,6 @@
 'use client'
 
-import { Project, Sprint, User, WallMessage } from '@/payload-types'
+import { Project, Sprint, TaskTime, User, WallMessage } from '@/payload-types'
 import { FC, useActionState, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
@@ -98,6 +98,7 @@ export const RoleSelect: FC<{
 
 export const ProjectDashboard: FC<{
   project: Project
+  taskTimes: TaskTime[]
   sprints: Sprint[]
   canAddStory: boolean
   canUpdateTimeEstimate: boolean
@@ -105,10 +106,12 @@ export const ProjectDashboard: FC<{
   canAddSprint: boolean
   users: User[]
   wallMessages: WallMessage[]
+  isDeveloperBool: boolean
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
 }> = ({
   project,
+  taskTimes,
   sprints,
   canAddStory,
   canUpdateTimeEstimate,
@@ -116,6 +119,7 @@ export const ProjectDashboard: FC<{
   canAddSprint,
   users,
   wallMessages,
+  isDeveloperBool,
   isMemberBool,
   isMethodologyManagerBool,
 }) => {
@@ -445,9 +449,11 @@ export const ProjectDashboard: FC<{
       </div>
       <Stories
         project={project}
+        taskTimes={taskTimes}
         canAddStory={canAddStory}
         canUpdateTimeEstimate={canUpdateTimeEstimate}
         canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+        isDeveloperBool={isDeveloperBool}
         isMemberBool={isMemberBool}
         isMethodologyManagerBool={isMethodologyManagerBool}
       />

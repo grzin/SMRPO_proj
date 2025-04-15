@@ -18,7 +18,7 @@ export const TaskTimes: CollectionConfig = {
     },
     {
       name: 'task',
-      type: 'number',
+      type: 'text',
       required: true,
     },
     {
