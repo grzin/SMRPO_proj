@@ -75,12 +75,12 @@ export default function TaskTimes({
   activeTaskDescription: string | null
   times: TaskTime[]
 }) {
-  let initialState = {
+  const initialState = {
     hours: 0,
     minutes: 0,
     seconds: 0,
   }
-  let ttInitialState = {}
+  const ttInitialState = {}
   const [state, formAction, pending] = useActionState(createTimeAction, initialState)
   const [ttState, ttFormAction, ttPending] = useActionState(trackTimeAction, ttInitialState)
 

@@ -6,13 +6,11 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { getUser } from '@/actions/login-action'
-import { useSearchParams } from 'next/navigation'
 import { Project } from '@/payload-types'
 
 export default async function Page({

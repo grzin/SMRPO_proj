@@ -116,4 +116,6 @@ export async function trackTimeAction({}, formData: FormData) {
   }
 
   redirect(`/projects/${response.projectId}/tasks/time/${response.taskId}`)
+
+  return response
 }

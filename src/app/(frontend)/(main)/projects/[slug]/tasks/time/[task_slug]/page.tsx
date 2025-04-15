@@ -64,7 +64,7 @@ export default async function Page({
 
   let activeTaskDescription = null
   if (activeTasks.totalDocs > 0) {
-    let stories = await payload.find({ collection: 'stories' })
+    const stories = await payload.find({ collection: 'stories' })
     stories.docs.forEach((s) => {
       s.tasks?.forEach((t) => {
         if (t.id === activeTasks.docs[0].task && t.id !== taskId)
