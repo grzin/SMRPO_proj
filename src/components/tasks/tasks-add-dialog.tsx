@@ -83,7 +83,7 @@ export default function AddTaskDialog(props: { project: Project; story: Story })
             <div>
               <Select name="member">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a project member" />
+                  <SelectValue placeholder="Select a project member1" />
                 </SelectTrigger>
                 <SelectContent defaultValue={undefined}>
                   {members.map((member) => (
