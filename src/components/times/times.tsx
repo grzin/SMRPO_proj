@@ -128,7 +128,7 @@ export default function TaskTimes({
               <TableRow key={taskTime.id}>
                 {taskTime.customHMS ? (
                   <>
-                    <TableCell>{new Date(taskTime.start).toLocaleTimeString()}</TableCell>
+                    <TableCell>{new Date(taskTime.start).toLocaleTimeString('sl-SI')}</TableCell>
                     <TableCell className="text-gray-400">custom entry</TableCell>
                     <TableCell>
                       {taskTime.customHMS.charAt(0) === '-' ? (
@@ -140,10 +140,10 @@ export default function TaskTimes({
                   </>
                 ) : (
                   <>
-                    <TableCell>{new Date(taskTime.start).toLocaleTimeString()}</TableCell>
+                    <TableCell>{new Date(taskTime.start).toLocaleTimeString('sl-SI')}</TableCell>
                     {taskTime.end ? (
                       <>
-                        <TableCell>{new Date(taskTime.end).toLocaleTimeString()}</TableCell>
+                        <TableCell>{new Date(taskTime.end).toLocaleTimeString('sl-SI')}</TableCell>
                         <TableCell>
                           <Badge className="bg-emerald-500">
                             {datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))

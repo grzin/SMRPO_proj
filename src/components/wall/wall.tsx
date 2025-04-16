@@ -16,6 +16,8 @@ export const Wall: FC<{
   const [newMessage, setNewMessage] = useState('')
   const scrollableRef = useRef<HTMLDivElement>(null)
 
+  const [wall, setWall] = useState<WallMessage[]>(wallMessages ?? [])
+
   useEffect(() => {
     if (scrollableRef.current) {
       scrollableRef.current.scrollTo({
@@ -23,7 +25,7 @@ export const Wall: FC<{
         behavior: 'smooth',
       })
     }
-  }, [wallMessages])
+  }, [wall])
 
   const handlePostMessage = () => {
     if (!newMessage.trim()) return
@@ -34,18 +36,15 @@ export const Wall: FC<{
 
     const messageName = `${user?.name || 'Anonymous'} (${user?.role == 'admin' ? 'Admin' : userRoleOnProject})`
 
-    const newId =
-      wallMessages && wallMessages.length > 0
-        ? Math.max(...wallMessages.map((msg) => msg.id)) + 1
-        : 0
+    const newId = wall && wall.length > 0 ? Math.max(...wall.map((msg) => msg.id)) + 1 : 0
 
     const message: WallMessage = {
       id: newId,
       username: messageName,
       message: newMessage,
-      createdAt: new Date().toLocaleString('sl-SI'),
+      createdAt: new Date().toDateString(),
       project: project.id,
-      updatedAt: new Date().toLocaleString('sl-SI'),
+      updatedAt: new Date().toDateString(),
     }
 
     postWallMessageAction(project.id, newMessage, messageName).then((response) => {
@@ -56,10 +55,7 @@ export const Wall: FC<{
         })
       }
     })
-    if (!wallMessages) {
-      wallMessages = []
-    }
-    wallMessages.push(message)
+    setWall((prevWall) => [...prevWall, message])
     setNewMessage('')
   }
 
@@ -71,17 +67,17 @@ export const Wall: FC<{
           <CardDescription>Wall where users can post comments</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-          {wallMessages && wallMessages.length > 0 && (
+          {wall && wall.length > 0 && (
             <div
               ref={scrollableRef}
               className="flex flex-col gap-4 p-4 border rounded-lg max-h-[400px] overflow-y-auto"
             >
               <div className="flex flex-col gap-2">
-                {wallMessages?.map((message) => (
+                {wall?.map((message) => (
                   <div key={message.id} className="p-2 border-b">
                     <p className="text-sm font-semibold">{message.username}</p>
                     <p className="text-xs text-gray-500">
-                      {new Date(message.createdAt).toLocaleString('sl-SI')}
+                      {new Date(message.createdAt).toLocaleDateString('sl-SI')}
                     </p>
                     <p>{message.message}</p>
                   </div>

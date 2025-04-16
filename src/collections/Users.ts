@@ -11,7 +11,7 @@ const beforeLoginHook: CollectionBeforeLoginHook<User> = async ({ req, user }) =
     id: user.id,
     data: {
       lastLoginDate: user.loginDate,
-      loginDate: loginDate.toLocaleDateString() + ' ' + loginDate.toLocaleTimeString(),
+      loginDate: loginDate.toDateString() + ' ' + loginDate.toTimeString(),
     },
   })
 }
