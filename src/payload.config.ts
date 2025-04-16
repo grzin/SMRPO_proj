@@ -12,9 +12,27 @@ import { Sprints } from './collections/Sprints'
 import { Stories } from './collections/Stories'
 import { TaskTimes } from './collections/TaskTimes'
 import { WallMessages } from './collections/WallMessages'
+import { PostgresAdapter } from '@payloadcms/db-postgres/types'
+import { SQLiteAdapter } from '@payloadcms/db-sqlite/types'
+import { DatabaseAdapterResult } from 'node_modules/payload/dist/database/types'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+let db: DatabaseAdapterResult<PostgresAdapter> | DatabaseAdapterResult<SQLiteAdapter> =
+  sqliteAdapter({
+    client: {
+      url: process.env.DATABASE_URI_LOCAL || '',
+    },
+  })
+
+if (process.env.DATABASE === 'postgres') {
+  db = postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URI_POSTGRES || '',
+    },
+  })
+}
 
 export default buildConfig({
   admin: {
@@ -28,18 +46,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI_LOCAL || '',
-    },
-  }),
-  /*
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URI_POSTGRES || '',
-    },
-  }),
-  */
+  db: db,
   sharp,
   plugins: [],
 })

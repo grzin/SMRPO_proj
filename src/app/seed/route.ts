@@ -97,15 +97,6 @@ async function createAdmin(payload: Payload) {
     role: 'admin',
   }
 
-  const djkhaleed: Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'> = {
-    username: 'djk',
-    password: 'anotherone',
-    name: 'another',
-    surname: 'one',
-    email: '',
-    role: 'admin',
-  }
-
   await payload
     .create({
       collection: 'users',
@@ -113,16 +104,6 @@ async function createAdmin(payload: Payload) {
     })
     .catch((error) => {
       // Gracefully fail, if admin already exists
-      console.error(error)
-    })
-
-  await payload
-    .create({
-      collection: 'users',
-      data: djkhaleed,
-    })
-    .catch((error) => {
-      // Gracefully fail, if djkhaleed already exists
       console.error(error)
     })
 }
@@ -178,7 +159,7 @@ async function createProjects(payload: Payload) {
           message:
             'Dragi sodelavci, včeraj sem zaključil integracijo novega CRM sistema z našo obstoječo bazo strank. Vse deluje kot načrtovano, a prosim, da vsi preverite dostope do svojih računov in mi sporočite morebitne težave. Za naslednji teden načrtujem še izobraževanje za celotno prodajno ekipo. Pripravil bom kratek priročnik z najpogostejšimi vprašanji. Lep pozdrav, Marko',
           username: 'Name (methodology manager)',
-          createdAt: new Date().toLocaleString('sl-SI'),
+          createdAt: new Date().toDateString(),
         },
       })
       .catch((error) => {
@@ -193,7 +174,7 @@ async function createProjects(payload: Payload) {
           message:
             'Pozdravljeni! Ravnokar sem dodala najnovejše oblikovne predloge za mobilno aplikacijo Zdravko v skupno mapo na Drivu. Upoštevala sem vse prejšnje komentarje glede barvne sheme in postavitve navigacijskih gumbov. Prosim za povratne informacije do petka, da lahko do konca meseca zaključimo z oblikovanjem in začnemo z implementacijo. Hvala vsem za sodelovanje! Nina',
           username: 'another (developer)',
-          createdAt: new Date().toLocaleString('sl-SI'),
+          createdAt: new Date().toDateString(),
         },
       })
       .catch((error) => {
