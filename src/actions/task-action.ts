@@ -17,7 +17,10 @@ export async function addTaskAction(
 
   const description = formData.get('description')?.toString() ?? ''
   const estimate = parseFloat(formData.get('estimate')?.toString() ?? '')
-  const taskedUserId = formData.get('member')?.toString()
+  let taskedUserId = formData.get('member')?.toString()
+  if (taskedUserId === 'unassigned') {
+    taskedUserId = undefined
+  }
 
   const status = taskedUserId ? 'pending' : 'unassigned'
 
@@ -110,7 +113,7 @@ export async function toggleRealizationAction(storyId: number, taskId: any, newV
 export async function deleteTaskAction(
   storyId: number,
   taskId: any,
-  project: Project
+  project: Project,
 ): Promise<{ success: true } | { error: string }> {
   const payload = await getPayload({ config })
   const user = await getUser()
@@ -142,7 +145,7 @@ export async function deleteTaskAction(
     return { error: 'Cannot delete assigned tasks.' }
   }
 
-  const newTasks = (story.tasks ?? []).filter(task => task.id !== taskId)
+  const newTasks = (story.tasks ?? []).filter((task) => task.id !== taskId)
 
   await payload.update({
     collection: 'stories',
@@ -166,7 +169,10 @@ export async function editTaskAction(
 
   const description = formData.get('description')?.toString() ?? ''
   const estimate = parseFloat(formData.get('estimate')?.toString() ?? '')
-  const taskedUserId = formData.get('member')?.toString()
+  let taskedUserId = formData.get('member')?.toString()
+  if (taskedUserId === 'unassigned') {
+    taskedUserId = undefined
+  }
 
   if (estimate < 0) {
     return { error: 'Estimate must be non-negative.' }
@@ -195,11 +201,10 @@ export async function editTaskAction(
 
     const oldTask = tasks[index]
 
-    const status =
-      taskedUserId ?
-        (parseInt(taskedUserId) === oldTask.taskedUser ?
-          oldTask.status
-        : 'pending')
+    const status = taskedUserId
+      ? parseInt(taskedUserId) === oldTask.taskedUser
+        ? oldTask.status
+        : 'pending'
       : 'unassigned'
 
     // Update the task
@@ -224,4 +229,83 @@ export async function editTaskAction(
     console.error('Failed to edit task:', err)
     return { error: 'Failed to edit task' }
   }
+}
+
+export async function acceptTaskAction(storyId: number, taskId: string) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const story = await payload.findByID({
+    collection: 'stories',
+    id: storyId,
+  })
+
+  const taskIndex = (story.tasks ?? []).findIndex((task) => task.id === taskId)
+
+  if (taskIndex === -1) {
+    return { error: 'Task not found in story' }
+  }
+
+  const task = story.tasks![taskIndex]
+
+  // Only the tasked user can toggle their task
+  const taskedUserId = typeof task.taskedUser === 'object' ? task.taskedUser?.id : task.taskedUser
+
+  if (!taskedUserId || taskedUserId !== user.id || task.status !== 'pending') {
+    return { error: 'You are not authorized to change this task.' }
+  }
+
+  // Update the task in place
+  story.tasks![taskIndex].status = 'accepted'
+
+  // Persist the story with updated task
+  await payload.update({
+    collection: 'stories',
+    id: storyId,
+    data: {
+      tasks: story.tasks,
+    },
+  })
+
+  return { success: true }
+}
+
+export async function cancelTaskAction(storyId: number, taskId: string) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const story = await payload.findByID({
+    collection: 'stories',
+    id: storyId,
+  })
+
+  const taskIndex = (story.tasks ?? []).findIndex((task) => task.id === taskId)
+
+  if (taskIndex === -1) {
+    return { error: 'Task not found in story' }
+  }
+
+  const task = story.tasks![taskIndex]
+
+  // Only the tasked user can toggle their task
+  const taskedUserId = typeof task.taskedUser === 'object' ? task.taskedUser?.id : task.taskedUser
+
+  if (!taskedUserId || taskedUserId !== user.id || task.status !== 'accepted') {
+    return { error: 'You are not authorized to change this task.' }
+  }
+
+  // Update the task in place
+  story.tasks![taskIndex].status = 'unassigned'
+  story.tasks![taskIndex].taskedUser = null
+
+  // Persist the story with updated task
+  await payload.update({
+    collection: 'stories',
+    id: storyId,
+    data: {
+      tasks: story.tasks,
+    },
+  })
+
+  return { success: true }
 }

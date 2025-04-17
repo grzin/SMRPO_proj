@@ -134,7 +134,16 @@ export const ProjectDashboard: FC<{
       </TabsContent>
       <TabsContent value="sprint">
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <SprintBacklog />
+          <SprintBacklog
+            project={project}
+            taskTimes={taskTimes}
+            canAddStory={canAddStory}
+            canUpdateTimeEstimate={canUpdateTimeEstimate}
+            canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+            isDeveloperBool={isDeveloperBool}
+            isMemberBool={isMemberBool}
+            isMethodologyManagerBool={isMethodologyManagerBool}
+          />
         </div>
       </TabsContent>
       <TabsContent value="documentation">

@@ -104,6 +104,9 @@ export default function EditTaskDialog(props: {
                   <SelectValue placeholder="Select a project member" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="unassigned">
+                    <span className="text-muted-foreground">Unassigned</span>
+                  </SelectItem>
                   {members.map((member) => (
                     <SelectItem
                       key={(member.user as User).id}

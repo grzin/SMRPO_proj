@@ -11,7 +11,12 @@ import { Project, Story, TaskTime, User } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { editStoryTimeEstimateAction } from '@/actions/story-action'
-import { toggleRealizationAction, deleteTaskAction } from '@/actions/task-action'
+import {
+  toggleRealizationAction,
+  deleteTaskAction,
+  acceptTaskAction,
+  cancelTaskAction,
+} from '@/actions/task-action'
 import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
 import EditTaskDialog from '../tasks/tasks-edit-dialog'
@@ -81,24 +86,6 @@ export const Stories: FC<{
 
   const handleGoToAdd = () => {
     router.push(`/stories/add?projectId=${project.id}`)
-  }
-
-  const handleToggle = async (storyId: number, taskId: any, newValue: boolean) => {
-    const result = await toggleRealizationAction(storyId, taskId, newValue)
-    if ('error' in result) {
-      // event.preventDefault()
-      return
-    }
-    router.refresh()
-  }
-
-  const handleDeteleTask = async (storyId: number, taskId: any, project: Project) => {
-    const result = await deleteTaskAction(storyId, taskId, project)
-    if ('error' in result) {
-      // event.preventDefault()
-      return
-    }
-    router.refresh()
   }
 
   const initialState = {
@@ -231,81 +218,14 @@ export const Stories: FC<{
                         <div>Status</div>
                         <div>Time tracking</div>
                       </div>
-                      {story.tasks?.map((task) => (
-                        <Card key={task.id}>
-                          <CardContent>
-                            <div className="grid grid-cols-7 gap-4">
-                              <div>{task.description}</div>
-                              <div>{task.estimate}</div>
-                              <div>
-                                <Switch
-                                  checked={task.realized}
-                                  onCheckedChange={async (val) =>
-                                    await handleToggle(story.id, task.id, val)
-                                  }
-                                  disabled={
-                                    !task.taskedUser || !(user?.id === (task.taskedUser as User).id)
-                                  }
-                                />
-                              </div>
-                              <div>
-                                {task.taskedUser ? (
-                                  <UserAvatar user={task.taskedUser as User} />
-                                ) : (
-                                  <span style={{ color: 'gray', fontStyle: 'italic' }}>
-                                    Unassigned
-                                  </span>
-                                )}
-                              </div>
-                              <div>{task.status}</div>
-                              <div className="flex justify-between">
-                                {sumTimes(taskTimes.filter((t) => t.task === task.id))}
-                                {user?.id === (task.taskedUser && (task.taskedUser as User).id) &&
-                                isDeveloperBool ? (
-                                  <a
-                                    href={
-                                      '/projects/' + project.id + '/tasks/time/' + (task.id || '')
-                                    }
-                                    className="text-primary"
-                                  >
-                                    {' '}
-                                    Manage
-                                  </a>
-                                ) : (
-                                  <></>
-                                )}
-                              </div>
-                              <div>
-                                {(isMemberBool || isMethodologyManagerBool) && (
-                                  <>
-                                    {task.status === 'unassigned' && (
-                                      <Button
-                                        type="button"
-                                        onClick={async () =>
-                                          await handleDeteleTask(story.id, task.id, project)
-                                        }
-                                        className="bg-red-500 hover:bg-red-600 text-white"
-                                      >
-                                        Delete
-                                      </Button>
-                                    )}
-                                    <EditTaskDialog
-                                      project={project}
-                                      story={story}
-                                      task={{
-                                        id: task.id as string,
-                                        description: task.description,
-                                        taskedUser: (task.taskedUser as User) ?? null,
-                                        estimate: task.estimate,
-                                      }}
-                                    />
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                      <TaskList
+                        story={story}
+                        project={project}
+                        taskTimes={taskTimes}
+                        isDeveloperBool={isDeveloperBool}
+                        isMemberBool={isMemberBool}
+                        isMethodologyManagerBool={isMethodologyManagerBool}
+                      />
                     </div>
                   </div>
                 </li>
@@ -317,5 +237,192 @@ export const Stories: FC<{
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export const TaskList: FC<{
+  story: Story
+  project: Project
+  taskTimes: TaskTime[]
+  isDeveloperBool: boolean
+  isMemberBool: boolean
+  isMethodologyManagerBool: boolean
+  filterStatus?: 'pending' | 'accepted' | 'unassigned' | 'realized'
+  displayTitle?: boolean
+}> = ({
+  story,
+  project,
+  taskTimes,
+  isDeveloperBool,
+  isMemberBool,
+  isMethodologyManagerBool,
+  filterStatus,
+  displayTitle = false,
+}) => {
+  const router = useRouter()
+  const user = useUser().user
+
+  const handleToggle = async (storyId: number, taskId: any, newValue: boolean) => {
+    const result = await toggleRealizationAction(storyId, taskId, newValue)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
+  }
+
+  const handleAccept = async (storyId: number, taskId: any) => {
+    const result = await acceptTaskAction(storyId, taskId)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
+  }
+
+  const handleCancel = async (storyId: number, taskId: any) => {
+    const result = await cancelTaskAction(storyId, taskId)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
+  }
+
+  const handleDeteleTask = async (storyId: number, taskId: any, project: Project) => {
+    const result = await deleteTaskAction(storyId, taskId, project)
+    if ('error' in result) {
+      // event.preventDefault()
+      return
+    }
+    router.refresh()
+  }
+
+  const filteredTasks =
+    story.tasks?.filter((task) => {
+      if (filterStatus === undefined) {
+        return true
+      }
+
+      if (filterStatus === 'unassigned') {
+        return task.status === 'unassigned'
+      }
+
+      if (filterStatus === 'pending') {
+        return task.status === 'pending' && !task.realized
+      }
+
+      if (filterStatus === 'accepted') {
+        return task.status === 'accepted' && !task.realized
+      }
+
+      if (filterStatus === 'realized') {
+        return task.realized
+      }
+    }) ?? []
+
+  return (
+    <>
+      {displayTitle && filteredTasks.length > 0 && (
+        <>
+          <h1 className="text-lg font-semibold">{story.title}</h1>
+          <div className="grid grid-cols-7 gap-4">
+            <div>Description</div>
+            <div>Time Estimate</div>
+            <div>Realized</div>
+            <div>Tasked User</div>
+            <div>Status</div>
+            <div>Time tracking</div>
+          </div>
+        </>
+      )}
+      {filteredTasks.map((task) => (
+        <Card key={task.id}>
+          <CardContent>
+            <div className="grid grid-cols-7 gap-4">
+              <div>{task.description}</div>
+              <div>{task.estimate}</div>
+              <div>
+                <Switch
+                  checked={task.realized}
+                  onCheckedChange={async (val) => await handleToggle(story.id, task.id, val)}
+                  disabled={
+                    !task.taskedUser ||
+                    !(user?.id === (task.taskedUser as User).id && task.status === 'accepted')
+                  }
+                />
+              </div>
+              <div>
+                {task.taskedUser ? (
+                  <UserAvatar user={task.taskedUser as User} />
+                ) : (
+                  <span style={{ color: 'gray', fontStyle: 'italic' }}>Unassigned</span>
+                )}
+              </div>
+              <div>{task.status}</div>
+              <div className="flex justify-between">
+                {sumTimes(taskTimes.filter((t) => t.task === task.id))}
+                {user?.id === (task.taskedUser && (task.taskedUser as User).id) &&
+                isDeveloperBool ? (
+                  <a
+                    href={'/projects/' + project.id + '/tasks/time/' + (task.id || '')}
+                    className="text-primary"
+                  >
+                    {' '}
+                    Manage
+                  </a>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {(isMemberBool || isMethodologyManagerBool) && (
+                  <>
+                    {task.status === 'unassigned' && (
+                      <Button
+                        type="button"
+                        onClick={async () => await handleDeteleTask(story.id, task.id, project)}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    <EditTaskDialog
+                      project={project}
+                      story={story}
+                      task={{
+                        id: task.id as string,
+                        description: task.description,
+                        taskedUser: (task.taskedUser as User) ?? null,
+                        estimate: task.estimate,
+                      }}
+                    />
+                  </>
+                )}
+                {task.status === 'pending' && (task.taskedUser as User).id === user.id && (
+                  <>
+                    <Button onClick={async () => await handleAccept(story.id, task.id)}>
+                      Accept
+                    </Button>
+                  </>
+                )}
+                {task.status === 'accepted' &&
+                  !task.realized &&
+                  (task.taskedUser as User).id === user.id && (
+                    <>
+                      <Button
+                        variant="destructive"
+                        onClick={async () => await handleCancel(story.id, task.id)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </>
   )
 }
