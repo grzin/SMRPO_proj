@@ -14,5 +14,10 @@ export default async function Page() {
     user: user,
   })
 
-  return <Projects projects={projects.docs} />
+  const users = await payload.find({
+    collection: 'users',
+    limit: 10000,
+  })
+
+  return <Projects projects={projects.docs} users={users.docs} />
 }

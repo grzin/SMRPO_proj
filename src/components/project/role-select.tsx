@@ -3,6 +3,13 @@
 import { FC } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
+export type Role =
+  | 'scrum_master'
+  | 'scrum_master_developer'
+  | 'product_owner'
+  | 'product_owner_developer'
+  | 'developer'
+
 export const RoleSelect: FC<{
   defaultValue?: string
   value?: string

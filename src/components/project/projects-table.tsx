@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import { projectColumns } from './columns'
 import { DataTable } from '../data-table'
-import { Project } from '@/payload-types'
+import { Project, User } from '@/payload-types'
 import { Button } from '../ui/button'
 import {
   Dialog,
@@ -21,7 +21,7 @@ import { createProjectAction } from '@/actions/project-action'
 import { useUser } from '@/contexts/user-context'
 import { Textarea } from '../ui/textarea'
 
-export default function ProjectsTable({ projects }: { projects: Project[] }) {
+export default function ProjectsTable({ projects, users }: { projects: Project[]; users: User[] }) {
   const { isAdmin } = useUser()
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -31,13 +31,13 @@ export default function ProjectsTable({ projects }: { projects: Project[] }) {
         filterColumnName={'name'}
         filterPlaceholder={'Filter project names...'}
       >
-        {isAdmin && <Actions />}
+        {isAdmin && <Actions users={users} />}
       </DataTable>
     </div>
   )
 }
 
-const Actions = () => {
+const Actions: FC<{ users: User[] }> = ({ users }) => {
   const [error, setError] = useState('')
   const [projectName, setProjectName] = useState('')
   const [description, setDescription] = useState('')
@@ -47,7 +47,7 @@ const Actions = () => {
       <DialogTrigger asChild>
         <Button variant="default">Create project</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[1000px]">
         <DialogHeader>
           <DialogTitle>Create new project</DialogTitle>
           <DialogDescription></DialogDescription>
@@ -79,14 +79,6 @@ const Actions = () => {
             <Label htmlFor="name" className="text-right">
               Members
             </Label>
-            <Textarea
-              name="description"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value)
-              }}
-              className="col-span-3"
-            />
             <FormMessage className="col-span-4">{error}</FormMessage>
           </div>
           <Button

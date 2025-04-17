@@ -9,10 +9,11 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader } from
 import { UserAvatar } from '../ui/avatar'
 import { addUserAction, deleteMember, editUserAction } from '@/actions/project-action'
 import { UserSelect } from './user-select'
-import { RoleSelect } from './role-select'
+import { Role, RoleSelect } from './role-select'
 import { isAdminOrMethodologyManager } from './utils'
 import { useUser } from '@/contexts/user-context'
 import { useRouter } from 'next/navigation'
+import { Trash, Pen, Save, X } from 'lucide-react'
 
 const roleNames = {
   scrum_master: 'Scrum master',
@@ -59,6 +60,21 @@ export const ProjectMembers: FC<{
   const usersToSelect = users.filter(
     (user) => !project.members?.some((x) => (x.user as User).id === user.id),
   )
+
+  const scrumMasterCount =
+    project.members?.filter((x) => x.role === 'scrum_master' || x.role == 'scrum_master_developer')
+      .length ?? 0
+  const productOwnerCount =
+    project.members?.filter(
+      (x) => x.role === 'product_owner' || x.role == 'product_owner_developer',
+    ).length ?? 0
+  const developerCount =
+    project.members?.filter(
+      (x) =>
+        x.role === 'developer' ||
+        x.role == 'scrum_master_developer' ||
+        x.role == 'product_owner_developer',
+    ).length ?? 0
 
   const isMethodologyManager = isAdminOrMethodologyManager(user, project)
 
@@ -117,33 +133,55 @@ export const ProjectMembers: FC<{
                     </TableCell>
                     <TableCell className="flex justify-end">
                       <div className="flex gap-2">
-                        {isMethodologyManager &&
-                          editingMember != member.id &&
-                          user?.id != (member.user as User).id && (
-                            <>
-                              <Button
-                                onClick={(e) => {
-                                  setEditingMember(member.id ?? null)
-                                  setSelectedUser((member?.user as User).id.toString())
-                                  setSelectedRole(member.role)
-                                  e.preventDefault()
-                                  return false
-                                }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                onClick={async (e) => {
-                                  await deleteMember(project.id, member.id ?? '')
-                                  e.preventDefault()
-                                  return false
-                                }}
-                                variant="destructive"
-                              >
-                                Delete
-                              </Button>
-                            </>
-                          )}
+                        {isMethodologyManager && editingMember != member.id && (
+                          <>
+                            <Button
+                              onClick={(e) => {
+                                setEditingMember(member.id ?? null)
+                                setSelectedUser((member?.user as User).id.toString())
+                                setSelectedRole(member.role)
+                                e.preventDefault()
+                                return false
+                              }}
+                              disabled={
+                                ((member.role == 'scrum_master' ||
+                                  member.role == 'scrum_master_developer') &&
+                                  scrumMasterCount <= 1) ||
+                                ((member.role == 'product_owner' ||
+                                  member.role == 'product_owner_developer') &&
+                                  productOwnerCount <= 1) ||
+                                ((member.role == 'developer' ||
+                                  member.role == 'scrum_master_developer' ||
+                                  member.role == 'product_owner_developer') &&
+                                  developerCount <= 1)
+                              }
+                            >
+                              <Pen />
+                            </Button>
+                            <Button
+                              onClick={async (e) => {
+                                await deleteMember(project.id, member.id ?? '')
+                                e.preventDefault()
+                                return false
+                              }}
+                              disabled={
+                                ((member.role == 'scrum_master' ||
+                                  member.role == 'scrum_master_developer') &&
+                                  scrumMasterCount <= 1) ||
+                                ((member.role == 'product_owner' ||
+                                  member.role == 'product_owner_developer') &&
+                                  productOwnerCount <= 1) ||
+                                ((member.role == 'developer' ||
+                                  member.role == 'scrum_master_developer' ||
+                                  member.role == 'product_owner_developer') &&
+                                  developerCount <= 1)
+                              }
+                              variant="destructive"
+                            >
+                              <Trash />
+                            </Button>
+                          </>
+                        )}
                         {isMethodologyManager && editingMember == member.id && (
                           <>
                             <Button
@@ -162,7 +200,7 @@ export const ProjectMembers: FC<{
                               }}
                               type="button"
                             >
-                              Save
+                              <Save />
                             </Button>
                             <Button
                               onClick={async (e) => {
@@ -173,7 +211,7 @@ export const ProjectMembers: FC<{
                               variant="secondary"
                               type="button"
                             >
-                              Cancel
+                              <X />
                             </Button>
                           </>
                         )}
@@ -196,10 +234,10 @@ export const ProjectMembers: FC<{
                     <TableCell>
                       <div className="flex flex-row gap-2 justify-end">
                         <Button variant="default" type="submit" disabled={pending}>
-                          Add
+                          <Save />
                         </Button>
-                        <Button variant="destructive" onClick={() => setAddMembers(false)}>
-                          Cancel
+                        <Button variant="secondary" onClick={() => setAddMembers(false)}>
+                          <X />
                         </Button>
                       </div>
                     </TableCell>
@@ -207,7 +245,7 @@ export const ProjectMembers: FC<{
                 )}
                 {isMethodologyManager && !addMember && (
                   <TableCell colSpan={3}>
-                    <Button onClick={() => setAddMembers(true)}>Add member</Button>
+                    <Button onClick={() => setAddMembers(true)}>Edit members</Button>
                   </TableCell>
                 )}
               </TableRow>

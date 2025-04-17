@@ -9,14 +9,15 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { FC } from 'react'
-import { Project } from '@/payload-types'
+import { Project, User } from '@/payload-types'
 import ProjectsTable from '@/components/project/projects-table'
 
 interface ProjectProps {
   projects: Project[]
+  users: User[]
 }
 
-const Projects: FC<ProjectProps> = ({ projects }) => {
+const Projects: FC<ProjectProps> = ({ projects, users }) => {
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -33,7 +34,7 @@ const Projects: FC<ProjectProps> = ({ projects }) => {
         </div>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <ProjectsTable projects={projects} />
+        <ProjectsTable projects={projects} users={users} />
       </div>
     </>
   )

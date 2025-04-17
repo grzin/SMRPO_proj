@@ -8,6 +8,7 @@ import { idValidator, projectDescription, projectName } from './validators'
 import { redirect } from 'next/navigation'
 import { Project, User, WallMessage } from '@/payload-types'
 import { projectRoleValidator } from './project-validators'
+import { Role } from '@/components/project/role-select'
 
 const createProjectSchema = z.object({
   name: projectName,
@@ -350,8 +351,6 @@ export async function editUserAction(
     }
     return x
   })
-
-  console.log(JSON.stringify(newMembers))
 
   let isError = false
   await payload
