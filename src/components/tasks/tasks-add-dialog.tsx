@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { UserAvatar } from '../ui/avatar'
 
 export default function AddTaskDialog(props: { project: Project; story: Story }) {
   const members = props.project.members ?? []
@@ -80,10 +81,13 @@ export default function AddTaskDialog(props: { project: Project; story: Story })
                 required
               />
             </div>
-            <div>
+            <div className="grid grid-cols-4 gap-4">
+              <Label htmlFor="estimate" className="text-right">
+                Assignee
+              </Label>
               <Select name="member">
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a project member1" />
+                  <SelectValue placeholder="Select a project member" />
                 </SelectTrigger>
                 <SelectContent defaultValue={undefined}>
                   {members.map((member) => (
@@ -91,7 +95,7 @@ export default function AddTaskDialog(props: { project: Project; story: Story })
                       key={(member.user as User).id}
                       value={(member.user as User).id.toString() ?? ''}
                     >
-                      {(member.user as User).username}
+                      <UserAvatar user={member.user as User} />
                     </SelectItem>
                   ))}
                 </SelectContent>

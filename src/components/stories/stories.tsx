@@ -19,6 +19,7 @@ import { Switch } from '@/components/ui/switch'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import datetimeDifference from 'datetime-difference'
+import { UserAvatar } from '../ui/avatar'
 
 function sumTimes(taskTimes: TaskTime[]) {
   dayjs.extend(duration)
@@ -98,7 +99,7 @@ export const Stories: FC<{
       return
     }
     router.refresh()
-  } 
+  }
 
   const initialState = {
     storyId: 0,
@@ -239,7 +240,9 @@ export const Stories: FC<{
                               <div>
                                 <Switch
                                   checked={task.realized}
-                                  onCheckedChange={async (val) => await handleToggle(story.id, task.id, val)}
+                                  onCheckedChange={async (val) =>
+                                    await handleToggle(story.id, task.id, val)
+                                  }
                                   disabled={
                                     !task.taskedUser || !(user?.id === (task.taskedUser as User).id)
                                   }
@@ -247,7 +250,7 @@ export const Stories: FC<{
                               </div>
                               <div>
                                 {task.taskedUser ? (
-                                  (task.taskedUser as User).username
+                                  <UserAvatar user={task.taskedUser as User} />
                                 ) : (
                                   <span style={{ color: 'gray', fontStyle: 'italic' }}>
                                     Unassigned
@@ -273,23 +276,31 @@ export const Stories: FC<{
                                 )}
                               </div>
                               <div>
-                                { (isMemberBool || isMethodologyManagerBool) &&
+                                {(isMemberBool || isMethodologyManagerBool) && (
                                   <>
-                                    { task.status === 'unassigned' &&
+                                    {task.status === 'unassigned' && (
                                       <Button
                                         type="button"
-                                        onClick={async () => await handleDeteleTask(story.id, task.id, project)}
+                                        onClick={async () =>
+                                          await handleDeteleTask(story.id, task.id, project)
+                                        }
                                         className="bg-red-500 hover:bg-red-600 text-white"
                                       >
                                         Delete
                                       </Button>
-                                    }
+                                    )}
                                     <EditTaskDialog
                                       project={project}
                                       story={story}
-                                      task={{ id: (task.id as string), description: task.description, taskedUser: (task.taskedUser as User) ?? null , estimate: task.estimate }}/>
+                                      task={{
+                                        id: task.id as string,
+                                        description: task.description,
+                                        taskedUser: (task.taskedUser as User) ?? null,
+                                        estimate: task.estimate,
+                                      }}
+                                    />
                                   </>
-                                }
+                                )}
                               </div>
                             </div>
                           </CardContent>

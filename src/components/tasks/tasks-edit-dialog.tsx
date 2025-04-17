@@ -23,14 +23,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { UserAvatar } from '../ui/avatar'
 
-export default function EditTaskDialog(
-    props: {
-      project: Project;
-      story: Story;
-      task: {id: string, description: string, taskedUser: User | null, estimate: number}
-    }
-) {
+export default function EditTaskDialog(props: {
+  project: Project
+  story: Story
+  task: { id: string; description: string; taskedUser: User | null; estimate: number }
+}) {
   const members = props.project.members ?? []
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -40,7 +39,7 @@ export default function EditTaskDialog(
     event: React.FormEvent<HTMLFormElement>,
     project: Project,
     story: Story,
-    taskId: string
+    taskId: string,
   ) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
@@ -65,13 +64,22 @@ export default function EditTaskDialog(
           <DialogTitle>Edit Task</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <form onSubmit={async (event) => await handleSubmit(event, props.project, props.story, props.task.id)}>
+        <form
+          onSubmit={async (event) =>
+            await handleSubmit(event, props.project, props.story, props.task.id)
+          }
+        >
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="description" className="text-right">
                 Description
               </Label>
-              <Input name="description" defaultValue={props.task.description} className="col-span-3" required />
+              <Input
+                name="description"
+                defaultValue={props.task.description}
+                className="col-span-3"
+                required
+              />
             </div>
             <div className="grid grid-cols-4 gap-4">
               <Label htmlFor="estimate" className="text-right">
@@ -87,11 +95,11 @@ export default function EditTaskDialog(
                 required
               />
             </div>
-            <div>
-              <Select
-                name="member"
-                defaultValue={props.task.taskedUser?.id.toString()}
-              >
+            <div className="grid grid-cols-4 gap-4">
+              <Label htmlFor="estimate" className="text-right">
+                Assignee
+              </Label>
+              <Select name="member" defaultValue={props.task.taskedUser?.id.toString()}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a project member" />
                 </SelectTrigger>
@@ -101,7 +109,7 @@ export default function EditTaskDialog(
                       key={(member.user as User).id}
                       value={(member.user as User).id.toString() ?? ''}
                     >
-                      {(member.user as User).username}
+                      <UserAvatar user={member.user as User} />
                     </SelectItem>
                   ))}
                 </SelectContent>

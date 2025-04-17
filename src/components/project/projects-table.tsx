@@ -76,6 +76,17 @@ const Actions = () => {
               }}
               className="col-span-3"
             />
+            <Label htmlFor="name" className="text-right">
+              Members
+            </Label>
+            <Textarea
+              name="description"
+              value={description}
+              onChange={(e) => {
+                setDescription(e.target.value)
+              }}
+              className="col-span-3"
+            />
             <FormMessage className="col-span-4">{error}</FormMessage>
           </div>
           <Button
