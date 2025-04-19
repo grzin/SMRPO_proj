@@ -71,6 +71,7 @@ export interface Config {
     sprints: Sprint;
     stories: Story;
     taskTimes: TaskTime;
+    timeTracking: TimeTracking;
     'wall-messages': WallMessage;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,6 +84,7 @@ export interface Config {
     sprints: SprintsSelect<false> | SprintsSelect<true>;
     stories: StoriesSelect<false> | StoriesSelect<true>;
     taskTimes: TaskTimesSelect<false> | TaskTimesSelect<true>;
+    timeTracking: TimeTrackingSelect<false> | TimeTrackingSelect<true>;
     'wall-messages': WallMessagesSelect<false> | WallMessagesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -184,7 +186,7 @@ export interface Story {
     | {
         description: string;
         estimate: number;
-        status: 'accepted' | 'pending' | 'unassigned';
+        status: 'accepted' | 'pending' | 'unassigned' | 'active';
         taskedUser?: (number | null) | User;
         realized: boolean;
         id?: string | null;
@@ -215,9 +217,25 @@ export interface TaskTime {
   id: number;
   user: number | User;
   task: string;
+  date: string;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  est_hours: number;
+  est_minutes: number;
+  est_seconds: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeTracking".
+ */
+export interface TimeTracking {
+  id: number;
+  user: number | User;
+  task: string;
   start: string;
-  end?: string | null;
-  customHMS?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -259,6 +277,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'taskTimes';
         value: number | TaskTime;
+      } | null)
+    | ({
+        relationTo: 'timeTracking';
+        value: number | TimeTracking;
       } | null)
     | ({
         relationTo: 'wall-messages';
@@ -399,9 +421,24 @@ export interface StoriesSelect<T extends boolean = true> {
 export interface TaskTimesSelect<T extends boolean = true> {
   user?: T;
   task?: T;
+  date?: T;
+  hours?: T;
+  minutes?: T;
+  seconds?: T;
+  est_hours?: T;
+  est_minutes?: T;
+  est_seconds?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "timeTracking_select".
+ */
+export interface TimeTrackingSelect<T extends boolean = true> {
+  user?: T;
+  task?: T;
   start?: T;
-  end?: T;
-  customHMS?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -74,7 +74,7 @@ export const Stories: CollectionConfig = {
         {
           name: 'status',
           type: 'select',
-          options: ['accepted', 'pending', 'unassigned'],
+          options: ['accepted', 'pending', 'unassigned', 'active'],
           required: true,
         },
         {

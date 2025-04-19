@@ -15,6 +15,7 @@ import { WallMessages } from './collections/WallMessages'
 import { PostgresAdapter } from '@payloadcms/db-postgres/types'
 import { SQLiteAdapter } from '@payloadcms/db-sqlite/types'
 import { DatabaseAdapterResult } from 'node_modules/payload/dist/database/types'
+import { TimeTracking } from './collections/TimeTracking'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -41,7 +42,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Projects, Sprints, Stories, TaskTimes, WallMessages],
+  collections: [Users, Projects, Sprints, Stories, TaskTimes, TimeTracking, WallMessages],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

@@ -12,50 +12,21 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-
 import { useActionState } from 'react'
-import { Project, Story, TaskTime } from '@/payload-types'
+import { Project, Story, TaskTime, TimeTracking } from '@/payload-types'
+import { manualTrackTimeAction, trackTimeAction } from '@/actions/time-management-actions'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { Label } from '../ui/label'
 
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import datetimeDifference from 'datetime-difference'
-import { createTimeAction, trackTimeAction } from '@/actions/time-management-actions'
-import { Badge } from '../ui/badge'
+function sumTimes(times: TaskTime[]) {
+  const s = times.map((t) => t.seconds).reduce((x, y) => x + y, 0)
+  const m = times.map((t) => t.minutes).reduce((x, y) => x + y, 0) + Math.floor(s / 60)
+  const h = times.map((t) => t.hours).reduce((x, y) => x + y, 0) + Math.floor(m / 60)
+  return formatTime(h, m % 60, s % 60)
+}
 
-function sumTimes(taskTimes: TaskTime[]) {
-  dayjs.extend(duration)
-  let sum = dayjs.duration(0)
-
-  taskTimes.forEach((taskTime) => {
-    if (taskTime.customHMS) {
-      const negative = taskTime.customHMS.charAt(0) === '-'
-      if (negative) {
-        const arr = taskTime.customHMS.substring(2).split(' ')
-        sum = sum.subtract({
-          hours: Number(arr[0].split('h')[0]),
-          minutes: Number(arr[1].split('m')[0]),
-          seconds: Number(arr[2].split('s')[0]),
-        })
-      } else {
-        const arr = taskTime.customHMS.split(' ')
-        sum = sum.add({
-          hours: Number(arr[0].split('h')[0]),
-          minutes: Number(arr[1].split('m')[0]),
-          seconds: Number(arr[2].split('s')[0]),
-        })
-      }
-    } else if (taskTime.end) {
-      const diff = datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
-      sum = sum.add({
-        hours: diff.hours,
-        minutes: diff.minutes,
-        seconds: diff.seconds,
-      })
-    }
-  })
-
-  return `${sum.hours()}h ${sum.minutes()}m ${sum.seconds()}s`
+function formatTime(h: number, m: number, s: number) {
+  return `${h}h ${m}m ${s}s`
 }
 
 export default function TaskTimes({
@@ -64,6 +35,7 @@ export default function TaskTimes({
   story,
   taskId,
   taskDescription,
+  isActiveTask,
   activeTaskDescription,
   times,
   ...props
@@ -72,161 +44,196 @@ export default function TaskTimes({
   story: Story
   taskId: string
   taskDescription: string
+  isActiveTask: boolean
   activeTaskDescription: string | null
   times: TaskTime[]
 }) {
-  const initialState = {
+  const initialState = {}
+  const manualInitialState = {
+    date: new Date(),
     hours: 0,
     minutes: 0,
     seconds: 0,
+    est_hours: 0,
+    est_minutes: 0,
+    est_seconds: 0,
   }
-  const ttInitialState = {}
-  const [state, formAction, pending] = useActionState(createTimeAction, initialState)
-  const [ttState, ttFormAction, ttPending] = useActionState(trackTimeAction, ttInitialState)
+  const [state, formAction, pending] = useActionState(trackTimeAction, initialState)
+  const [manualState, manualFormAction, manualPending] = useActionState(
+    manualTrackTimeAction,
+    initialState,
+  )
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex', className)} {...props}>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <h1 className="text-xl font-bold">
-          {story.title} - {taskDescription}
-        </h1>
-        {activeTaskDescription ? (
-          <p>
-            Time tracking is active for task:{' '}
-            <span className="font-bold">{activeTaskDescription}</span>
-          </p>
-        ) : (
-          <form action={ttFormAction}>
-            <Input name="projectId" value={project.id} hidden readOnly />
-            <Input name="taskId" value={taskId} hidden readOnly />
-            {times.find((taskTime) => taskTime.end === null && taskTime.customHMS === null) ? (
-              <Button type="submit" name="action" value="stop" className="text-white bg-red-500">
-                Stop tracking
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                name="action"
-                value="start"
-                className="text-white bg-emerald-400"
-              >
-                Start tracking
-              </Button>
-            )}
-          </form>
-        )}
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Start time</TableHead>
-              <TableHead>End time</TableHead>
-              <TableHead>Duration</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {times.map((taskTime) => (
-              <TableRow key={taskTime.id}>
-                {taskTime.customHMS ? (
-                  <>
-                    <TableCell>{new Date(taskTime.start).toLocaleTimeString('sl-SI')}</TableCell>
-                    <TableCell className="text-gray-400">custom entry</TableCell>
-                    <TableCell>
-                      {taskTime.customHMS.charAt(0) === '-' ? (
-                        <Badge className="bg-red-500">{taskTime.customHMS}</Badge>
-                      ) : (
-                        <Badge className="bg-emerald-500">{taskTime.customHMS}</Badge>
-                      )}
-                    </TableCell>
-                  </>
-                ) : (
-                  <>
-                    <TableCell>{new Date(taskTime.start).toLocaleTimeString('sl-SI')}</TableCell>
-                    {taskTime.end ? (
-                      <>
-                        <TableCell>{new Date(taskTime.end).toLocaleTimeString('sl-SI')}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-emerald-500">
-                            {datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
-                              .hours +
-                              'h ' +
-                              datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
-                                .minutes +
-                              'm ' +
-                              datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
-                                .seconds +
-                              's'}
-                          </Badge>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell className="font-bold text-emerald-500">in progress...</TableCell>
-                        <TableCell>
-                          <Badge className="bg-gray-400">-</Badge>
-                        </TableCell>
-                      </>
-                    )}
-                  </>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell>Sum</TableCell>
-              <TableCell></TableCell>
-              <TableCell>{sumTimes(times)}</TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-        <h2 className="font-bold mt-12 bg-emerald-200 p-4">Add custom</h2>
-        <form action={formAction} className="flex flex-col gap-4 max-w-sm mx-auto">
-          <Input name="projectId" value={project.id} hidden readOnly />
-          <Input name="taskId" value={taskId} hidden readOnly />
-          <Label htmlFor="hours">Hours</Label>
-          <Input
-            name="hours"
-            id="hours"
-            type="number"
-            placeholder="Hours"
-            min="0"
-            max="23"
-            required
-          />
-          <Label htmlFor="minutes">Minutes</Label>
-          <Input
-            name="minutes"
-            id="minutes"
-            type="number"
-            placeholder="Minutes"
-            min="0"
-            max="59"
-            required
-          />
-          <Label htmlFor="seconds">Seconds</Label>
-          <Input
-            name="seconds"
-            id="seconds"
-            type="number"
-            placeholder="Seconds"
-            min="0"
-            max="59"
-            required
-          />
-          <div className="flex items-center">
-            <Button
-              type="submit"
-              name="action"
-              value="add"
-              className="text-white bg-emerald-500 mr-4"
-            >
-              Add time
-            </Button>
-            <Button type="submit" name="action" value="subtract" className="text-white bg-red-500">
-              Subtract time
-            </Button>
-          </div>
-        </form>
+        <div className="flex gap-4 min-w-full">
+          <Card className="flex-1">
+            <CardHeader>
+              <CardTitle>Time tracking</CardTitle>
+              <CardDescription>Automatic time tracking</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              {activeTaskDescription ? (
+                <p>
+                  Time tracking is active for task:{' '}
+                  <span className="font-bold">{activeTaskDescription}</span>
+                </p>
+              ) : (
+                <form action={formAction}>
+                  <Input name="projectId" value={project.id} hidden readOnly />
+                  <Input name="taskId" value={taskId} hidden readOnly />
+                  {isActiveTask ? (
+                    <Button
+                      type="submit"
+                      name="action"
+                      value="stop"
+                      className="text-white bg-red-500"
+                    >
+                      Stop tracking
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      name="action"
+                      value="start"
+                      className="text-white bg-emerald-400"
+                    >
+                      Start tracking
+                    </Button>
+                  )}
+                </form>
+              )}
+            </CardContent>
+          </Card>
+          <Card className="flex-1">
+            <CardHeader>
+              <CardTitle>Update time</CardTitle>
+              <CardDescription>Update time history</CardDescription>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              <form action={manualFormAction} className="flex flex-col gap-4">
+                <Input name="projectId" value={project.id} hidden readOnly />
+                <Input name="taskId" value={taskId} hidden readOnly />
+                <Label htmlFor="date">Date</Label>
+                <Input name="date" id="date" type="date" required />
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label htmlFor="hours">Hours</Label>
+                    <Input
+                      name="hours"
+                      id="hours"
+                      type="number"
+                      min="0"
+                      max="23"
+                      placeholder="Hours"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="minutes">Minutes</Label>
+                    <Input
+                      name="minutes"
+                      id="minutes"
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="Minutes"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="seconds">Seconds</Label>
+                    <Input
+                      name="seconds"
+                      id="seconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="Seconds"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <Label htmlFor="est_hours">Est. hours</Label>
+                    <Input
+                      name="est_hours"
+                      id="est_hours"
+                      type="number"
+                      min="0"
+                      max="23"
+                      placeholder="Est. hours"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="est_minutes">Est. minutes</Label>
+                    <Input
+                      name="est_minutes"
+                      id="est_minutes"
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="Est. minutes"
+                      required
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="est_seconds">Est. seconds</Label>
+                    <Input
+                      name="est_seconds"
+                      id="est_seconds"
+                      type="number"
+                      min="0"
+                      max="59"
+                      placeholder="Est. seconds"
+                      required
+                    />
+                  </div>
+                </div>
+                <Button type="submit" name="action">
+                  Update
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>History</CardTitle>
+            <CardDescription>Time management</CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Estimated remaining time</TableHead>
+                  <TableHead>Time spent</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {times.map((t) => (
+                  <TableRow key={t.id}>
+                    <TableCell>{t.date}</TableCell>
+                    <TableCell>{`${t.est_hours}h ${t.est_minutes}m ${t.est_seconds}s`}</TableCell>
+                    <TableCell>{`${t.hours}h ${t.minutes}m ${t.seconds}s`}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell>Sum</TableCell>
+                  <TableCell></TableCell>
+                  <TableCell>{sumTimes(times)}</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

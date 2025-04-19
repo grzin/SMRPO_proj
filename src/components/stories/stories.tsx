@@ -21,44 +21,27 @@ import { FormError } from '../ui/form'
 import AddTaskDialog from '../tasks/tasks-add-dialog'
 import EditTaskDialog from '../tasks/tasks-edit-dialog'
 import { Switch } from '@/components/ui/switch'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import datetimeDifference from 'datetime-difference'
 import { UserAvatar } from '../ui/avatar'
 
-function sumTimes(taskTimes: TaskTime[]) {
-  dayjs.extend(duration)
-  let sum = dayjs.duration(0)
+function sumTimes(times: TaskTime[]) {
+  const s = times.map((t) => t.seconds).reduce((x, y) => x + y, 0)
+  const m = times.map((t) => t.minutes).reduce((x, y) => x + y, 0) + Math.floor(s / 60)
+  const h = times.map((t) => t.hours).reduce((x, y) => x + y, 0) + Math.floor(m / 60)
+  return formatTime(h, m % 60, s % 60)
+}
 
-  taskTimes.forEach((taskTime) => {
-    if (taskTime.customHMS) {
-      const negative = taskTime.customHMS.charAt(0) === '-'
-      if (negative) {
-        const arr = taskTime.customHMS.substring(2).split(' ')
-        sum = sum.subtract({
-          hours: Number(arr[0].split('h')[0]),
-          minutes: Number(arr[1].split('m')[0]),
-          seconds: Number(arr[2].split('s')[0]),
-        })
-      } else {
-        const arr = taskTime.customHMS.split(' ')
-        sum = sum.add({
-          hours: Number(arr[0].split('h')[0]),
-          minutes: Number(arr[1].split('m')[0]),
-          seconds: Number(arr[2].split('s')[0]),
-        })
-      }
-    } else if (taskTime.end) {
-      const diff = datetimeDifference(new Date(taskTime.start), new Date(taskTime.end))
-      sum = sum.add({
-        hours: diff.hours,
-        minutes: diff.minutes,
-        seconds: diff.seconds,
-      })
-    }
-  })
+function formatEstTaskTime(taskTime: TaskTime | undefined) {
+  if (taskTime === undefined) return ''
+  return formatTime(taskTime.est_hours, taskTime.est_minutes, taskTime.est_seconds)
+}
 
-  return `${sum.hours()}h ${sum.minutes()}m ${sum.seconds()}s`
+function formatTime(h: number, m: number, s: number) {
+  return `${h}h ${m}m ${s}s`
+}
+
+function isEstTimeZero(taskTime: TaskTime | undefined) {
+  if (taskTime === undefined) return false
+  return taskTime.est_hours === 0 && taskTime.est_minutes === 0 && taskTime.est_seconds === 0
 }
 
 export const Stories: FC<{
@@ -226,6 +209,20 @@ export const Stories: FC<{
                         isMemberBool={isMemberBool}
                         isMethodologyManagerBool={isMethodologyManagerBool}
                       />
+                      <div className="grid grid-cols-7 gap-4 mt-4">
+                        <div>Sum:</div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div>
+                          {sumTimes(
+                            taskTimes.filter(
+                              (tt) => story.tasks?.find((t) => t.id === tt.task) !== undefined,
+                            ),
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -341,14 +338,25 @@ export const TaskList: FC<{
           <CardContent>
             <div className="grid grid-cols-7 gap-4">
               <div>{task.description}</div>
-              <div>{task.estimate}</div>
+              <div>
+                {formatEstTaskTime(
+                  taskTimes
+                    .sort((a, b) => (a.date < b.date ? 1 : -1))
+                    .find((tt) => tt.task === task.id),
+                ) || task.estimate}
+              </div>
               <div>
                 <Switch
                   checked={task.realized}
                   onCheckedChange={async (val) => await handleToggle(story.id, task.id, val)}
                   disabled={
                     !task.taskedUser ||
-                    !(user?.id === (task.taskedUser as User).id && task.status === 'accepted')
+                    !(user?.id === (task.taskedUser as User).id && task.status === 'accepted') ||
+                    (task.estimate >= 0 && !taskTimes.find((tt) => tt.task === task.id)) ||
+                    !taskTimes
+                      .sort((a, b) => (a.date < b.date ? 1 : -1))
+                      .filter((tt) => tt.task === task.id)
+                      .every((t) => isEstTimeZero(t))
                   }
                 />
               </div>
@@ -360,10 +368,12 @@ export const TaskList: FC<{
                 )}
               </div>
               <div>{task.status}</div>
-              <div className="flex justify-between">
+              <div className="flex justify-between pr-8">
                 {sumTimes(taskTimes.filter((t) => t.task === task.id))}
                 {user?.id === (task.taskedUser && (task.taskedUser as User).id) &&
-                isDeveloperBool ? (
+                isDeveloperBool &&
+                !task.realized &&
+                (task.status === 'accepted' || task.status === 'active') ? (
                   <a
                     href={'/projects/' + project.id + '/tasks/time/' + (task.id || '')}
                     className="text-primary"
