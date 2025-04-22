@@ -51,6 +51,15 @@ export async function addTaskAction(
       realized: false,
     }
 
+    const duplicateDescription =
+      (story.tasks ?? []).find(
+        (task) => task.description.toLocaleLowerCase() === description.toLocaleLowerCase(),
+      ) !== undefined
+
+    if (duplicateDescription) {
+      return { error: 'Task with the same description already exists.' }
+    }
+
     const newTasks = [...(story.tasks ?? []), createdTask]
 
     await payload.update({
@@ -189,6 +198,17 @@ export async function editTaskAction(
     )
   ) {
     return { error: 'You lack permission to edit tasks.' }
+  }
+
+  const duplicateDescription =
+    (story.tasks ?? []).find(
+      (task) =>
+        task.id != taskId &&
+        task.description.toLocaleLowerCase() === description.toLocaleLowerCase(),
+    ) !== undefined
+
+  if (duplicateDescription) {
+    return { error: 'Task with the same description already exists.' }
   }
 
   try {
