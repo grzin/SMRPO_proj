@@ -209,7 +209,7 @@ export const Stories: FC<{
                         isMemberBool={isMemberBool}
                         isMethodologyManagerBool={isMethodologyManagerBool}
                       />
-                      <div className="grid grid-cols-7 gap-4 mt-4">
+                      <div className="grid grid-cols-7 gap-4 mt-4 px-6">
                         <div>Sum:</div>
                         <div></div>
                         <div></div>
@@ -356,7 +356,7 @@ export const TaskList: FC<{
                     !taskTimes
                       .sort((a, b) => (a.date < b.date ? 1 : -1))
                       .filter((tt) => tt.task === task.id)
-                      .every((t) => isEstTimeZero(t))
+                      .some((t) => isEstTimeZero(t))
                   }
                 />
               </div>
@@ -424,7 +424,7 @@ export const TaskList: FC<{
                         variant="destructive"
                         onClick={async () => await handleCancel(story.id, task.id)}
                       >
-                        Cancel
+                        Release
                       </Button>
                     </>
                   )}
