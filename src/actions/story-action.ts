@@ -250,6 +250,16 @@ export async function editStoryTimeEstimateAction({}, formData: FormData) {
   return response
 }
 
+export async function editStorySprint(sprintName: string, storyId: number) {
+
+  const payload = await getPayload({ config })
+  const sprint = await payload.find({
+    collection: 'sprints',
+    where: {
+      name: {
+        equals: sprintName,
+      },
+    },
   })
   const sprintId = (sprint.docs[0] as Sprint)?.id
   await payload.update({
@@ -257,6 +267,7 @@ export async function editStoryTimeEstimateAction({}, formData: FormData) {
     id: storyId,
     data: {
       sprint: sprintId,
+    },
   })
 
 }
