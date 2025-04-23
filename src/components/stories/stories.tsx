@@ -96,8 +96,6 @@ export const Stories: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
-console.log('stories', project.stories)
-
   return (
     <div className="rounded-xl md:min-h-min">
       <Card className="col-span-2">
