@@ -164,3 +164,19 @@ Prav tako lahko dokumentacijo:
 Vsi uporabniki na projektu lahko vidijo projektni zid in nanj pripenjajo nove objave.
 
 ![img/22.png](img/22.png)
+
+## #28 - Seznam nalog (Sprint backlog)
+
+Na projektu je za vsako uporabniško zgodbo prikazan seznam nalog. Na zavihku `Sprint backlog` so zgodbe združene glede na stanje: `Unassigned`, `Assigned`, `Active` in `Done`.
+
+## #16 - Sprejemanje nalog
+
+Če razvijalcu dodelimo nalogo (pri dodajanju ali urejanju naloge ga izberemo v polju `Assignee`) in je naloga v stanju `pending`, razvijalec ob nalogi vidi akcijo `Accept`. Ob kliku se nalogi stanje spremeni v `accepted`.
+
+## #20 - Zaključevanje nalog
+
+Če je naloga v stanju `accepted` in je ocenjeni preostanek dela 0, lahko član skupine, ki je nalogo sprejel, to označi kot `Realized`.
+
+## #15 - Vzdrževanje obstoječih nalog
+
+Dokler naloga ni sprejeta, ji lahko skrbnik metodologije in člani razvojne skupine urejajo vse parametre ali jo izbrišejo.
