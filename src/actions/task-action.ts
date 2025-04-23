@@ -221,6 +221,14 @@ export async function editTaskAction(
 
     const oldTask = tasks[index]
 
+    if (oldTask.realized) {
+      return { error: 'Cannot edit realized tasks.' }
+    }
+
+    if (oldTask.status === 'accepted') {
+      return { error: 'Cannot edit accepted tasks.' }
+    }
+
     const status = taskedUserId
       ? parseInt(taskedUserId) === oldTask.taskedUser
         ? oldTask.status

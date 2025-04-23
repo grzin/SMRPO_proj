@@ -397,17 +397,19 @@ export const TaskList: FC<{
                         Delete
                       </Button>
                     )}
-                    <EditTaskDialog
-                      project={project}
-                      story={story}
-                      task={{
-                        id: task.id as string,
-                        description: task.description,
-                        taskedUser: (task.taskedUser as User) ?? null,
-                        estimate: task.estimate,
-                        status: task.status,
-                      }}
-                    />
+                    {!task.realized && task.status !== 'accepted' && (
+                      <EditTaskDialog
+                        project={project}
+                        story={story}
+                        task={{
+                          id: task.id as string,
+                          description: task.description,
+                          taskedUser: (task.taskedUser as User) ?? null,
+                          estimate: task.estimate,
+                          status: task.status,
+                        }}
+                      />
+                    )}
                   </>
                 )}
                 {task.status === 'pending' && (task.taskedUser as User).id === user.id && (
