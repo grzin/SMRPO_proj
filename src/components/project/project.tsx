@@ -52,10 +52,6 @@ export const ProjectDashboard: FC<{
     isMethodologyManagerBool,
   } = props
 
-console.log('stories', project.stories)
-console.log('project', project)
-console.log('sprints', sprints)
-
   return (
     <Tabs defaultValue="details">
       <TabsList className="w-full">
@@ -79,6 +75,7 @@ console.log('sprints', sprints)
             isDeveloperBool={isDeveloperBool}
             isMemberBool={isMemberBool}
             isMethodologyManagerBool={isMethodologyManagerBool}
+            projectSprints={sprints}
           />
           <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
             <Card className="col-span-2">

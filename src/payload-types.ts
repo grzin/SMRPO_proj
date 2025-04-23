@@ -181,7 +181,7 @@ export interface Story {
   businessValue: number;
   timeEstimate?: number | null;
   project: number | Project;
-  sprint: number | Sprint;
+  sprint?: (number | null) | Sprint;
   tasks?:
     | {
         description: string;

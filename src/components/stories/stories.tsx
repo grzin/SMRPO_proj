@@ -7,10 +7,10 @@ import Link from 'next/link'
 import { canDeleteStory } from '@/actions/user-actions'
 import { useUser } from '@/contexts/user-context'
 import { useEffect, useState } from 'react'
-import { Project, Story, TaskTime, User } from '@/payload-types'
+import { Project, Story, TaskTime, User, Sprint } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
-import { editStoryTimeEstimateAction } from '@/actions/story-action'
+import { editStoryTimeEstimateAction, editStorySprint } from '@/actions/story-action'
 import {
   toggleRealizationAction,
   deleteTaskAction,
@@ -53,6 +53,7 @@ export const Stories: FC<{
   isDeveloperBool: boolean
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
+  projectSprints: Sprint[] | null
 }> = ({
   project,
   taskTimes,
@@ -62,6 +63,7 @@ export const Stories: FC<{
   isDeveloperBool,
   isMemberBool,
   isMethodologyManagerBool,
+  projectSprints,
 }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
@@ -94,6 +96,8 @@ export const Stories: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
+console.log('stories', project.stories)
+
   return (
     <div className="rounded-xl md:min-h-min">
       <Card className="col-span-2">
@@ -121,6 +125,7 @@ export const Stories: FC<{
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      <p className="text-sm text-gray-500">Sprint: {story.sprint == null ? "undefined" : (story.sprint as Sprint).name}</p>
                       <p className="text-sm text-gray-500">Acceptance Tests: </p>
                       <ul>
                         {story.acceptanceTests.map((testObj, index) => (
@@ -142,44 +147,80 @@ export const Stories: FC<{
                     </div>
                   )}
                   <div className="col-span-1">
-                    <div className="grid gap-3">
-                      {canNotSeeTimeEstimate ? (
-                        <></>
+                    <div className="col-span-1">
+                      <div className="grid gap-3">
+                        {canNotSeeTimeEstimate ? (
+                          <></>
+                        ) : (
+                          <form action={formAction}>
+                            <Input
+                              name="projectId"
+                              id="projectId"
+                              type="number"
+                              defaultValue={project.id}
+                              hidden
+                            />
+                            <Input
+                              name="storyId"
+                              id="storyId"
+                              type="number"
+                              defaultValue={story.id}
+                              hidden
+                            />
+                            <Label className="p-2" htmlFor="timeEstimate">Time estimate (in story points)</Label>
+                            <Input
+                              name="timeEstimate"
+                              id="timeEstimate"
+                              type="number"
+                              placeholder="Enter time estimate value"
+                              defaultValue={story.timeEstimate || undefined}
+                              disabled={!canUpdateTimeEstimate}
+                              min={0}
+                            />
+                            {canUpdateTimeEstimate ? (
+                              <Button type="submit" className="mt-1">
+                                Update time estimate
+                              </Button>
+                            ) : (
+                              <></>
+                            )}
+                            {state.message && <FormError>{state.message}</FormError>}
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                    <div className="col-span-1">
+                    <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
+                      {story.timeEstimate && story.timeEstimate > 0 && projectSprints ? (
+                        <>
+                          <select
+                            id={`sprintSelect-${story.id}`}
+                            className="border rounded p-2 w-full"
+                            defaultValue={story.sprint ? (story.sprint as Sprint).name : 'undefined'}
+                          >
+                            {projectSprints?.map((sprint) => (
+                              <option key={sprint.id} value={sprint.name}>
+                                {sprint.name}
+                              </option>
+                            ))}
+                          </select>
+                          <Button
+                            className="mt-2"
+                            onClick={() => {
+                              const selectedSprint = (document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement).value
+                              console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
+                              editStorySprint(selectedSprint, story.id).then(() => {
+                                router.refresh()
+                              })
+                            }}
+                          >
+                            Update Sprint
+                          </Button>
+                        </>
                       ) : (
-                        <form action={formAction}>
-                          <Input
-                            name="projectId"
-                            id="projectId"
-                            type="number"
-                            defaultValue={project.id}
-                            hidden
-                          />
-                          <Input
-                            name="storyId"
-                            id="storyId"
-                            type="number"
-                            defaultValue={story.id}
-                            hidden
-                          />
-                          <Label htmlFor="timeEstimate">Time estimate (in story points)</Label>
-                          <Input
-                            name="timeEstimate"
-                            id="timeEstimate"
-                            type="number"
-                            placeholder="Enter time estimate value"
-                            defaultValue={story.timeEstimate || undefined}
-                            disabled={!canUpdateTimeEstimate}
-                            min={0}
-                          />
-                          {canUpdateTimeEstimate ? (
-                            <Button type="submit" className="mt-1">
-                              Update
-                            </Button>
-                          ) : (
-                            <></>
-                          )}
-                          {state.message && <FormError>{state.message}</FormError>}
-                        </form>
+                        <div className="border rounded p-2 w-full bg-gray-100">
+                          {story.sprint ? (story.sprint as Sprint).name : 'No Sprint Assigned'}
+                        </div>
                       )}
                     </div>
                   </div>
