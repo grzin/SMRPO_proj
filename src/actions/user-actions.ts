@@ -32,7 +32,8 @@ export async function isAdminOrMethodologyManager(user: User, members: any[]) {
       (ourUser?.role === 'scrum_master' ||
         ourUser?.role === 'product_owner' ||
         ourUser?.role === 'scrum_master_developer' ||
-        ourUser?.role === 'product_owner_developer'))
+        ourUser?.role === 'product_owner_developer' ||
+        ourUser?.role === 'product_owner_scrum_master'))
   )
 }
 

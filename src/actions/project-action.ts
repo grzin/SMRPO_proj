@@ -328,8 +328,8 @@ export async function editUserAction(
     | 'scrum_master'
     | 'scrum_master_developer'
     | 'product_owner'
-    | 'product_owner_developer'
-    | 'developer',
+    | 'developer'
+    | 'product_owner_scrum_master',
 ) {
   const payload = await getPayload({ config })
   const user = await getUser()

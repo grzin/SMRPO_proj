@@ -49,7 +49,7 @@ export const projectColumns: ColumnDef<User>[] = [
               | 'product_owner'
               | 'developer'
               | 'scrum_master_developer'
-              | 'product_owner_developer'
+              | 'product_owner_scrum_master'
             id?: string | null
           }[]
         | null

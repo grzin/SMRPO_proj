@@ -19,7 +19,7 @@ const roleNames = {
   scrum_master: 'Scrum master',
   scrum_master_developer: 'Scrum master & Developer',
   product_owner: 'Product owner',
-  product_owner_developer: 'Product owner & Developer',
+  product_owner_scrum_master: 'Product owner & Scrum master',
   developer: 'Developer',
 }
 
@@ -46,8 +46,8 @@ export const ProjectMembers: FC<{
     | 'scrum_master'
     | 'scrum_master_developer'
     | 'product_owner'
-    | 'product_owner_developer'
     | 'developer'
+    | 'product_owner_scrum_master'
   >('developer')
 
   const [addMember, setAddMembers] = useState(false)
@@ -62,19 +62,19 @@ export const ProjectMembers: FC<{
   )
 
   const scrumMasterCount =
-    project.members?.filter((x) => x.role === 'scrum_master' || x.role == 'scrum_master_developer')
-      .length ?? 0
-  const productOwnerCount =
-    project.members?.filter(
-      (x) => x.role === 'product_owner' || x.role == 'product_owner_developer',
-    ).length ?? 0
-  const developerCount =
     project.members?.filter(
       (x) =>
-        x.role === 'developer' ||
+        x.role === 'scrum_master' ||
         x.role == 'scrum_master_developer' ||
-        x.role == 'product_owner_developer',
+        x.role === 'product_owner_scrum_master',
     ).length ?? 0
+  const productOwnerCount =
+    project.members?.filter(
+      (x) => x.role === 'product_owner' || x.role === 'product_owner_scrum_master',
+    ).length ?? 0
+  const developerCount =
+    project.members?.filter((x) => x.role === 'developer' || x.role == 'scrum_master_developer')
+      .length ?? 0
 
   const isMethodologyManager = isAdminOrMethodologyManager(user, project)
 
@@ -122,7 +122,7 @@ export const ProjectMembers: FC<{
                                 newVal == 'product_owner' ||
                                 newVal == 'developer' ||
                                 newVal == 'scrum_master_developer' ||
-                                newVal == 'product_owner_developer'
+                                newVal == 'product_owner_scrum_master'
                               ) {
                                 setSelectedRole(newVal)
                               }
@@ -145,14 +145,14 @@ export const ProjectMembers: FC<{
                               }}
                               disabled={
                                 ((member.role == 'scrum_master' ||
-                                  member.role == 'scrum_master_developer') &&
+                                  member.role == 'scrum_master_developer' ||
+                                  member.role == 'product_owner_scrum_master') &&
                                   scrumMasterCount <= 1) ||
                                 ((member.role == 'product_owner' ||
-                                  member.role == 'product_owner_developer') &&
+                                  member.role == 'product_owner_scrum_master') &&
                                   productOwnerCount <= 1) ||
                                 ((member.role == 'developer' ||
-                                  member.role == 'scrum_master_developer' ||
-                                  member.role == 'product_owner_developer') &&
+                                  member.role == 'scrum_master_developer') &&
                                   developerCount <= 1)
                               }
                             >
@@ -166,14 +166,14 @@ export const ProjectMembers: FC<{
                               }}
                               disabled={
                                 ((member.role == 'scrum_master' ||
-                                  member.role == 'scrum_master_developer') &&
+                                  member.role == 'scrum_master_developer' ||
+                                  member.role == 'product_owner_scrum_master') &&
                                   scrumMasterCount <= 1) ||
                                 ((member.role == 'product_owner' ||
-                                  member.role == 'product_owner_developer') &&
+                                  member.role == 'product_owner_scrum_master') &&
                                   productOwnerCount <= 1) ||
                                 ((member.role == 'developer' ||
-                                  member.role == 'scrum_master_developer' ||
-                                  member.role == 'product_owner_developer') &&
+                                  member.role == 'scrum_master_developer') &&
                                   developerCount <= 1)
                               }
                               variant="destructive"

@@ -16,8 +16,8 @@ const projectRoles = [
     value: 'product_owner',
   },
   {
-    label: 'Product owner & Developer',
-    value: 'product_owner_developer',
+    label: 'Product owner & Scrum master',
+    value: 'product_owner_scrum_master',
   },
   {
     label: 'Developer',

@@ -155,7 +155,7 @@ export interface Project {
   members?:
     | {
         user: number | User;
-        role: 'scrum_master' | 'scrum_master_developer' | 'product_owner' | 'product_owner_developer' | 'developer';
+        role: 'scrum_master' | 'scrum_master_developer' | 'product_owner' | 'product_owner_scrum_master' | 'developer';
         id?: string | null;
       }[]
     | null;

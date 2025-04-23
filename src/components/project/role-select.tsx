@@ -7,7 +7,7 @@ export type Role =
   | 'scrum_master'
   | 'scrum_master_developer'
   | 'product_owner'
-  | 'product_owner_developer'
+  | 'product_owner_scrum_master'
   | 'developer'
 
 export const RoleSelect: FC<{
@@ -24,7 +24,7 @@ export const RoleSelect: FC<{
         <SelectItem value="scrum_master">Scrum master</SelectItem>
         <SelectItem value="scrum_master_developer">Scrum master & Developer</SelectItem>
         <SelectItem value="product_owner">Product owner</SelectItem>
-        <SelectItem value="product_owner_developer">Product owner & Developer</SelectItem>
+        <SelectItem value="product_owner_scrum_master">Product owner & Scrum master</SelectItem>
         <SelectItem value="developer">Developer</SelectItem>
       </SelectContent>
     </Select>
