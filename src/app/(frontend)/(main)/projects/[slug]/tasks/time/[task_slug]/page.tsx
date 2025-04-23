@@ -52,22 +52,22 @@ export default async function Page({
       user: { equals: user.id },
       task: { equals: taskId },
     },
+    sort: '-date',
   })
 
-  const activeTasks = await payload.find({
-    collection: 'taskTimes',
+  const activeTask = await payload.find({
+    collection: 'timeTracking',
     where: {
       user: { equals: user.id },
-      and: [{ end: { exists: false } }, { customHMS: { exists: false } }],
     },
   })
 
   let activeTaskDescription = null
-  if (activeTasks.totalDocs > 0) {
+  if (activeTask.totalDocs > 0) {
     const stories = await payload.find({ collection: 'stories' })
     stories.docs.forEach((s) => {
       s.tasks?.forEach((t) => {
-        if (t.id === activeTasks.docs[0].task && t.id !== taskId)
+        if (t.id === activeTask.docs[0].task && t.id !== taskId)
           activeTaskDescription = t.description
       })
     })
@@ -99,8 +99,9 @@ export default async function Page({
       <TaskTimes
         project={project}
         story={story}
-        taskId={task?.id || ''}
+        taskId={taskId}
         taskDescription={task?.description || ''}
+        isActiveTask={activeTask.totalDocs > 0 && activeTask.docs[0].task === taskId}
         activeTaskDescription={activeTaskDescription}
         times={times.docs}
       />

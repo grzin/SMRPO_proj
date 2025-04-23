@@ -118,6 +118,33 @@ Skrbnik metodologije lahko uporabniški zgodbi določi in spremeni oceno časovn
 Aplikacija pred shranjevanjem podatkov preveri ustrezne uporabniške pravice in pravilen vnos časovne ocene.
 V primeru napačnega vnosa je shranjevanje onemogočeno.
 
+## #18 - Beleženje porabe časa
+
+Uporabnik, ki ima vlogo razvijalca, lahko avtomatično beleži porabo časa na sprejeti nalogi.
+Ob sprejemu naloge, se prikaže povezava `Manage`, ki vodi na stran za upravljanje s časom.
+Uporabnik lahko začne beležiti čas na nalogi, v kolikor ne beleži čas na drugi nalogi.
+V tem primeru aplikacija prikaže opozorilo.
+S ponovnim klikom na gumb se beleženje časa ustavi in delo se pripiše vsoti ur za ta delovni dan.
+
+![img/18.png](img/18.png)
+
+![img/18_err.png](img/18_err.png)
+
+## #19 - Pregledovanje in spreminjanje časovnega poteka dela
+
+Uporabnik lahko ureja zgodovino svojega dela na nalogi.
+Ureja lahko le dneve v preteklosti.
+Uredi lahko porabljen in pričakovan čas za dokončanje naloge.
+
+![img/19_edit.png](img/19_edit.png)
+
+Uporabnikom se prikaže vsota porabljenega časa na določeni nalogi (za vse razvijalce skupaj).
+Začetna vrednost pričakovanega časa se preipiše s tisto, ki jo je nastavil razvijalec.
+Tabela nalog na dnu prikaže tudi vsoto porabljenega časa za vse naloge skupaj.
+Ko se pričakovani čas nastavi na `0h 0m 0s`, se nalogi omogoči prehod v dokončano stanje (Realized).
+
+![img/19_view.png](img/19_view.png)
+
 ## #21 - Vzdrževanje uporabniške dokumentacije
 
 Vsi uporabniki, ki lahko vidijo projekt, lahko vidijo napisano dokumentacijo projekta.
