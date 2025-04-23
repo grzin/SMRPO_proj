@@ -28,7 +28,13 @@ import { UserAvatar } from '../ui/avatar'
 export default function EditTaskDialog(props: {
   project: Project
   story: Story
-  task: { id: string; description: string; taskedUser: User | null; estimate: number }
+  task: {
+    id: string
+    description: string
+    taskedUser: User | null
+    estimate: number
+    status: 'pending' | 'accepted' | 'unassigned' | 'active'
+  }
 }) {
   const members = props.project.members ?? []
   const router = useRouter()
@@ -91,6 +97,7 @@ export default function EditTaskDialog(props: {
                 step="0.1"
                 min="0.0"
                 defaultValue={props.task.estimate}
+                readOnly={props.task.status !== 'unassigned' && props.task.status !== 'pending'}
                 className="col-span-3"
                 required
               />

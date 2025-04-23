@@ -405,6 +405,7 @@ export const TaskList: FC<{
                         description: task.description,
                         taskedUser: (task.taskedUser as User) ?? null,
                         estimate: task.estimate,
+                        status: task.status,
                       }}
                     />
                   </>
