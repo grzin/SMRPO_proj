@@ -78,7 +78,7 @@ console.log("product backlog stories", project.stories)
                     </TabsContent>
                     <TabsContent value="others">
                     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                      {projectSprints?.filter((sprint) => sprint.name !== noSprintAssigned).map((sprint) => {
+                      {projectSprints?.filter((sprint) => sprint.name !== noSprintAssigned && sprint.id !== currentSprint?.id).map((sprint) => {
                         const sprintStories = (project.stories as Story[]).filter(
                           (story) => story.sprint && (story.sprint as Sprint).id === sprint.id
                         );
