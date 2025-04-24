@@ -6,6 +6,7 @@ import { isAdminOrMethodologyManager, canDeleteStory } from '@/actions/user-acti
 import { getUser } from '@/actions/login-action'
 import { Project, Story, User, Sprint } from '@/payload-types'
 import { redirect } from 'next/navigation'
+import { noSprintAssigned } from '@/components/stories/stories'
 
 export async function getStoryById(storyId: string) {
   const payload = await getPayload({ config })
@@ -250,24 +251,36 @@ export async function editStoryTimeEstimateAction({}, formData: FormData) {
   return response
 }
 
-export async function editStorySprint(sprintName: string, storyId: number) {
+export async function editStorySprint(sprintName: string | null, storyId: number) {
 
   const payload = await getPayload({ config })
-  const sprint = await payload.find({
-    collection: 'sprints',
-    where: {
-      name: {
-        equals: sprintName,
+  if (sprintName === noSprintAssigned) {
+    await payload.update({
+      collection: 'stories',
+      id: storyId,
+      data: {
+        sprint: null,
       },
-    },
-  })
-  const sprintId = (sprint.docs[0] as Sprint)?.id
-  await payload.update({
-    collection: 'stories',
-    id: storyId,
-    data: {
-      sprint: sprintId,
-    },
-  })
+    })
+    return
+  } else {
+    const sprint = await payload.find({
+      collection: 'sprints',
+      where: {
+        name: {
+          equals: sprintName,
+        },
+      },
+    })
+    const sprintId = (sprint.docs[0] as Sprint)?.id
+    await payload.update({
+      collection: 'stories',
+      id: storyId,
+      data: {
+        sprint: sprintId,
+      },
+    })
+
+  }
 
 }

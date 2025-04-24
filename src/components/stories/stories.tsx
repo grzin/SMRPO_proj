@@ -23,6 +23,8 @@ import EditTaskDialog from '../tasks/tasks-edit-dialog'
 import { Switch } from '@/components/ui/switch'
 import { UserAvatar } from '../ui/avatar'
 
+export const noSprintAssigned : string = 'No Sprint Assigned'
+
 function sumTimes(times: TaskTime[]) {
   const s = times.map((t) => t.seconds).reduce((x, y) => x + y, 0)
   const m = times.map((t) => t.minutes).reduce((x, y) => x + y, 0) + Math.floor(s / 60)
@@ -95,6 +97,11 @@ export const Stories: FC<{
 
     checkDeletableStories()
   }, [project.stories, user, project.members])
+
+
+  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
+    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
+  }
 
   return (
     <div className="rounded-xl md:min-h-min">
@@ -217,7 +224,7 @@ export const Stories: FC<{
                         </>
                       ) : (
                         <div className="border rounded p-2 w-full bg-gray-100">
-                          {story.sprint ? (story.sprint as Sprint).name : 'No Sprint Assigned'}
+                          {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
                         </div>
                       )}
                     </div>
@@ -529,6 +536,10 @@ export const Stori: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
+  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
+    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
+  }
+
   return (
     <li
       key={story.id}
@@ -637,7 +648,7 @@ export const Stori: FC<{
             </>
           ) : (
             <div className="border rounded p-2 w-full bg-gray-100">
-              {story.sprint ? (story.sprint as Sprint).name : 'No Sprint Assigned'}
+              {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
             </div>
           )}
         </div>

@@ -51,7 +51,7 @@ export const ProjectDashboard: FC<{
     isMemberBool,
     isMethodologyManagerBool,
   } = props
-
+console.log("sprintsm project dashboard", sprints)
   return (
     <Tabs defaultValue="details">
       <TabsList className="w-full">
@@ -142,6 +142,7 @@ export const ProjectDashboard: FC<{
             isDeveloperBool={isDeveloperBool}
             isMemberBool={isMemberBool}
             isMethodologyManagerBool={isMethodologyManagerBool}
+            projectSprints={sprints}
           />
         </div>
       </TabsContent>
