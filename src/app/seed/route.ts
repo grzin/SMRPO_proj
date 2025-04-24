@@ -1,4 +1,4 @@
-import { Sprint, User, TaskTime } from '@/payload-types'
+import { Sprint, User, TaskTime, Story } from '@/payload-types'
 import config from '@/payload.config'
 import { NextResponse } from 'next/server'
 import { getPayload, Payload } from 'payload'
@@ -12,6 +12,7 @@ export async function GET() {
   await createTestUsers(payload)
   await createProjects(payload)
   await createSprints(payload)
+  await createStories(payload)
 
   return NextResponse.json({ success: true })
 }
@@ -185,10 +186,24 @@ async function createProjects(payload: Payload) {
 async function createSprints(payload: Payload) {
   const sprints: Omit<Sprint, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>[] = [
     {
-      name: 'Sprint #1 - Past sprint',
-      startDate: '2025-03-17T00:00:00.000Z',
-      endDate: '2025-03-21T00:00:00.000Z',
-      velocity: 3,
+      name: 'P1: Sprint #1 - Past sprint',
+      startDate: '2025-04-21T00:00:00.000Z',
+      endDate: '2025-04-21T00:00:00.000Z',
+      velocity: 4,
+      project: 1,
+    },
+    {
+      name: 'P1: Sprint #2 - Current sprint',
+      startDate: '2025-04-21T00:00:00.000Z',
+      endDate: '2025-05-21T00:00:00.000Z',
+      velocity: 4,
+      project: 1,
+    },
+    {
+      name: 'P1: Sprint #3 - Future sprint',
+      startDate: '2025-05-21T00:00:00.000Z',
+      endDate: '2025-06-21T00:00:00.000Z',
+      velocity: 4,
       project: 1,
     },
     {
@@ -224,5 +239,135 @@ async function createSprints(payload: Payload) {
         // Gracefully fail, if the sprint already exists
         console.error(error)
       })
+  }
+}
+
+async function createStories(payload: Payload) {
+  const stories: Omit<Story, 'createdAt' | 'updatedAt'>[] = [
+    // Sprint 1 Stories
+    {
+      id: 1,
+      title: 'P1: Story #1',
+      titleLowerCase: 'p1: story #1',
+      description: 'Implement the login functionality for the application.',
+      acceptanceTests: [{ test: 'User can log in with valid credentials.', id: '1' }],
+      priority: 'must have',
+      businessValue: 10,
+      project: 1,
+      sprint: 1,
+      timeEstimate: 3,
+    },
+    {
+      id: 2,
+      title: 'P1: Story #2',
+      titleLowerCase: 'p1: story #2',
+      description: 'Design the homepage layout with responsive design.',
+      acceptanceTests: [{ test: 'Homepage adjusts correctly on mobile and desktop.', id: '2' }],
+      priority: 'should have',
+      businessValue: 8,
+      project: 1,
+      sprint: null,
+      timeEstimate: null,
+    },
+    {
+      id: 3,
+      title: 'P1: Story #3',
+      titleLowerCase: 'p1: story #3',
+      description: 'Set up the database schema for user accounts.',
+      acceptanceTests: [{ test: 'Database schema supports all required user fields.', id: '3' }],
+      priority: 'must have',
+      businessValue: 9,
+      project: 1,
+      sprint: 1,
+      timeEstimate: 4,
+    },
+
+    // Sprint 2 Stories
+    {
+      id: 4,
+      title: 'P1: Story #4',
+      titleLowerCase: 'p1: story #4',
+      description: 'Integrate payment gateway for online transactions.',
+      acceptanceTests: [{ test: 'Users can complete payments successfully.', id: '4' }],
+      priority: 'must have',
+      businessValue: 12,
+      project: 1,
+      sprint: 2,
+      timeEstimate: 0,
+    },
+    {
+      id: 5,
+      title: 'P1: Story #5',
+      titleLowerCase: 'p1: story #5',
+      description: 'Create a user profile page with editable fields.',
+      acceptanceTests: [{ test: 'Users can update their profile information.', id: '5' }],
+      priority: 'should have',
+      businessValue: 7,
+      project: 1,
+      sprint: 2,
+      timeEstimate: 4,
+    },
+    {
+      id: 6,
+      title: 'P1: Story #6',
+      titleLowerCase: 'p1: story #6',
+      description: 'Implement email notifications for account activities.',
+      acceptanceTests: [{ test: 'Users receive email notifications for updates.', id: '6' }],
+      priority: 'could have',
+      businessValue: 5,
+      project: 1,
+      sprint: null,
+      timeEstimate: 3,
+    },
+
+    // Sprint 3 Stories
+    {
+      id: 7,
+      title: 'P1: Story #7',
+      titleLowerCase: 'p1: story #7',
+      description: 'Develop the admin dashboard for managing users.',
+      acceptanceTests: [{ test: 'Admin can view and manage user accounts.', id: '7' }],
+      priority: 'must have',
+      businessValue: 15,
+      project: 1,
+      sprint: 3,
+      timeEstimate: 8,
+    },
+    {
+      id: 8,
+      title: 'P1: Story #8',
+      titleLowerCase: 'p1: story #8',
+      description: 'Optimize the application for faster load times.',
+      acceptanceTests: [{ test: 'Page load times are under 2 seconds.', id: '8' }],
+      priority: 'should have',
+      businessValue: 10,
+      project: 1,
+      sprint: null,
+      timeEstimate: 0,
+    },
+    {
+      id: 9,
+      title: 'P1: Story #9',
+      titleLowerCase: 'p1: story #9',
+      description: 'Add multi-language support for the application.',
+      acceptanceTests: [{ test: 'Users can switch between supported languages.', id: '9' }],
+      priority: 'could have',
+      businessValue: 6,
+      project: 1,
+      sprint: 3,
+      timeEstimate: 0,
+    },
+  ];
+
+  for (let i = 0; i < stories.length; i++) {
+    await payload
+      .create({
+        collection: 'stories',
+        data: stories[i],
+      })
+      .catch((error) => {
+        // Gracefully fail, if the story already exists
+        console.error(error);
+      });
   }
 }
