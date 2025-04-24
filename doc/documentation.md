@@ -118,6 +118,22 @@ Skrbnik metodologije lahko uporabniški zgodbi določi in spremeni oceno časovn
 Aplikacija pred shranjevanjem podatkov preveri ustrezne uporabniške pravice in pravilen vnos časovne ocene.
 V primeru napačnega vnosa je shranjevanje onemogočeno.
 
+## #13 - Dodajanje zgodb v Sprint
+
+Skrbnik metodologije lahko doda zgodbe v sprint.
+
+![img/13.png](img/13.png)
+
+To stori tako, da v spustnem meniju izbere sprint projekt, v katerega želi dodati zgodbo in klikne na gumb Update sprint. V primerju, da zgodba še nima določene ocene časovne zahtevnosti ali je že realizirana, sprinta ne moremo spreminjati.
+
+## #15 - Vzdrževanje obstoječih nalog
+
+Dokler naloga ni sprejeta, ji lahko skrbnik metodologije in člani razvojne skupine urejajo vse parametre ali jo izbrišejo.
+
+## #16 - Sprejemanje nalog
+
+Če razvijalcu dodelimo nalogo (pri dodajanju ali urejanju naloge ga izberemo v polju `Assignee`) in je naloga v stanju `pending`, razvijalec ob nalogi vidi akcijo `Accept`. Ob kliku se nalogi stanje spremeni v `accepted`.
+
 ## #18 - Beleženje porabe časa
 
 Uporabnik, ki ima vlogo razvijalca, lahko avtomatično beleži porabo časa na sprejeti nalogi.
@@ -145,6 +161,10 @@ Ko se pričakovani čas nastavi na `0h 0m 0s`, se nalogi omogoči prehod v dokon
 
 ![img/19_view.png](img/19_view.png)
 
+## #20 - Zaključevanje nalog
+
+Če je naloga v stanju `accepted` in je ocenjeni preostanek dela 0, lahko član skupine, ki je nalogo sprejel, to označi kot `Realized`.
+
 ## #21 - Vzdrževanje uporabniške dokumentacije
 
 Vsi uporabniki, ki lahko vidijo projekt, lahko vidijo napisano dokumentacijo projekta.
@@ -165,18 +185,20 @@ Vsi uporabniki na projektu lahko vidijo projektni zid in nanj pripenjajo nove ob
 
 ![img/22.png](img/22.png)
 
+## #27 - Seznam zahtev
+
+Vsi člani projekta si lahko ogledajo seznam zahtev (Product Backlog), kjer so zbrane vse uporabniške zgodbe projekta.
+
+Zgodbe so v seznamu zahtev razdeljene med:
+- nerealizirane, ki pripadajo aktivnemu sprintu.
+![img/27_active.png](img/27_active.png)
+
+- nerealizirane, ki pripadajo ostalim sprintom ali nobenem sprintu. Zgodbe so vizualno grupirane po sprintih, katerim pripadajo. Na dnu pa se nahajajo zgodbe, ki ne pripadajo nobenemu sprintu.
+![img/27_other.png](img/27_other.png)
+
+- realizirane zgodbe
+![img/27_realized.png](img/27_realized.png)
+
 ## #28 - Seznam nalog (Sprint backlog)
 
 Na projektu je za vsako uporabniško zgodbo prikazan seznam nalog. Na zavihku `Sprint backlog` so zgodbe združene glede na stanje: `Unassigned`, `Assigned`, `Active` in `Done`.
-
-## #16 - Sprejemanje nalog
-
-Če razvijalcu dodelimo nalogo (pri dodajanju ali urejanju naloge ga izberemo v polju `Assignee`) in je naloga v stanju `pending`, razvijalec ob nalogi vidi akcijo `Accept`. Ob kliku se nalogi stanje spremeni v `accepted`.
-
-## #20 - Zaključevanje nalog
-
-Če je naloga v stanju `accepted` in je ocenjeni preostanek dela 0, lahko član skupine, ki je nalogo sprejel, to označi kot `Realized`.
-
-## #15 - Vzdrževanje obstoječih nalog
-
-Dokler naloga ni sprejeta, ji lahko skrbnik metodologije in člani razvojne skupine urejajo vse parametre ali jo izbrišejo.

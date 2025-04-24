@@ -55,7 +55,7 @@ export const Stories: CollectionConfig = {
       name: 'sprint',
       type: 'relationship',
       relationTo: 'sprints',
-      required: true,
+      required: false,
     },
     {
       name: 'tasks',

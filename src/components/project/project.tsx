@@ -20,6 +20,7 @@ import { Documentation } from '../documentation/documentation'
 import { Wall } from '../wall/wall'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { SprintBacklog } from './sprint-backlog'
+import { ProductBacklog } from './product-backlog'
 import { ProjectMembers } from './project-members'
 import { ProjectDetails } from './project-details'
 
@@ -50,7 +51,6 @@ export const ProjectDashboard: FC<{
     isMemberBool,
     isMethodologyManagerBool,
   } = props
-
   return (
     <Tabs defaultValue="details">
       <TabsList className="w-full">
@@ -74,6 +74,7 @@ export const ProjectDashboard: FC<{
             isDeveloperBool={isDeveloperBool}
             isMemberBool={isMemberBool}
             isMethodologyManagerBool={isMethodologyManagerBool}
+            projectSprints={sprints}
           />
           <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
             <Card className="col-span-2">
@@ -130,7 +131,19 @@ export const ProjectDashboard: FC<{
         </div>
       </TabsContent>
       <TabsContent value="product">
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0"></div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <ProductBacklog
+            project={project}
+            taskTimes={taskTimes}
+            canAddStory={canAddStory}
+            canUpdateTimeEstimate={canUpdateTimeEstimate}
+            canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+            isDeveloperBool={isDeveloperBool}
+            isMemberBool={isMemberBool}
+            isMethodologyManagerBool={isMethodologyManagerBool}
+            projectSprints={sprints}
+          />
+        </div>
       </TabsContent>
       <TabsContent value="sprint">
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
