@@ -11,6 +11,7 @@ import { Label } from '@radix-ui/react-select'
 import { isProductOwner } from '@/actions/user-actions'
 import { useState } from 'react'
 import { editStorySprint } from '@/actions/story-action'
+import { useRouter } from 'next/navigation'
 
 export const ProductBacklog: FC<{
   project: Project
@@ -38,6 +39,8 @@ export const ProductBacklog: FC<{
     (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
   )
   const [selectedStories, setSelectedStories] = useState<number[]>([]);
+
+  const router = useRouter()
   
   console.log('sprints', projectSprints)
   return (
@@ -83,7 +86,7 @@ export const ProductBacklog: FC<{
                               onStorySelect={undefined}
                             />
                           ))}
-                        {currentSprint && (
+                        {currentSprint && !canNotSeeTimeEstimate && (
                           <div className="mt-2 border-t pt-2">
                             <p>
                               <b>Total Time Estimate:</b>{' '}
@@ -105,12 +108,57 @@ export const ProductBacklog: FC<{
                     </TabsContent>
                     <TabsContent value="others">
                       <div className="flex flex-1 flex-col gap-4">
-                        {currentSprint && (
-                          <div className="mb-4 flex justify-end">
+                        {currentSprint && isMethodologyManagerBool && (
+                          <div className="flex justify-end items-start space-x-4">
+                            <div className="flex flex-col items-end space-y-2">
+                              <p className="text-sm text-gray-500 p-2">
+                                Total Time Estimate of Selected Stories:{" "}
+                                {(project.stories as Story[])
+                                  .filter((story) => selectedStories.includes(story.id))
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
+                                story points
+                              </p>
+                              <p className="text-sm text-gray-500 p-2">
+                                Remaining Velocity of Current Sprint:{" "}
+                                {currentSprint.velocity -
+                                  (project.stories as Story[])
+                                    .filter(
+                                      (story) =>
+                                        story.sprint && (story.sprint as Sprint).id === currentSprint.id
+                                    )
+                                    .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
+                                story points
+                              </p>
+                            </div>
                             <Button
                               disabled={selectedStories.length === 0}
-                              className={`mt-1 ${selectedStories.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                              className={` px-4 py-2 rounded self-stretch ${
+                                selectedStories.length === 0
+                                  ? "bg-gray-400 cursor-not-allowed"
+                                  : "bg-blue-500 text-white"
+                              }`}
                               onClick={async () => {
+                                const totalSelectedTimeEstimate = (project.stories as Story[])
+                                  .filter((story) => selectedStories.includes(story.id))
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0);
+
+                                const totalAssignedTimeEstimate = (project.stories as Story[])
+                                  .filter(
+                                    (story) =>
+                                      story.sprint && (story.sprint as Sprint).id === currentSprint.id
+                                  )
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0);
+
+                                const remainingVelocity =
+                                  currentSprint.velocity - totalAssignedTimeEstimate;
+
+                                if (totalSelectedTimeEstimate > remainingVelocity) {
+                                  alert(
+                                    `The total time estimate of the selected stories (${totalSelectedTimeEstimate} story points) exceeds the remaining velocity of the current sprint (${remainingVelocity} story points).`
+                                  );
+                                  return;
+                                }
+
                                 for (const storyId of selectedStories) {
                                   await editStorySprint(currentSprint.name, storyId);
                                 }
@@ -119,11 +167,11 @@ export const ProductBacklog: FC<{
                                   if (selectedStories.includes(story.id)) {
                                     story.sprint = currentSprint;
                                   }
-                                })
+                                });
+                                router.refresh();
                               }}
-                                
                             >
-                              Add selected stories to current sprint
+                              Add to Sprint
                             </Button>
                           </div>
                         )}
@@ -153,7 +201,7 @@ export const ProductBacklog: FC<{
                             />
                           ))}
                       </div>
-                      <div className="mt-2 border-t pt-2">
+                      {!canNotSeeTimeEstimate && (<div className="mt-2 border-t pt-2">
                         <p>
                           <b>Total Time Estimate:</b>{' '}
                           {(project.stories as Story[])
@@ -161,7 +209,7 @@ export const ProductBacklog: FC<{
                             .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                           story points
                         </p>
-                      </div>
+                      </div>)}
                     </TabsContent>
                     <TabsContent value="future releases">
                       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -186,7 +234,7 @@ export const ProductBacklog: FC<{
                               onStorySelect={undefined}
                             />
                           ))}
-                        {currentSprint && (
+                        {currentSprint && !canNotSeeTimeEstimate && (
                           <div className="mt-2 border-t pt-2">
                             <p>
                               <b>Total Time Estimate:</b>{' '}
