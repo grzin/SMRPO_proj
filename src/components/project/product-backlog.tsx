@@ -1,6 +1,7 @@
 'use client'
 
 import { FC } from 'react'
+import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Project, Story, TaskTime, Sprint } from '@/payload-types'
@@ -8,6 +9,9 @@ import { TaskList } from '../stories/stories'
 import { Stori, noSprintAssigned } from '../stories/stories'
 import { Label } from '@radix-ui/react-select'
 import { isProductOwner } from '@/actions/user-actions'
+import { useState } from 'react'
+import { editStorySprint } from '@/actions/story-action'
+import { useRouter } from 'next/navigation'
 
 export const ProductBacklog: FC<{
   project: Project
@@ -34,7 +38,11 @@ export const ProductBacklog: FC<{
   const currentSprint = projectSprints?.find(
     (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
   )
-  console.log('product backlog stories', project.stories)
+  const [selectedStories, setSelectedStories] = useState<number[]>([]);
+
+  const router = useRouter()
+  
+  console.log('sprints', projectSprints)
   return (
     <Card className="col-span-3">
       <CardContent className="">
@@ -53,13 +61,14 @@ export const ProductBacklog: FC<{
                         Active sprint{currentSprint ? ' - ' + currentSprint?.name : ''}
                       </TabsTrigger>
                       <TabsTrigger value="others">Other</TabsTrigger>
+                      <TabsTrigger value="future releases">Future Releases</TabsTrigger>
                     </TabsList>
                     <TabsContent value="active sprint">
                       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
-                              story.sprint && (story.sprint as Sprint).id === currentSprint?.id,
+                              story.sprint && (story.sprint as Sprint).id === currentSprint?.id && story.timeEstimate && story.timeEstimate > 0,
                           )
                           .map((story) => (
                             <Stori
@@ -74,9 +83,10 @@ export const ProductBacklog: FC<{
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
                               canAddStory={canAddStory}
+                              onStorySelect={undefined}
                             />
                           ))}
-                        {currentSprint && (
+                        {currentSprint && !canNotSeeTimeEstimate && (
                           <div className="mt-2 border-t pt-2">
                             <p>
                               <b>Total Time Estimate:</b>{' '}
@@ -97,59 +107,78 @@ export const ProductBacklog: FC<{
                       </div>
                     </TabsContent>
                     <TabsContent value="others">
-                      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                        {projectSprints
-                          ?.filter(
-                            (sprint) =>
-                              sprint.name !== noSprintAssigned && sprint.id !== currentSprint?.id,
-                          )
-                          .map((sprint) => {
-                            const sprintStories = (project.stories as Story[]).filter(
-                              (story) => story.sprint && (story.sprint as Sprint).id === sprint.id,
-                            )
-                            const totalTimeEstimate = sprintStories.reduce(
-                              (sum, story) => sum + (story.timeEstimate || 0),
-                              0,
-                            )
-
-                            return (
-                              <div key={sprint.id} className="mb-4 border rounded p-4 shadow-sm">
-                                <h3 className="text-lg font-semibold">{sprint.name}</h3>
-                                <div className="flex flex-1 flex-col gap-4">
-                                  {sprintStories.map((story) => (
-                                    <Stori
-                                      key={story.id}
-                                      story={story}
-                                      project={project}
-                                      taskTimes={taskTimes}
-                                      canUpdateTimeEstimate={canUpdateTimeEstimate}
-                                      canNotSeeTimeEstimate={canNotSeeTimeEstimate}
-                                      isDeveloperBool={isDeveloperBool}
-                                      isMemberBool={isMemberBool}
-                                      isMethodologyManagerBool={isMethodologyManagerBool}
-                                      projectSprints={projectSprints}
-                                      canAddStory={canAddStory}
-                                    />
-                                  ))}
-                                </div>
-                                <div className="mt-2 border-t pt-2">
-                                  <p>
-                                    <b>Total Time Estimate:</b> {totalTimeEstimate} story points
-                                  </p>
-                                  <p>
-                                    <b>Velocity:</b> {sprint.velocity} story points
-                                  </p>
-                                </div>
-                              </div>
-                            )
-                          })}
-                      </div>
-                      <h3 className="text-lg font-semibold">Stories not assigned to any sprint</h3>
                       <div className="flex flex-1 flex-col gap-4">
+                        {currentSprint && isMethodologyManagerBool && (
+                          <div className="flex justify-end items-start space-x-4">
+                            <div className="flex flex-col items-end space-y-2">
+                              <p className="text-sm text-gray-500 p-2">
+                                Total Time Estimate of Selected Stories:{" "}
+                                {(project.stories as Story[])
+                                  .filter((story) => selectedStories.includes(story.id))
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
+                                story points
+                              </p>
+                              <p className="text-sm text-gray-500 p-2">
+                                Remaining Velocity of Current Sprint:{" "}
+                                {currentSprint.velocity -
+                                  (project.stories as Story[])
+                                    .filter(
+                                      (story) =>
+                                        story.sprint && (story.sprint as Sprint).id === currentSprint.id
+                                    )
+                                    .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
+                                story points
+                              </p>
+                            </div>
+                            <Button
+                              disabled={selectedStories.length === 0}
+                              className={` px-4 py-2 rounded self-stretch ${
+                                selectedStories.length === 0
+                                  ? "bg-gray-400 cursor-not-allowed"
+                                  : "bg-blue-500 text-white"
+                              }`}
+                              onClick={async () => {
+                                const totalSelectedTimeEstimate = (project.stories as Story[])
+                                  .filter((story) => selectedStories.includes(story.id))
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0);
+
+                                const totalAssignedTimeEstimate = (project.stories as Story[])
+                                  .filter(
+                                    (story) =>
+                                      story.sprint && (story.sprint as Sprint).id === currentSprint.id
+                                  )
+                                  .reduce((sum, story) => sum + (story.timeEstimate || 0), 0);
+
+                                const remainingVelocity =
+                                  currentSprint.velocity - totalAssignedTimeEstimate;
+
+                                if (totalSelectedTimeEstimate > remainingVelocity) {
+                                  alert(
+                                    `The total time estimate of the selected stories (${totalSelectedTimeEstimate} story points) exceeds the remaining velocity of the current sprint (${remainingVelocity} story points).`
+                                  );
+                                  return;
+                                }
+
+                                for (const storyId of selectedStories) {
+                                  await editStorySprint(currentSprint.name, storyId);
+                                }
+                                setSelectedStories([]);
+                                (project.stories as Story[]).forEach((story) => {
+                                  if (selectedStories.includes(story.id)) {
+                                    story.sprint = currentSprint;
+                                  }
+                                });
+                                router.refresh();
+                              }}
+                            >
+                              Add to Sprint
+                            </Button>
+                          </div>
+                        )}
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
-                              !story.sprint && story.timeEstimate && story.timeEstimate > 0,
+                              !story.sprint && story.priority !== 'won\'t have this time',
                           )
                           .map((story) => (
                             <Stori
@@ -164,17 +193,61 @@ export const ProductBacklog: FC<{
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
                               canAddStory={canAddStory}
+                              onStorySelect={(storyId, isSelected) => {
+                                setSelectedStories((prev) =>
+                                  isSelected ? [...prev, storyId] : prev.filter((id) => id !== storyId)
+                                );
+                              }}
                             />
                           ))}
                       </div>
-                      <div className="mt-2 border-t pt-2">
+                      {!canNotSeeTimeEstimate && (<div className="mt-2 border-t pt-2">
                         <p>
                           <b>Total Time Estimate:</b>{' '}
                           {(project.stories as Story[])
-                            .filter((story) => !story.sprint)
+                            .filter((story) => !story.sprint && story.priority !== 'won\'t have this time')
                             .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                           story points
                         </p>
+                      </div>)}
+                    </TabsContent>
+                    <TabsContent value="future releases">
+                      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                        {(project.stories as Story[])
+                          .filter(
+                            (story) =>
+                              story.priority === 'won\'t have this time'
+                          )
+                          .map((story) => (
+                            <Stori
+                              key={story.id}
+                              story={story}
+                              project={project}
+                              taskTimes={taskTimes}
+                              canUpdateTimeEstimate={canUpdateTimeEstimate}
+                              canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+                              isDeveloperBool={isDeveloperBool}
+                              isMemberBool={isMemberBool}
+                              isMethodologyManagerBool={isMethodologyManagerBool}
+                              projectSprints={projectSprints}
+                              canAddStory={canAddStory}
+                              onStorySelect={undefined}
+                            />
+                          ))}
+                        {currentSprint && !canNotSeeTimeEstimate && (
+                          <div className="mt-2 border-t pt-2">
+                            <p>
+                              <b>Total Time Estimate:</b>{' '}
+                              {(project.stories as Story[])
+                                .filter(
+                                  (story) =>
+                                    story.priority === 'won\'t have this time',
+                                )
+                                .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
+                              story points
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </TabsContent>
                   </Tabs>
@@ -183,23 +256,44 @@ export const ProductBacklog: FC<{
             </div>
           </TabsContent>
           <TabsContent value="realized">
-            {(project.stories as Story[])
-              .filter((story) => story.timeEstimate == 0)
-              .map((story) => (
-                <Stori
-                  key={story.id}
-                  story={story}
-                  project={project}
-                  taskTimes={taskTimes}
-                  canUpdateTimeEstimate={canUpdateTimeEstimate}
-                  canNotSeeTimeEstimate={canNotSeeTimeEstimate}
-                  isDeveloperBool={isDeveloperBool}
-                  isMemberBool={isMemberBool}
-                  isMethodologyManagerBool={isMethodologyManagerBool}
-                  projectSprints={projectSprints}
-                  canAddStory={canAddStory}
-                />
-              ))}
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+            {projectSprints
+              ?.filter(
+                (sprint) =>
+                  sprint.name !== noSprintAssigned && new Date(sprint.startDate) < today,
+              )
+              .map((sprint) => {
+                const sprintStories = (project.stories as Story[]).filter(
+                  (story) => story.timeEstimate == 0 && (story.sprint as Sprint)?.id === sprint.id,
+                )
+                console.log('sprint stories', sprintStories)
+                console.log('project stories', project.stories)
+                console.log('sprint', sprint)
+                return (
+                  <div key={sprint.id} className="mb-4 border rounded p-4 shadow-sm">
+                    <h3 className="text-lg">Implemented in: <b className="font-semibold">{sprint.name}</b></h3>
+                    <div className="flex flex-1 flex-col gap-4">
+                      {sprintStories.map((story) => (
+                        <Stori
+                          key={story.id}
+                          story={story}
+                          project={project}
+                          taskTimes={taskTimes}
+                          canUpdateTimeEstimate={canUpdateTimeEstimate}
+                          canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+                          isDeveloperBool={isDeveloperBool}
+                          isMemberBool={isMemberBool}
+                          isMethodologyManagerBool={isMethodologyManagerBool}
+                          projectSprints={projectSprints}
+                          canAddStory={canAddStory}
+                          onStorySelect={undefined}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
           </TabsContent>
         </Tabs>
       </CardContent>
