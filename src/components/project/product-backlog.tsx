@@ -19,12 +19,22 @@ export const ProductBacklog: FC<{
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
   projectSprints: Sprint[]
-}> = ({ project, taskTimes, canAddStory, canUpdateTimeEstimate, canNotSeeTimeEstimate, isDeveloperBool, isMemberBool, isMethodologyManagerBool, projectSprints }) => {
-  const today = new Date();
+}> = ({
+  project,
+  taskTimes,
+  canAddStory,
+  canUpdateTimeEstimate,
+  canNotSeeTimeEstimate,
+  isDeveloperBool,
+  isMemberBool,
+  isMethodologyManagerBool,
+  projectSprints,
+}) => {
+  const today = new Date()
   const currentSprint = projectSprints?.find(
-    (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today 
-  );
-console.log("product backlog stories", project.stories)
+    (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
+  )
+  console.log('product backlog stories', project.stories)
   return (
     <Card className="col-span-3">
       <CardContent className="">
@@ -39,86 +49,106 @@ console.log("product backlog stories", project.stories)
                 <CardContent className="">
                   <Tabs defaultValue="active sprint">
                     <TabsList className="w-full">
-                      <TabsTrigger value="active sprint">Active sprint{currentSprint ? " - " + currentSprint?.name : ""}</TabsTrigger>
+                      <TabsTrigger value="active sprint">
+                        Active sprint{currentSprint ? ' - ' + currentSprint?.name : ''}
+                      </TabsTrigger>
                       <TabsTrigger value="others">Other</TabsTrigger>
                     </TabsList>
                     <TabsContent value="active sprint">
-                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                      {(project.stories as Story[])
-                        .filter((story) => story.sprint && (story.sprint as Sprint).id === currentSprint?.id)
-                        .map((story) => (
-                          <Stori
-                            key={story.id}
-                            story={story}
-                            project={project}
-                            taskTimes={taskTimes}
-                            canUpdateTimeEstimate={canUpdateTimeEstimate}
-                            canNotSeeTimeEstimate={canNotSeeTimeEstimate}
-                            isDeveloperBool={isDeveloperBool}
-                            isMemberBool={isMemberBool}
-                            isMethodologyManagerBool={isMethodologyManagerBool}
-                            projectSprints={projectSprints}
-                          />
-                        ))}
-                      {currentSprint && (
-                        <div className="mt-2 border-t pt-2">
-                          <p>
-                            <b>Total Time Estimate:</b>{" "}
-                            {(project.stories as Story[])
-                              .filter((story) => story.sprint && (story.sprint as Sprint).id === currentSprint.id)
-                              .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
-                            story points
-                          </p>
-                          <p>
-                            <b>Velocity:</b> {currentSprint.velocity} story points
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                        {(project.stories as Story[])
+                          .filter(
+                            (story) =>
+                              story.sprint && (story.sprint as Sprint).id === currentSprint?.id,
+                          )
+                          .map((story) => (
+                            <Stori
+                              key={story.id}
+                              story={story}
+                              project={project}
+                              taskTimes={taskTimes}
+                              canUpdateTimeEstimate={canUpdateTimeEstimate}
+                              canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+                              isDeveloperBool={isDeveloperBool}
+                              isMemberBool={isMemberBool}
+                              isMethodologyManagerBool={isMethodologyManagerBool}
+                              projectSprints={projectSprints}
+                            />
+                          ))}
+                        {currentSprint && (
+                          <div className="mt-2 border-t pt-2">
+                            <p>
+                              <b>Total Time Estimate:</b>{' '}
+                              {(project.stories as Story[])
+                                .filter(
+                                  (story) =>
+                                    story.sprint &&
+                                    (story.sprint as Sprint).id === currentSprint.id,
+                                )
+                                .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
+                              story points
+                            </p>
+                            <p>
+                              <b>Velocity:</b> {currentSprint.velocity} story points
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </TabsContent>
                     <TabsContent value="others">
-                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                      {projectSprints?.filter((sprint) => sprint.name !== noSprintAssigned && sprint.id !== currentSprint?.id).map((sprint) => {
-                        const sprintStories = (project.stories as Story[]).filter(
-                          (story) => story.sprint && (story.sprint as Sprint).id === sprint.id
-                        );
-                        const totalTimeEstimate = sprintStories.reduce((sum, story) => sum + (story.timeEstimate || 0), 0);
+                      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                        {projectSprints
+                          ?.filter(
+                            (sprint) =>
+                              sprint.name !== noSprintAssigned && sprint.id !== currentSprint?.id,
+                          )
+                          .map((sprint) => {
+                            const sprintStories = (project.stories as Story[]).filter(
+                              (story) => story.sprint && (story.sprint as Sprint).id === sprint.id,
+                            )
+                            const totalTimeEstimate = sprintStories.reduce(
+                              (sum, story) => sum + (story.timeEstimate || 0),
+                              0,
+                            )
 
-                        return (
-                          <div key={sprint.id} className="mb-4 border rounded p-4 shadow-sm">
-                            <h3 className="text-lg font-semibold">{sprint.name}</h3>
-                            <div className="flex flex-1 flex-col gap-4">
-                              {sprintStories.map((story) => (
-                                <Stori
-                                  key={story.id}
-                                  story={story}
-                                  project={project}
-                                  taskTimes={taskTimes}
-                                  canUpdateTimeEstimate={canUpdateTimeEstimate}
-                                  canNotSeeTimeEstimate={canNotSeeTimeEstimate}
-                                  isDeveloperBool={isDeveloperBool}
-                                  isMemberBool={isMemberBool}
-                                  isMethodologyManagerBool={isMethodologyManagerBool}
-                                  projectSprints={projectSprints}
-                                />
-                              ))}
-                            </div>
-                            <div className="mt-2 border-t pt-2">
-                              <p>
-                                <b>Total Time Estimate:</b> {totalTimeEstimate} story points
-                              </p>
-                              <p>
-                                <b>Velocity:</b> {sprint.velocity} story points
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <h3 className="text-lg font-semibold">Stories not assigned to any sprint</h3>
+                            return (
+                              <div key={sprint.id} className="mb-4 border rounded p-4 shadow-sm">
+                                <h3 className="text-lg font-semibold">{sprint.name}</h3>
+                                <div className="flex flex-1 flex-col gap-4">
+                                  {sprintStories.map((story) => (
+                                    <Stori
+                                      key={story.id}
+                                      story={story}
+                                      project={project}
+                                      taskTimes={taskTimes}
+                                      canUpdateTimeEstimate={canUpdateTimeEstimate}
+                                      canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+                                      isDeveloperBool={isDeveloperBool}
+                                      isMemberBool={isMemberBool}
+                                      isMethodologyManagerBool={isMethodologyManagerBool}
+                                      projectSprints={projectSprints}
+                                    />
+                                  ))}
+                                </div>
+                                <div className="mt-2 border-t pt-2">
+                                  <p>
+                                    <b>Total Time Estimate:</b> {totalTimeEstimate} story points
+                                  </p>
+                                  <p>
+                                    <b>Velocity:</b> {sprint.velocity} story points
+                                  </p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                      </div>
+                      <h3 className="text-lg font-semibold">Stories not assigned to any sprint</h3>
                       <div className="flex flex-1 flex-col gap-4">
                         {(project.stories as Story[])
-                          .filter((story) => !story.sprint && story.timeEstimate && story.timeEstimate > 0)
+                          .filter(
+                            (story) =>
+                              !story.sprint && story.timeEstimate && story.timeEstimate > 0,
+                          )
                           .map((story) => (
                             <Stori
                               key={story.id}
@@ -136,10 +166,10 @@ console.log("product backlog stories", project.stories)
                       </div>
                       <div className="mt-2 border-t pt-2">
                         <p>
-                          <b>Total Time Estimate:</b>{" "}
+                          <b>Total Time Estimate:</b>{' '}
                           {(project.stories as Story[])
                             .filter((story) => !story.sprint)
-                            .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{" "}
+                            .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                           story points
                         </p>
                       </div>
@@ -154,17 +184,18 @@ console.log("product backlog stories", project.stories)
               .filter((story) => story.timeEstimate == 0)
               .map((story) => (
                 <Stori
-                story={story}
-                project={project}
-                taskTimes={taskTimes}
-                canUpdateTimeEstimate={canUpdateTimeEstimate}
-                canNotSeeTimeEstimate={canNotSeeTimeEstimate}
-                isDeveloperBool={isDeveloperBool}
-                isMemberBool={isMemberBool}
-                isMethodologyManagerBool={isMethodologyManagerBool}
-                projectSprints={projectSprints}
+                  key={story.id}
+                  story={story}
+                  project={project}
+                  taskTimes={taskTimes}
+                  canUpdateTimeEstimate={canUpdateTimeEstimate}
+                  canNotSeeTimeEstimate={canNotSeeTimeEstimate}
+                  isDeveloperBool={isDeveloperBool}
+                  isMemberBool={isMemberBool}
+                  isMethodologyManagerBool={isMethodologyManagerBool}
+                  projectSprints={projectSprints}
                 />
-            ))}
+              ))}
           </TabsContent>
         </Tabs>
       </CardContent>
