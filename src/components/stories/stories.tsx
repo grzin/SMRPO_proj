@@ -98,10 +98,11 @@ export const Stories: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
-
-  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
-    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
-  }
+  
+  const today = new Date()
+  const currentSprint = projectSprints?.find(
+    (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
+  )
 
   return (
     <div className="rounded-xl md:min-h-min">
@@ -193,40 +194,6 @@ export const Stories: FC<{
                           </form>
                         )}
                       </div>
-                    </div>
-                    <div className="col-span-1">
-                    <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-                      {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
-                        <>
-                          <select
-                            id={`sprintSelect-${story.id}`}
-                            className="border rounded p-2 w-full"
-                            defaultValue={story.sprint ? (story.sprint as Sprint).name : 'undefined'}
-                          >
-                            {projectSprints?.map((sprint) => (
-                              <option key={sprint.id} value={sprint.name}>
-                                {sprint.name}
-                              </option>
-                            ))}
-                          </select>
-                          <Button
-                            className="mt-2"
-                            onClick={() => {
-                              const selectedSprint = (document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement).value
-                              console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
-                              editStorySprint(selectedSprint, story.id).then(() => {
-                                router.refresh()
-                              })
-                            }}
-                          >
-                            Update Sprint
-                          </Button>
-                        </>
-                      ) : (
-                        <div className="border rounded p-2 w-full bg-gray-100">
-                          {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
-                        </div>
-                      )}
                     </div>
                   </div>
                   <div className="col-span-3">
@@ -498,6 +465,8 @@ export const Stori: FC<{
   isMethodologyManagerBool: boolean
   projectSprints: Sprint[] | null
   canAddStory: boolean
+  onStorySelect: ((storyId: number, isSelected: boolean) => void) | undefined
+
 }> = ({
   story,
   project,
@@ -508,7 +477,8 @@ export const Stori: FC<{
   isMemberBool,
   isMethodologyManagerBool,
   projectSprints,
-  canAddStory
+  canAddStory,
+  onStorySelect
 }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
@@ -526,6 +496,12 @@ export const Stori: FC<{
 
   const [state, formAction, pending] = useActionState(editStoryTimeEstimateAction, initialState)
 
+  
+  const today = new Date()
+  const currentSprint = projectSprints?.find(
+    (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
+  )
+
   useEffect(() => {
     if (!user) {
       return
@@ -541,19 +517,20 @@ export const Stori: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
-  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
-    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
-  }
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!onStorySelect) return;
+    onStorySelect(story.id, e.target.checked);
+  };
 
   return (
     <li
       key={story.id}
-      className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-3"
+      className="border rounded p-4 hover:bg-gray-100 grid auto-rows-min gap-4 md:grid-cols-24"
     >
       {deletableStories[story.id] ? (
         <Link
           href={`/stories/edit?storyId=${story.id}&projectId=${project.id}`}
-          className="cursor-pointer col-span-2"
+          className="cursor-pointer col-span-14"
         >
           <h3 className="text-lg font-semibold">{story.title}</h3>
           <p>Description: {story.description}</p>
@@ -568,7 +545,7 @@ export const Stori: FC<{
           </ul>
         </Link>
       ) : (
-        <div className="col-span-2">
+        <div className="col-span-14">
           <h3 className="text-lg font-semibold">{story.title}</h3>
           <p>Description: {story.description}</p>
           <p className="text-sm text-gray-500">Priority: {story.priority}</p>
@@ -580,7 +557,7 @@ export const Stori: FC<{
           </ul>
         </div>
       )}
-      <div className="col-span-1">
+      <div className="col-span-7">
         <div className="col-span-1">
           <div className="grid gap-3">
             {canNotSeeTimeEstimate ? (
@@ -623,42 +600,29 @@ export const Stori: FC<{
             )}
           </div>
         </div>
-        <div className="col-span-1">
-        <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-          {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
-            <>
-              <select
-                id={`sprintSelect-${story.id}`}
-                className="border rounded p-2 w-full"
-                defaultValue={story.sprint ? (story.sprint as Sprint).name : 'undefined'}
-              >
-                {projectSprints?.map((sprint) => (
-                  <option key={sprint.id} value={sprint.name}>
-                    {sprint.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                className="mt-2"
-                onClick={() => {
-                  const selectedSprint = (document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement).value
-                  console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
-                  editStorySprint(selectedSprint, story.id).then(() => {
-                    router.refresh()
-                  })
-                }}
-              >
-                Update Sprint
-              </Button>
-            </>
-          ) : (
-            <div className="border rounded p-2 w-full bg-gray-100">
-              {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
-            </div>
-          )}
-        </div>
       </div>
-      <div className="col-span-3">
+      {onStorySelect != undefined && story.timeEstimate && story.timeEstimate > 0 && isMethodologyManagerBool ? (
+      <div className="col-span-2 justify-end flex">
+        <input
+          type="checkbox"
+          onChange={handleCheckboxChange}
+          className="form-checkbox h-5 w-5 ml-auto"
+        />
+      </div>) : (<></>)}
+      {story.timeEstimate && story.timeEstimate > 0 && (story.sprint as Sprint)?.id == currentSprint?.id  && canNotSeeTimeEstimate ? (
+      <div className="col-span-2 justify-end flex">
+            <Button
+              className="bg-red-500 text-white hover:bg-red-600"
+              onClick={async () => {
+                await editStorySprint('No Sprint Assigned', story.id).then(() => {
+                  router.refresh()
+                })
+              }}
+            >
+              Remove from Sprint
+            </Button>
+      </div>) : (<></>)}
+      <div className="col-span-24">
         <h1>
           <b>Tasks</b>
         </h1>

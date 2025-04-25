@@ -1,6 +1,7 @@
 'use client'
 
 import { FC } from 'react'
+import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { Project, Story, TaskTime, Sprint } from '@/payload-types'
@@ -8,6 +9,8 @@ import { TaskList } from '../stories/stories'
 import { Stori, noSprintAssigned } from '../stories/stories'
 import { Label } from '@radix-ui/react-select'
 import { isProductOwner } from '@/actions/user-actions'
+import { useState } from 'react'
+import { editStorySprint } from '@/actions/story-action'
 
 export const ProductBacklog: FC<{
   project: Project
@@ -34,6 +37,8 @@ export const ProductBacklog: FC<{
   const currentSprint = projectSprints?.find(
     (sprint) => new Date(sprint.startDate) <= today && new Date(sprint.endDate) >= today,
   )
+  const [selectedStories, setSelectedStories] = useState<number[]>([]);
+  
   console.log('sprints', projectSprints)
   return (
     <Card className="col-span-3">
@@ -75,6 +80,7 @@ export const ProductBacklog: FC<{
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
                               canAddStory={canAddStory}
+                              onStorySelect={undefined}
                             />
                           ))}
                         {currentSprint && (
@@ -99,6 +105,28 @@ export const ProductBacklog: FC<{
                     </TabsContent>
                     <TabsContent value="others">
                       <div className="flex flex-1 flex-col gap-4">
+                        {currentSprint && (
+                          <div className="mb-4 flex justify-end">
+                            <Button
+                              disabled={selectedStories.length === 0}
+                              className={`mt-1 ${selectedStories.length === 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white'}`}
+                              onClick={async () => {
+                                for (const storyId of selectedStories) {
+                                  await editStorySprint(currentSprint.name, storyId);
+                                }
+                                setSelectedStories([]);
+                                (project.stories as Story[]).forEach((story) => {
+                                  if (selectedStories.includes(story.id)) {
+                                    story.sprint = currentSprint;
+                                  }
+                                })
+                              }}
+                                
+                            >
+                              Add selected stories to current sprint
+                            </Button>
+                          </div>
+                        )}
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
@@ -117,6 +145,11 @@ export const ProductBacklog: FC<{
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
                               canAddStory={canAddStory}
+                              onStorySelect={(storyId, isSelected) => {
+                                setSelectedStories((prev) =>
+                                  isSelected ? [...prev, storyId] : prev.filter((id) => id !== storyId)
+                                );
+                              }}
                             />
                           ))}
                       </div>
@@ -150,6 +183,7 @@ export const ProductBacklog: FC<{
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
                               canAddStory={canAddStory}
+                              onStorySelect={undefined}
                             />
                           ))}
                         {currentSprint && (
@@ -204,6 +238,7 @@ export const ProductBacklog: FC<{
                           isMethodologyManagerBool={isMethodologyManagerBool}
                           projectSprints={projectSprints}
                           canAddStory={canAddStory}
+                          onStorySelect={undefined}
                         />
                       ))}
                     </div>
