@@ -23,7 +23,23 @@ import EditTaskDialog from '../tasks/tasks-edit-dialog'
 import { Switch } from '@/components/ui/switch'
 import { UserAvatar } from '../ui/avatar'
 
-export const noSprintAssigned : string = 'No Sprint Assigned'
+export const noSprintAssigned: string = 'No Sprint Assigned'
+
+function sumEstTimes(story: Story, times: TaskTime[]) {
+  let storySum = 0
+  story.tasks?.forEach((task) => {
+    if (!times.find((time) => task.id === time.task)) {
+      storySum += task.estimate
+    }
+  })
+
+  const s =
+    times.map((t) => t.est_seconds).reduce((x, y) => x + y, 0) + Math.floor(storySum * 60 * 60)
+  const m = times.map((t) => t.est_minutes).reduce((x, y) => x + y, 0) + Math.floor(s / 60)
+  const h = times.map((t) => t.est_hours).reduce((x, y) => x + y, 0) + Math.floor(m / 60)
+
+  return formatTime(h, m % 60, s % 60)
+}
 
 function sumTimes(times: TaskTime[]) {
   const s = times.map((t) => t.seconds).reduce((x, y) => x + y, 0)
@@ -98,9 +114,17 @@ export const Stories: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
-
-  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
-    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
+  if (projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
+    projectSprints.unshift({
+      id: -1,
+      name: noSprintAssigned,
+      startDate: '',
+      endDate: '',
+      velocity: 0,
+      project: 0,
+      updatedAt: '',
+      createdAt: '',
+    })
   }
 
   return (
@@ -130,7 +154,9 @@ export const Stories: FC<{
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
-                      <p className="text-sm text-gray-500">Sprint: {story.sprint == null ? "undefined" : (story.sprint as Sprint).name}</p>
+                      <p className="text-sm text-gray-500">
+                        Sprint: {story.sprint == null ? 'undefined' : (story.sprint as Sprint).name}
+                      </p>
                       <p className="text-sm text-gray-500">Acceptance Tests: </p>
                       <ul>
                         {story.acceptanceTests.map((testObj, index) => (
@@ -172,7 +198,9 @@ export const Stories: FC<{
                               defaultValue={story.id}
                               hidden
                             />
-                            <Label className="p-2" htmlFor="timeEstimate">Time estimate (in story points)</Label>
+                            <Label className="p-2" htmlFor="timeEstimate">
+                              Time estimate (in story points)
+                            </Label>
                             <Input
                               name="timeEstimate"
                               id="timeEstimate"
@@ -195,13 +223,21 @@ export const Stories: FC<{
                       </div>
                     </div>
                     <div className="col-span-1">
-                    <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-                      {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
+                      <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>
+                        Sprint
+                      </Label>
+                      {canAddStory &&
+                      story.timeEstimate &&
+                      story.timeEstimate > 0 &&
+                      projectSprints &&
+                      projectSprints.length > 1 ? (
                         <>
                           <select
                             id={`sprintSelect-${story.id}`}
                             className="border rounded p-2 w-full"
-                            defaultValue={story.sprint ? (story.sprint as Sprint).name : 'undefined'}
+                            defaultValue={
+                              story.sprint ? (story.sprint as Sprint).name : 'undefined'
+                            }
                           >
                             {projectSprints?.map((sprint) => (
                               <option key={sprint.id} value={sprint.name}>
@@ -212,8 +248,14 @@ export const Stories: FC<{
                           <Button
                             className="mt-2"
                             onClick={() => {
-                              const selectedSprint = (document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement).value
-                              console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
+                              const selectedSprint = (
+                                document.getElementById(
+                                  `sprintSelect-${story.id}`,
+                                ) as HTMLSelectElement
+                              ).value
+                              console.log(
+                                `Updating sprint for story ${story.id} to ${selectedSprint}`,
+                              )
                               editStorySprint(selectedSprint, story.id).then(() => {
                                 router.refresh()
                               })
@@ -257,7 +299,14 @@ export const Stories: FC<{
                       />
                       <div className="grid grid-cols-7 gap-4 mt-4 px-6">
                         <div>Sum:</div>
-                        <div></div>
+                        <div>
+                          {sumEstTimes(
+                            story,
+                            taskTimes.filter(
+                              (tt) => story.tasks?.find((t) => t.id === tt.task) !== undefined,
+                            ),
+                          )}
+                        </div>
                         <div></div>
                         <div></div>
                         <div></div>
@@ -486,7 +535,6 @@ export const TaskList: FC<{
   )
 }
 
-
 export const Stori: FC<{
   story: Story
   project: Project
@@ -508,7 +556,7 @@ export const Stori: FC<{
   isMemberBool,
   isMethodologyManagerBool,
   projectSprints,
-  canAddStory
+  canAddStory,
 }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
@@ -541,8 +589,17 @@ export const Stori: FC<{
     checkDeletableStories()
   }, [project.stories, user, project.members])
 
-  if(projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
-    projectSprints.unshift({id: -1, name: noSprintAssigned, startDate: "", endDate: "", velocity: 0, project: 0, updatedAt: "", createdAt: ""})
+  if (projectSprints && !projectSprints.some((sprint) => sprint.name === noSprintAssigned)) {
+    projectSprints.unshift({
+      id: -1,
+      name: noSprintAssigned,
+      startDate: '',
+      endDate: '',
+      velocity: 0,
+      project: 0,
+      updatedAt: '',
+      createdAt: '',
+    })
   }
 
   return (
@@ -559,7 +616,9 @@ export const Stori: FC<{
           <p>Description: {story.description}</p>
           <p className="text-sm text-gray-500">Priority: {story.priority}</p>
           <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
-          <p className="text-sm text-gray-500">Sprint: {story.sprint == null ? "undefined" : (story.sprint as Sprint).name}</p>
+          <p className="text-sm text-gray-500">
+            Sprint: {story.sprint == null ? 'undefined' : (story.sprint as Sprint).name}
+          </p>
           <p className="text-sm text-gray-500">Acceptance Tests: </p>
           <ul>
             {story.acceptanceTests.map((testObj, index) => (
@@ -594,14 +653,10 @@ export const Stori: FC<{
                   defaultValue={project.id}
                   hidden
                 />
-                <Input
-                  name="storyId"
-                  id="storyId"
-                  type="number"
-                  defaultValue={story.id}
-                  hidden
-                />
-                <Label className="p-2" htmlFor="timeEstimate">Time estimate (in story points)</Label>
+                <Input name="storyId" id="storyId" type="number" defaultValue={story.id} hidden />
+                <Label className="p-2" htmlFor="timeEstimate">
+                  Time estimate (in story points)
+                </Label>
                 <Input
                   name="timeEstimate"
                   id="timeEstimate"
@@ -624,8 +679,14 @@ export const Stori: FC<{
           </div>
         </div>
         <div className="col-span-1">
-        <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-          {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
+          <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>
+            Sprint
+          </Label>
+          {canAddStory &&
+          story.timeEstimate &&
+          story.timeEstimate > 0 &&
+          projectSprints &&
+          projectSprints.length > 1 ? (
             <>
               <select
                 id={`sprintSelect-${story.id}`}
@@ -641,7 +702,9 @@ export const Stori: FC<{
               <Button
                 className="mt-2"
                 onClick={() => {
-                  const selectedSprint = (document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement).value
+                  const selectedSprint = (
+                    document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement
+                  ).value
                   console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
                   editStorySprint(selectedSprint, story.id).then(() => {
                     router.refresh()
@@ -686,15 +749,18 @@ export const Stori: FC<{
           />
           <div className="grid grid-cols-7 gap-4 mt-4 px-6">
             <div>Sum:</div>
-            <div></div>
+            <div>
+              {sumEstTimes(
+                story,
+                taskTimes.filter((tt) => story.tasks?.find((t) => t.id === tt.task) !== undefined),
+              )}
+            </div>
             <div></div>
             <div></div>
             <div></div>
             <div>
               {sumTimes(
-                taskTimes.filter(
-                  (tt) => story.tasks?.find((t) => t.id === tt.task) !== undefined,
-                ),
+                taskTimes.filter((tt) => story.tasks?.find((t) => t.id === tt.task) !== undefined),
               )}
             </div>
           </div>
