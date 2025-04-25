@@ -196,7 +196,7 @@ export const Stories: FC<{
                     </div>
                     <div className="col-span-1">
                     <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-                      {story.timeEstimate && story.timeEstimate > 0 && projectSprints ? (
+                      {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
                         <>
                           <select
                             id={`sprintSelect-${story.id}`}
@@ -497,6 +497,7 @@ export const Stori: FC<{
   isMemberBool: boolean
   isMethodologyManagerBool: boolean
   projectSprints: Sprint[] | null
+  canAddStory: boolean
 }> = ({
   story,
   project,
@@ -507,6 +508,7 @@ export const Stori: FC<{
   isMemberBool,
   isMethodologyManagerBool,
   projectSprints,
+  canAddStory
 }) => {
   const [deletableStories, setDeletableStories] = useState<Record<string, boolean>>({})
   const router = useRouter()
@@ -623,7 +625,7 @@ export const Stori: FC<{
         </div>
         <div className="col-span-1">
         <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>Sprint</Label>
-          {story.timeEstimate && story.timeEstimate > 0 && projectSprints ? (
+          {canAddStory && story.timeEstimate && story.timeEstimate > 0 && projectSprints && projectSprints.length > 1 ? (
             <>
               <select
                 id={`sprintSelect-${story.id}`}

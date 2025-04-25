@@ -73,6 +73,7 @@ export const ProductBacklog: FC<{
                               isMemberBool={isMemberBool}
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
+                              canAddStory={canAddStory}
                             />
                           ))}
                         {currentSprint && (
@@ -127,6 +128,7 @@ export const ProductBacklog: FC<{
                                       isMemberBool={isMemberBool}
                                       isMethodologyManagerBool={isMethodologyManagerBool}
                                       projectSprints={projectSprints}
+                                      canAddStory={canAddStory}
                                     />
                                   ))}
                                 </div>
@@ -161,6 +163,7 @@ export const ProductBacklog: FC<{
                               isMemberBool={isMemberBool}
                               isMethodologyManagerBool={isMethodologyManagerBool}
                               projectSprints={projectSprints}
+                              canAddStory={canAddStory}
                             />
                           ))}
                       </div>
@@ -194,6 +197,7 @@ export const ProductBacklog: FC<{
                   isMemberBool={isMemberBool}
                   isMethodologyManagerBool={isMethodologyManagerBool}
                   projectSprints={projectSprints}
+                  canAddStory={canAddStory}
                 />
               ))}
           </TabsContent>

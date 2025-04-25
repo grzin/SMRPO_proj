@@ -254,7 +254,7 @@ export async function editStoryTimeEstimateAction({}, formData: FormData) {
 export async function editStorySprint(sprintName: string | null, storyId: number) {
 
   const payload = await getPayload({ config })
-  if (sprintName === noSprintAssigned) {
+  if (sprintName === 'No Sprint Assigned') {
     await payload.update({
       collection: 'stories',
       id: storyId,
