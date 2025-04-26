@@ -173,6 +173,8 @@ export interface Story {
   title: string;
   titleLowerCase: string;
   description: string;
+  realized: boolean;
+  rejectComment?: string | null;
   acceptanceTests: {
     test: string;
     id?: string | null;
@@ -390,6 +392,8 @@ export interface StoriesSelect<T extends boolean = true> {
   title?: T;
   titleLowerCase?: T;
   description?: T;
+  realized?: T;
+  rejectComment?: T;
   acceptanceTests?:
     | T
     | {
