@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
+
 import { FC, useActionState } from 'react'
 import Link from 'next/link'
 import { canDeleteStory } from '@/actions/user-actions'
@@ -22,6 +22,7 @@ import AddTaskDialog from '../tasks/tasks-add-dialog'
 import EditTaskDialog from '../tasks/tasks-edit-dialog'
 import { Switch } from '@/components/ui/switch'
 import { UserAvatar } from '../ui/avatar'
+import { useRouter } from 'next/navigation'
 
 export const noSprintAssigned: string = 'No Sprint Assigned'
 
@@ -226,54 +227,6 @@ export const Stories: FC<{
                           </form>
                         )}
                       </div>
-                    </div>
-                    <div className="col-span-1">
-                      <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>
-                        Sprint
-                      </Label>
-                      {canAddStory &&
-                      story.timeEstimate &&
-                      story.timeEstimate > 0 &&
-                      projectSprints &&
-                      projectSprints.length > 1 ? (
-                        <>
-                          <select
-                            id={`sprintSelect-${story.id}`}
-                            className="border rounded p-2 w-full"
-                            defaultValue={
-                              story.sprint ? (story.sprint as Sprint).name : 'undefined'
-                            }
-                          >
-                            {projectSprints?.map((sprint) => (
-                              <option key={sprint.id} value={sprint.name}>
-                                {sprint.name}
-                              </option>
-                            ))}
-                          </select>
-                          <Button
-                            className="mt-2"
-                            onClick={() => {
-                              const selectedSprint = (
-                                document.getElementById(
-                                  `sprintSelect-${story.id}`,
-                                ) as HTMLSelectElement
-                              ).value
-                              console.log(
-                                `Updating sprint for story ${story.id} to ${selectedSprint}`,
-                              )
-                              editStorySprint(selectedSprint, story.id).then(() => {
-                                router.refresh()
-                              })
-                            }}
-                          >
-                            Update Sprint
-                          </Button>
-                        </>
-                      ) : (
-                        <div className="border rounded p-2 w-full bg-gray-100">
-                          {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
-                        </div>
-                      )}
                     </div>
                   </div>
                   <div className="col-span-3">
@@ -696,50 +649,6 @@ export const Stori: FC<{
             )}
           </div>
         </div>
-        <div className="col-span-1">
-          <Label className="p-2" htmlFor={`sprintSelect-${story.id}`}>
-            Sprint
-          </Label>
-          {canAddStory &&
-          story.timeEstimate &&
-          story.timeEstimate > 0 &&
-          projectSprints &&
-          projectSprints.length > 1 ? (
-            <>
-              <select
-                id={`sprintSelect-${story.id}`}
-                className="border rounded p-2 w-full"
-                defaultValue={story.sprint ? (story.sprint as Sprint).name : 'undefined'}
-              >
-                {projectSprints?.map((sprint) => (
-                  <option key={sprint.id} value={sprint.name}>
-                    {sprint.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                className="mt-2"
-                onClick={() => {
-                  const selectedSprint = (
-                    document.getElementById(`sprintSelect-${story.id}`) as HTMLSelectElement
-                  ).value
-                  console.log(`Updating sprint for story ${story.id} to ${selectedSprint}`)
-                  editStorySprint(selectedSprint, story.id).then(() => {
-                    router.refresh()
-                  })
-                }}
-              >
-                Update Sprint
-              </Button>
-            </>
-          ) : (
-            <div className="border rounded p-2 w-full bg-gray-100">
-              {story.sprint ? (story.sprint as Sprint).name : noSprintAssigned}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="col-span-3">
       </div>
       {onStorySelect != undefined && story.timeEstimate && story.timeEstimate > 0 && isMethodologyManagerBool ? (
       <div className="col-span-2 justify-end flex">
@@ -752,7 +661,7 @@ export const Stori: FC<{
       {story.timeEstimate && story.timeEstimate > 0 && (story.sprint as Sprint)?.id == currentSprint?.id  && canNotSeeTimeEstimate ? (
       <div className="col-span-2 justify-end flex">
             <Button
-              className="bg-red-500 text-white hover:bg-red-600"
+              variant="destructive"
               onClick={async () => {
                 await editStorySprint('No Sprint Assigned', story.id).then(() => {
                   router.refresh()
