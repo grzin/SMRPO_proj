@@ -42,7 +42,6 @@ export const ProductBacklog: FC<{
 
   const router = useRouter()
   
-  console.log('sprints', projectSprints)
   return (
     <Card className="col-span-3">
       <CardContent className="">
@@ -68,7 +67,7 @@ export const ProductBacklog: FC<{
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
-                              story.sprint && (story.sprint as Sprint).id === currentSprint?.id && story.timeEstimate && story.timeEstimate > 0,
+                              story.sprint && (story.sprint as Sprint).id === currentSprint?.id  && !story.realized,
                           )
                           .map((story) => (
                             <Stori
@@ -93,8 +92,7 @@ export const ProductBacklog: FC<{
                               {(project.stories as Story[])
                                 .filter(
                                   (story) =>
-                                    story.sprint &&
-                                    (story.sprint as Sprint).id === currentSprint.id,
+                                    story.sprint && (story.sprint as Sprint).id === currentSprint.id && !story.realized,
                                 )
                                 .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                               story points
@@ -131,11 +129,12 @@ export const ProductBacklog: FC<{
                               </p>
                             </div>
                             <Button
+                            variant="default"
                               disabled={selectedStories.length === 0}
                               className={` px-4 py-2 rounded self-stretch ${
                                 selectedStories.length === 0
                                   ? "bg-gray-400 cursor-not-allowed"
-                                  : "bg-blue-500 text-white"
+                                  : ""
                               }`}
                               onClick={async () => {
                                 const totalSelectedTimeEstimate = (project.stories as Story[])
@@ -178,7 +177,7 @@ export const ProductBacklog: FC<{
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
-                              !story.sprint && story.priority !== 'won\'t have this time',
+                              !story.sprint && story.priority !== 'won\'t have this time' && !story.realized,
                           )
                           .map((story) => (
                             <Stori
@@ -205,7 +204,7 @@ export const ProductBacklog: FC<{
                         <p>
                           <b>Total Time Estimate:</b>{' '}
                           {(project.stories as Story[])
-                            .filter((story) => !story.sprint && story.priority !== 'won\'t have this time')
+                            .filter((story) => !story.sprint && story.priority !== 'won\'t have this time' && !story.realized)
                             .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                           story points
                         </p>
@@ -216,7 +215,7 @@ export const ProductBacklog: FC<{
                         {(project.stories as Story[])
                           .filter(
                             (story) =>
-                              story.priority === 'won\'t have this time'
+                              story.priority === 'won\'t have this time' && !story.realized,
                           )
                           .map((story) => (
                             <Stori
@@ -241,7 +240,7 @@ export const ProductBacklog: FC<{
                               {(project.stories as Story[])
                                 .filter(
                                   (story) =>
-                                    story.priority === 'won\'t have this time',
+                                    story.priority === 'won\'t have this time' && !story.realized,
                                 )
                                 .reduce((sum, story) => sum + (story.timeEstimate || 0), 0)}{' '}
                               story points
@@ -264,14 +263,11 @@ export const ProductBacklog: FC<{
               )
               .map((sprint) => {
                 const sprintStories = (project.stories as Story[]).filter(
-                  (story) => story.timeEstimate == 0 && (story.sprint as Sprint)?.id === sprint.id,
+                  (story) => story.realized && story.sprint && (story.sprint as Sprint).id === sprint.id,
                 )
-                console.log('sprint stories', sprintStories)
-                console.log('project stories', project.stories)
-                console.log('sprint', sprint)
                 return (
                   <div key={sprint.id} className="mb-4 border rounded p-4 shadow-sm">
-                    <h3 className="text-lg">Implemented in: <b className="font-semibold">{sprint.name}</b></h3>
+                    <h3 className="text-lg">Realized in sprint: <b className="font-semibold">{sprint.name}</b></h3>
                     <div className="flex flex-1 flex-col gap-4">
                       {sprintStories.map((story) => (
                         <Stori

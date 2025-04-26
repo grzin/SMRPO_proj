@@ -19,6 +19,17 @@ export const Stories: CollectionConfig = {
       required: true,
     },
     {
+      name: 'realized',
+      type: 'checkbox',
+      required: true,
+      defaultValue: false,
+    },
+    {
+      name: 'rejectComment',
+      type: 'text',
+      required: false,
+    },
+    {
       name: 'acceptanceTests',
       type: 'array',
       required: true,

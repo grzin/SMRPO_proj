@@ -25,7 +25,6 @@ export default function UserEdit({
   if (editUser == null) {
     return <CreateUser {...props}></CreateUser>
   } else {
-    console.log(editUser.id)
     return (
       <>
         <EditUser editUser={editUser} {...props}></EditUser>

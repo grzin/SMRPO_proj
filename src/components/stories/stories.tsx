@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 
 import { FC, useActionState } from 'react'
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import Link from 'next/link'
 import { canDeleteStory } from '@/actions/user-actions'
 import { useUser } from '@/contexts/user-context'
@@ -10,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { Project, Story, TaskTime, User, Sprint } from '@/payload-types'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
-import { editStoryTimeEstimateAction, editStorySprint } from '@/actions/story-action'
+import { editStoryTimeEstimateAction, editStorySprint, acceptStory, rejectStory } from '@/actions/story-action'
 import {
   toggleRealizationAction,
   deleteTaskAction,
@@ -160,6 +161,7 @@ export const Stories: FC<{
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      {story.rejectComment && (<p className="text-sm text-orange-500">Rejected because: {story.rejectComment}</p>)}
                       <p className="text-sm text-gray-500">
                         Sprint: {story.sprint == null ? 'undefined' : (story.sprint as Sprint).name}
                       </p>
@@ -176,6 +178,7 @@ export const Stories: FC<{
                       <p>Description: {story.description}</p>
                       <p className="text-sm text-gray-500">Priority: {story.priority}</p>
                       <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+                      {story.rejectComment && (<p className="text-sm text-orange-500">Rejected because: {story.rejectComment}</p>)}
                       <ul>
                         {story.acceptanceTests.map((testObj, index) => (
                           <li key={index}>#{testObj.test}</li>
@@ -534,6 +537,8 @@ export const Stori: FC<{
   }
 
   const [state, formAction, pending] = useActionState(editStoryTimeEstimateAction, initialState)
+  const [isRejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
   
   const today = new Date()
@@ -587,9 +592,7 @@ export const Stori: FC<{
           <p>Description: {story.description}</p>
           <p className="text-sm text-gray-500">Priority: {story.priority}</p>
           <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
-          <p className="text-sm text-gray-500">
-            Sprint: {story.sprint == null ? 'undefined' : (story.sprint as Sprint).name}
-          </p>
+          {story.rejectComment && (<p className="text-sm text-orange-500">Rejected because: {story.rejectComment}</p>)}
           <p className="text-sm text-gray-500">Acceptance Tests: </p>
           <ul>
             {story.acceptanceTests.map((testObj, index) => (
@@ -603,6 +606,7 @@ export const Stori: FC<{
           <p>Description: {story.description}</p>
           <p className="text-sm text-gray-500">Priority: {story.priority}</p>
           <p className="text-sm text-gray-500">Business Value: {story.businessValue}</p>
+          {story.rejectComment && (<p className="text-sm text-orange-500">Rejected because: {story.rejectComment}</p>)}
           <ul>
             {story.acceptanceTests.map((testObj, index) => (
               <li key={index}>#{testObj.test}</li>
@@ -658,19 +662,80 @@ export const Stori: FC<{
           className="form-checkbox h-5 w-5 ml-auto"
         />
       </div>) : (<></>)}
-      {story.timeEstimate && story.timeEstimate > 0 && (story.sprint as Sprint)?.id == currentSprint?.id  && canNotSeeTimeEstimate ? (
       <div className="col-span-2 justify-end flex">
+      <div className="col-span-12 justify-end flex flex-col gap-2">
+        {!story.realized && (story.sprint as Sprint)?.id == currentSprint?.id  && canNotSeeTimeEstimate ? (
+          <div>
             <Button
-              variant="destructive"
+            variant="default"
+              disabled={
+                !story.tasks ||
+                story.tasks.length === 0 ||
+                story.tasks.some((task) => !task.realized)
+              }
+              className={`px-4 py-2 rounded ${
+                !story.tasks ||
+                story.tasks.length === 0 ||
+                story.tasks.some((task) => !task.realized)
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : ""
+              }`}
               onClick={async () => {
-                await editStorySprint('No Sprint Assigned', story.id).then(() => {
-                  router.refresh()
-                })
+                await acceptStory(story.id).then(() => {
+                  router.refresh();
+                });
               }}
             >
-              Remove from Sprint
+              Accept Story
             </Button>
-      </div>) : (<></>)}
+            </div>
+        ) : (<></>)}
+        
+        {(story.sprint as Sprint)?.id == currentSprint?.id  && canNotSeeTimeEstimate ? (
+          <div>
+            <Button
+              variant="destructive"
+              onClick={() => setRejectDialogOpen(true)} // Open the reject dialog
+            >
+              Reject Story
+            </Button> 
+            <Dialog open={isRejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Reject Story</DialogTitle>
+                  <p>Please provide a reason for rejecting this story.</p>
+                </DialogHeader>
+                <Input
+                  placeholder="Enter rejection reason"
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                />
+                <DialogFooter>
+                  <Button
+                    variant="destructive"
+                    onClick={async () => {
+                      if (rejectReason.trim() === '') {
+                        alert('Please provide a reason for rejection.');
+                        return;
+                      }
+                      await rejectStory(rejectReason, story.id); // Call rejectStory with reason and storyId
+                      setRejectDialogOpen(false); // Close the dialog
+                      setRejectReason(''); // Clear the input
+                      router.refresh(); // Refresh the page
+                    }}
+                  >
+                    Reject
+                  </Button>
+                  <Button variant="default" onClick={() => setRejectDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            </div>
+        ) : (<></>)}
+        </div>
+      </div>
       <div className="col-span-24">
         <h1>
           <b>Tasks</b>

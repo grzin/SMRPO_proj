@@ -34,7 +34,6 @@ export async function addStoryAction(formData: FormData, members: any) {
     .getAll('acceptanceTests')
     .map((str) => ({ test: str.toString() }))
 
-  console.log(acceptanceTests)
   const priority = formData.get('priority')?.toString() as
     | 'must have'
     | 'should have'
@@ -43,8 +42,6 @@ export async function addStoryAction(formData: FormData, members: any) {
   const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
   const projectId = Number(formData.get('project')?.toString())
 
-  console.log(title, description, acceptanceTests, priority, businessValue, projectId)
-  console.log('lel', members)
 
   if (!isAdminOrMethodologyManager(user, members)) {
     return { error: 'You do not have permission to add a user story' }
@@ -98,6 +95,7 @@ export async function addStoryAction(formData: FormData, members: any) {
         priority: priority,
         businessValue: businessValue,
         project: projectId,
+        realized: false,
       },
     })
     return { data: savedStory }
@@ -124,8 +122,6 @@ export async function editStoryAction(formData: FormData, members: any) {
     | "won't have this time"
   const businessValue = parseInt(formData.get('businessValue')?.toString() || 'a', 10)
   const storyId = Number(formData.get('storyId')?.toString())
-
-  console.log(title, description, acceptanceTests, priority, businessValue, storyId)
 
   const story = await payload
     .findByID({
@@ -156,9 +152,6 @@ export async function editStoryAction(formData: FormData, members: any) {
       },
     },
   })
-
-  console.log(title)
-  console.log(existingStory)
 
   if (existingStory.totalDocs > 0) {
     return { error: 'Story already exists' }
@@ -282,5 +275,72 @@ export async function editStorySprint(sprintName: string | null, storyId: number
     })
 
   }
+
+}
+
+export async function acceptStory(storyId: number) {
+  const payload = await getPayload({ config })
+  const user = await getUser()
+
+  const story = await payload
+    .findByID({
+      collection: 'stories',
+      id: storyId,
+    })
+    .catch(() => {
+      return { error: 'Failed fetching story' }
+    })
+
+  if ('error' in story) {
+    return story
+  }
+
+  const members = (story?.project as Project)?.members ?? []
+
+  if (!canDeleteStory(user, story, members)) {
+    return { error: 'You do not have permission to accept a user story' }
+  }
+
+  try {
+    await payload.update({
+      collection: 'stories',
+      id: storyId,
+      data: {
+        realized: true,
+        rejectComment: null,
+      },
+    })
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to accept user story:', error)
+    return { error: 'Failed to accept user story' }
+  }
+}
+
+export async function rejectStory(reason: string, storyId: number) {
+
+  let updateStory = await getStoryById(storyId.toString())
+  if (updateStory === null) {
+    return { error: 'Failed to fetch story' }
+  }
+  updateStory = updateStory as Story
+  updateStory.tasks?.forEach(task => {
+    task.realized = false
+  });
+
+  const payload = await getPayload({ config })
+  await payload.update({
+    collection: 'stories',
+    id: storyId,
+    data: {
+      realized: false,
+      rejectComment: reason,
+      tasks: updateStory.tasks,
+      sprint: null,
+    },
+  })
+  
+  return
+  
 
 }

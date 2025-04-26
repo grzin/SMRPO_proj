@@ -64,6 +64,8 @@ export default function TaskTimes({
     initialState,
   )
 
+  console.log('taskid', taskId)
+
   return (
     <div className={cn('flex', className)} {...props}>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">

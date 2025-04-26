@@ -39,9 +39,6 @@ export default function StoryEdit({ project, story }: StoryEditProps) {
   const [businessValue, setBusinessValue] = useState<string>(story.businessValue.toString())
   const [error, setError] = useState<string | null>(null)
 
-  console.log(story)
-  console.log(story.acceptanceTests)
-
   useEffect(() => {
     setTitle(story.title || '')
     setDescription(story.description || '')

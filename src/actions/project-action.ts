@@ -118,10 +118,6 @@ export async function addUserAction({}, formData: FormData) {
     message: '',
   }
 
-  console.log(formData.get('projectId'))
-  console.log(formData.get('user'))
-  console.log(formData.get('role')?.toString())
-
   const validatedFields = addMemberScehma.safeParse({
     project: formData.get('project') ?? '',
     user: formData.get('user') ?? '',
@@ -132,8 +128,6 @@ export async function addUserAction({}, formData: FormData) {
     response.message = JSON.stringify(validatedFields.error.errors)
     return response
   }
-
-  console.log('validated')
 
   const project = await payload
     .findByID({ collection: 'projects', id: validatedFields.data.project })
